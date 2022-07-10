@@ -2,78 +2,75 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://hugo-paper.vercel.app/</loc>
+    <loc>https://meanvery.github.io/</loc>
     <lastmod>2022-07-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/post/</loc>
+    <loc>https://meanvery.github.io/post/</loc>
     <lastmod>2022-07-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/</loc>
+    <loc>https://meanvery.github.io/post/myfirst/</loc>
     <lastmod>2022-07-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%A0%87%E7%AD%BE/</loc>
-    <lastmod>2022-07-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hugo-paper.vercel.app/post/myfirst/</loc>
-    <lastmod>2022-07-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hugo-paper.vercel.app/archives/</loc>
+    <loc>https://meanvery.github.io/archives/</loc>
     <lastmod>2019-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/categories/</loc>
+    <loc>https://meanvery.github.io/categories/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/css/</loc>
+    <loc>https://meanvery.github.io/tags/css/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/html/</loc>
+    <loc>https://meanvery.github.io/tags/html/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/markdown/</loc>
+    <loc>https://meanvery.github.io/tags/markdown/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/post/markdown-syntax/</loc>
+    <loc>https://meanvery.github.io/post/markdown-syntax/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/series/</loc>
+    <loc>https://meanvery.github.io/series/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/categories/syntax/</loc>
+    <loc>https://meanvery.github.io/categories/syntax/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/categories/themes/</loc>
+    <loc>https://meanvery.github.io/tags/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/series/themes-guide/</loc>
+    <loc>https://meanvery.github.io/categories/themes/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/privacy/</loc>
+    <loc>https://meanvery.github.io/series/themes-guide/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/tags/privacy/</loc>
     <lastmod>2019-03-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/post/rich-content/</loc>
+    <loc>https://meanvery.github.io/post/rich-content/</loc>
     <lastmod>2019-03-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/shortcodes/</loc>
+    <loc>https://meanvery.github.io/tags/shortcodes/</loc>
     <lastmod>2019-03-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/post/placeholder-text/</loc>
+    <loc>https://meanvery.github.io/post/placeholder-text/</loc>
     <lastmod>2019-03-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/text/</loc>
+    <loc>https://meanvery.github.io/tags/text/</loc>
     <lastmod>2019-03-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/post/math-typesetting/</loc>
+    <loc>https://meanvery.github.io/post/math-typesetting/</loc>
     <lastmod>2019-03-08T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/emoji/</loc>
+    <loc>https://meanvery.github.io/tags/emoji/</loc>
     <lastmod>2019-03-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/post/emoji-support/</loc>
+    <loc>https://meanvery.github.io/post/emoji-support/</loc>
     <lastmod>2019-03-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/about/</loc>
+    <loc>https://meanvery.github.io/about/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hugo-paper.vercel.app/tags/index/</loc>
+    <loc>https://meanvery.github.io/tags/index/</loc>
   </url>
 </urlset>
