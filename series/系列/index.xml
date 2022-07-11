@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>系列 on Paper</title>
+    <link>https://meanvery.github.io/series/%E7%B3%BB%E5%88%97/</link>
+    <description>Recent content in 系列 on Paper</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright><atom:link href="https://meanvery.github.io/series/%E7%B3%BB%E5%88%97/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>文章题目</title>
+      <link>https://meanvery.github.io/post/format_rules/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/format_rules/</guid>
+      <description>小标题 字体从大到小六个级别，H1最大，H6最小
+H1 H2 H3 H4 H5 H6 这里的内容将在黑线 | 之后显示 这里同上
+加粗格式
+斜体格式
+灰色色块显著
+引用格式1
+表格项1 表格项2 内容1 内容2 内容3 内容4 反引号法黑色背景，通常用于代码块 xxxx&amp;quot;四空格法&amp;quot;黑色背景xxxx大括号法 黑色背景 编号 有序号的编号 第一 第二 第三 无序号（小圆点） 内容 内容 内容 嵌套编号 内容 嵌套1 嵌套2 嵌套3 内容 嵌套1 嵌套2 其他格式 缩写
+H下标O
+X上标
+输入内容
+黄色块高亮显示
+the above quote is excerpted from xxxxxx [article] (https://www.baidu.com) during xxxxxxx,日期&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+  </channel>
+</rss>
