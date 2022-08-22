@@ -3,7 +3,25 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://meanvery.github.io/</loc>
-    <lastmod>2022-07-11T00:00:00+00:00</lastmod>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/tags/alexnet/</loc>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/tags/googlenet/</loc>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/post/</loc>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/post/seminar-20220820/</loc>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/tags/</loc>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/tags/vggnet/</loc>
+    <lastmod>2022-08-22T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://meanvery.github.io/post/20220711/</loc>
     <lastmod>2022-07-11T00:00:00+00:00</lastmod>
@@ -14,13 +32,7 @@
     <loc>https://meanvery.github.io/post/format_rules/</loc>
     <lastmod>2022-07-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://meanvery.github.io/post/</loc>
-    <lastmod>2022-07-11T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://meanvery.github.io/series/</loc>
-    <lastmod>2022-07-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://meanvery.github.io/tags/</loc>
     <lastmod>2022-07-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://meanvery.github.io/about/</loc>
