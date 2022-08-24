@@ -7,7 +7,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Mon, 11 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/tags/markdown/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 24 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/tags/markdown/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Typora</title>
+      <link>https://meanvery.github.io/post/typora/</link>
+      <pubDate>Wed, 24 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/typora/</guid>
+      <description>尝试使用Typora使得博客的创作更为方便。1
+加粗
+撒嘎嘎我
+斜体
+带下划线
+hello world
+删除内容
+金字塔方法示意图内容 数量 a 1 b 2 c 3 第一 第二 第三 1
+2
+aaaa 3
+哈哈哈哈
+555555
+https://
+$$ f(x)=a_0+∑_(n=1)^∞▒(a_n cos⁡〖nπx/L〗+b_n sin⁡〖nπx/L〗 ) $$
+www.example.com&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
     <item>
       <title>Markdown Syntax Guide</title>
       <link>https://meanvery.github.io/post/markdown-syntax/</link>
