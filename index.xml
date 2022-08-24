@@ -14,8 +14,7 @@
       <pubDate>Wed, 24 Aug 2022 00:00:00 +0000</pubDate>
       
       <guid>https://meanvery.github.io/post/mymathtypesetting/</guid>
-      <description>(3\times3)
-Examples Inline math: \(\varphi = \dfrac{1+\sqrt5}{2}= 1.6180339887…\)Block math: $$ \varphi = 1+\frac{1} {1+\frac{1} {1+\frac{1} {1+\cdots} } } $$</description>
+      <description>&lt;p&gt;Mathematical notation in a Hugo project can be enabled by using third party JavaScript libraries.&lt;/p&gt;</description>
     </item>
     
     <item>
