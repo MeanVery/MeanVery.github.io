@@ -7,41 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Wed, 24 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Math Typesetting</title>
-      <link>https://meanvery.github.io/post/mymathtypesetting/</link>
-      <pubDate>Wed, 24 Aug 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://meanvery.github.io/post/mymathtypesetting/</guid>
-      <description>Examples 在(3\times3)卷积核当中
-(\varphi = \dfrac{1+\sqrt5}{2})
-在\(3\times3\)卷积核当中\(\varphi = \dfrac{1+\sqrt5}{2}\)Inline math: \(\varphi = \dfrac{1+\sqrt5}{2}= 1.6180339887…\)Block math: $$ \varphi = 1+\frac{1} {1+\frac{1} {1+\frac{1} {1+\cdots} } } $$</description>
-    </item>
-    
-    <item>
-      <title>Typora</title>
-      <link>https://meanvery.github.io/post/typora/</link>
-      <pubDate>Wed, 24 Aug 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://meanvery.github.io/post/typora/</guid>
-      <description>尝试使用Typora使得博客的创作更为方便。1
-加粗
-撒嘎嘎我
-斜体
-带下划线
-hello world
-删除内容
-金字塔方法示意图内容 数量 a 1 b 2 c 3 第一 第二 第三 1
-2
-aaaa 3
-哈哈哈哈
-555555
-https://
-$$ f(x)=a_0+∑_(n=1)^∞▒(a_n cos⁡〖nπx/L〗+b_n sin⁡〖nπx/L〗 ) $$
-www.example.com&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
-    </item>
-    
+    <lastBuildDate>Mon, 22 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Seminar-20220820</title>
       <link>https://meanvery.github.io/post/seminar-20220820/</link>
@@ -51,7 +17,7 @@ www.example.com&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
       <description>感谢高丹阳学姐的讲解！
 AlexNet 首次使用GPU进行模型训练 使用ReLU激活函数代替Sigmoid/Tanh 使用规范层(Local Response Normalization, LRN) 使用随机丢弃策略(Dropout) GoogLeNet12 Inception(也称为GoogLeNet)结构的核心思想与贡献：
 使用 \(1\times1\) 的卷积来进行升降维 在相同尺寸的感受野种叠加更多的卷积，能提取更丰富的特征。同时在卷积之后都跟着激活函数，多层卷积与激活也有助于组合出更多的非线性特征 降低了计算的复杂度，对输入降维后再做卷积计算量明显减小 在多个尺寸上同时进行卷积后再进行聚合 直观上在多个尺度上同时进行卷积，能提取到不同尺度的特征，特征更丰富也意味着最后分类判断时更加准确 利用稀疏矩阵分解成密集矩阵计算的原理来加快收敛速度 Hebbin赫布原理，&amp;ldquo;fire together, wire together&amp;rdquo; : 两个神经元或者神经元系统，如果总是同时兴奋，就会形成一种组合，其中一个神经元的兴奋会促进另一个的兴奋 GoogLeNet网络深度深，为了避免梯度消失，网络额外增加了两个辅助的Softmax用于向前传导梯度。
-VGGNet3 采用连续的几个 \(3\times3\) 卷积核代替AlexNet中的较大卷积核，即&#34;金字塔方法&#34;。金字塔方法示意图优点 结构简洁，整个网络都使用了相同大小的卷积核尺寸( \(3\times3\) )和最大池化尺寸(\(2\times2\)) 几个小卷积核的组合比一个大卷积核效果更好 验证了加深网络结构可以提升性能 缺点 是同了更多参数，耗费更多计算资源，导致更多的内存占用 https://zhuanlan.zhihu.com/p/32702031&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+VGGNet3 采用连续的几个 \(3\times3\) 卷积核代替AlexNet中的较大卷积核，即&#34;金字塔方法&#34;。金字塔方法示意图优点 结构简洁，整个网络都使用了相同大小的卷积核尺寸( \(3\times3\) )和最大池化尺寸(\(2\times2\)) 几个小卷积核的组合比一个大卷积核效果更好 验证了加深网络结构可以提升性能 缺点 使用了更多参数，耗费更多计算资源，导致更多的内存占用 https://zhuanlan.zhihu.com/p/32702031&amp;#160;&amp;#x21a9;&amp;#xfe0e;
 https://blog.csdn.net/guoyunfei20/article/details/78395500&amp;#160;&amp;#x21a9;&amp;#xfe0e;
 https://zhuanlan.zhihu.com/p/41423739&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
