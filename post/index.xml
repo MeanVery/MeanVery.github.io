@@ -14,7 +14,7 @@
       <pubDate>Wed, 24 Aug 2022 00:00:00 +0000</pubDate>
       
       <guid>https://meanvery.github.io/post/mymathtypesetting/</guid>
-      <description>{{ if or .Params.math .Site.Params.math }} {{ partial &amp;#34;math.html&amp;#34; . }} {{ end }} Examples Inline math: \(\varphi = \dfrac{1+\sqrt5}{2}= 1.6180339887…\)Block math: $$ \varphi = 1+\frac{1} {1+\frac{1} {1+\frac{1} {1+\cdots} } } $$</description>
+      <description>Examples Inline math: \(\varphi = \dfrac{1+\sqrt5}{2}= 1.6180339887…\)Block math: $$ \varphi = 1+\frac{1} {1+\frac{1} {1+\frac{1} {1+\cdots} } } $$</description>
     </item>
     
     <item>

@@ -23,7 +23,7 @@
 
   
   
-  <meta name="description" content="{{ if or .Params.math .Site.Params.math }} {{ partial &#34;math.html&#34; . }} {{ end }} Examples Inline math: \(\varphi = \dfrac{1&#43;\sqrt5}{2}= 1.6180339887…\)Block math: $$ \varphi = 1&#43;\frac{1} {1&#43;\frac{1} {1&#43;\frac{1} {1&#43;\cdots} } } $$" />
+  <meta name="description" content="Examples Inline math: \(\varphi = \dfrac{1&#43;\sqrt5}{2}= 1.6180339887…\)Block math: $$ \varphi = 1&#43;\frac{1} {1&#43;\frac{1} {1&#43;\frac{1} {1&#43;\cdots} } } $$" />
   <meta name="author" content="MeanVery" />
   
 
@@ -82,7 +82,7 @@
   <meta itemprop="name" content="Math Typesetting">
 <meta itemprop="description" content="A brief guide to setup KaTeX"><meta itemprop="datePublished" content="2022-08-24T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-08-24T00:00:00+00:00" />
-<meta itemprop="wordCount" content="33">
+<meta itemprop="wordCount" content="19">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -158,10 +158,7 @@
     </p>
     <h1>Math Typesetting</h1>
   </header>
-  <section class="post-content"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">{{</span> <span style="color:#66d9ef">if</span> or .Params.math .Site.Params.math <span style="color:#f92672">}}</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">{{</span> partial <span style="color:#e6db74">&#34;math.html&#34;</span> . <span style="color:#f92672">}}</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">{{</span> end <span style="color:#f92672">}}</span>
-</span></span></code></pre></div>
+  <section class="post-content">
 
 <!-- KaTeX -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
