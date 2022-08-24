@@ -41,6 +41,21 @@ www.example.com&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
     <item>
+      <title>Seminar-20220820</title>
+      <link>https://meanvery.github.io/post/seminar-20220820/</link>
+      <pubDate>Mon, 22 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220820/</guid>
+      <description>感谢高丹阳学姐的讲解！
+AlexNet 首次使用GPU进行模型训练 使用ReLU激活函数代替Sigmoid/Tanh 使用规范层(Local Response Normalization, LRN) 使用随机丢弃策略(Dropout) GoogLeNet12 Inception(也称为GoogLeNet)结构的核心思想与贡献：
+使用(1*1)的卷积来进行升降维 在相同尺寸的感受野种叠加更多的卷积，能提取更丰富的特征。同时在卷积之后都跟着激活函数，多层卷积与激活也有助于组合出更多的非线性特征 降低了计算的复杂度，对输入降维后再做卷积计算量明显减小 在多个尺寸上同时进行卷积后再进行聚合 直观上在多个尺度上同时进行卷积，能提取到不同尺度的特征，特征更丰富也意味着最后分类判断时更加准确 利用稀疏矩阵分解成密集矩阵计算的原理来加快收敛速度 Hebbin赫布原理，&amp;ldquo;fire together, wire together&amp;rdquo; : 两个神经元或者神经元系统，如果总是同时兴奋，就会形成一种组合，其中一个神经元的兴奋会促进另一个的兴奋 GoogLeNet网络深度深，为了避免梯度消失，网络额外增加了两个辅助的Softmax用于向前传导梯度。
+VGGNet3 采用连续的几个3*3卷积核代替AlexNet中的较大卷积核，即&amp;quot;金字塔方法&amp;quot;。
+金字塔方法示意图优点 结构简洁，整个网络都使用了相同大小的卷积核尺寸(33)和最大池化尺寸(22) 几个小卷积核的组合比一个大卷积核效果更好 验证了加深网络结构可以提升性能 缺点 是同了更多参数，耗费更多计算资源，导致更多的内存占用 https://zhuanlan.zhihu.com/p/32702031&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://blog.csdn.net/guoyunfei20/article/details/78395500&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/41423739&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+    <item>
       <title>An Overview of Computer Vision</title>
       <link>https://meanvery.github.io/post/20220711/</link>
       <pubDate>Mon, 11 Jul 2022 00:00:00 +0000</pubDate>
@@ -142,22 +157,6 @@ the above quote is excerpted from xxxxxx [article] (https://www.baidu.com) durin
       
       <guid>https://meanvery.github.io/post/emoji-support/</guid>
       <description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://meanvery.github.io/post/seminar-20220820/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://meanvery.github.io/post/seminar-20220820/</guid>
-      <description>+++ author = &amp;ldquo;MeanVery&amp;rdquo; title = &amp;ldquo;Seminar-20220820&amp;rdquo; date = &amp;ldquo;2022-08-22&amp;rdquo; tags = [ &amp;ldquo;AlexNet&amp;rdquo; , &amp;ldquo;GoogLeNet&amp;rdquo; , &amp;ldquo;VGGNet&amp;rdquo;,]
-+++ Inline math: \(\varphi = \dfrac{1+\sqrt5}{2}= 1.6180339887…\)感谢高丹阳学姐的讲解！
-AlexNet 首次使用GPU进行模型训练 使用ReLU激活函数代替Sigmoid/Tanh 使用规范层(Local Response Normalization, LRN) 使用随机丢弃策略(Dropout) GoogLeNet12 Inception(也称为GoogLeNet)结构的核心思想与贡献：
-使用(1\times1)的卷积来进行升降维 在相同尺寸的感受野种叠加更多的卷积，能提取更丰富的特征。同时在卷积之后都跟着激活函数，多层卷积与激活也有助于组合出更多的非线性特征 降低了计算的复杂度，对输入降维后再做卷积计算量明显减小 在多个尺寸上同时进行卷积后再进行聚合 直观上在多个尺度上同时进行卷积，能提取到不同尺度的特征，特征更丰富也意味着最后分类判断时更加准确 利用稀疏矩阵分解成密集矩阵计算的原理来加快收敛速度 Hebbin赫布原理，&amp;ldquo;fire together, wire together&amp;rdquo; : 两个神经元或者神经元系统，如果总是同时兴奋，就会形成一种组合，其中一个神经元的兴奋会促进另一个的兴奋 GoogLeNet网络深度深，为了避免梯度消失，网络额外增加了两个辅助的Softmax用于向前传导梯度。
-VGGNet3 采用连续的几个(3\times3)积核代替AlexNet中的较大卷积核，即&amp;quot;金字塔方法&amp;quot;。
-金字塔方法示意图优点 结构简洁，整个网络都使用了相同大小的卷积核尺寸(3\times3)和最大池化尺寸(2\times2) 几个小卷积核的组合比一个大卷积核效果更好 验证了加深网络结构可以提升性能 缺点 是同了更多参数，耗费更多计算资源，导致更多的内存占用 https://zhuanlan.zhihu.com/p/32702031&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://blog.csdn.net/guoyunfei20/article/details/78395500&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/41423739&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
   </channel>
