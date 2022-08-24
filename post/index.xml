@@ -7,9 +7,24 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Mon, 22 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 24 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Seminar-20220820</title>
+      <title>Seminar-20220824-ResNet, DenseNet</title>
+      <link>https://meanvery.github.io/post/seminar-20220824/</link>
+      <pubDate>Wed, 24 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220824/</guid>
+      <description>感谢陈露元同学的讲解！
+ResNet1 ResNetV22 ResNeXt34 DenseNet56 https://blog.csdn.net/csdnldp/article/details/78313087&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://www.cnblogs.com/puheng/p/9690160.html&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/32913695&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/51075096&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/43057737&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/37189203&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+    <item>
+      <title>Seminar-20220820-AlexNet, GoogLeNet, VGGNet</title>
       <link>https://meanvery.github.io/post/seminar-20220820/</link>
       <pubDate>Mon, 22 Aug 2022 00:00:00 +0000</pubDate>
       
@@ -20,21 +35,6 @@ AlexNet 首次使用GPU进行模型训练 使用ReLU激活函数代替Sigmoid/Ta
 VGGNet3 采用连续的几个 \(3\times3\) 卷积核代替AlexNet中的较大卷积核，即&#34;金字塔方法&#34;。金字塔方法示意图优点 结构简洁，整个网络都使用了相同大小的卷积核尺寸( \(3\times3\) )和最大池化尺寸(\(2\times2\)) 几个小卷积核的组合比一个大卷积核效果更好 验证了加深网络结构可以提升性能 缺点 使用了更多参数，耗费更多计算资源，导致更多的内存占用 https://zhuanlan.zhihu.com/p/32702031&amp;#160;&amp;#x21a9;&amp;#xfe0e;
 https://blog.csdn.net/guoyunfei20/article/details/78395500&amp;#160;&amp;#x21a9;&amp;#xfe0e;
 https://zhuanlan.zhihu.com/p/41423739&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
-    </item>
-    
-    <item>
-      <title>Seminar-20220824-ResNet&amp;DenseNet</title>
-      <link>https://meanvery.github.io/post/seminar-20220824/</link>
-      <pubDate>Mon, 22 Aug 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://meanvery.github.io/post/seminar-20220824/</guid>
-      <description>感谢陈露元同学的讲解！
-ResNet1 ResNetV22 ResNeXt34 DenseNet56 https://blog.csdn.net/csdnldp/article/details/78313087&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://www.cnblogs.com/puheng/p/9690160.html&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/32913695&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/51075096&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/43057737&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/37189203&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
     <item>
