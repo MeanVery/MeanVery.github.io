@@ -24,10 +24,24 @@
   
   
   <meta name="description" content="感谢陈露元同学的讲解！
-ResNet1 ResNetV22 ResNeXt34 DenseNet56 https://blog.csdn.net/csdnldp/article/details/78313087&#160;&#x21a9;&#xfe0e;
+ResNet1 2 ​	从之前已有的研究中可以看出，似乎神经网络的深度越深，学习效果就越好。但这个结论其实并不可靠：一个问题是，随着深度的增加而出现的梯度消失或梯度爆炸现象，影响最后的收敛，不过这种收敛问题可以通过正则化（regularization）得到部分解决；另一个问题是，网络即使收敛，在深度增加时，正确率却无法进一步提高甚至还会下降，称为网络的退化（degradation）问题。
+​	考虑一个极端的情形，如果增加的所有层都是前一层的直接复制，那么深层网络的训练误差应当和浅层网络相等，因此网络退化的根本原因是优化的问题，不是所有的系统都很容易优化。
+​	为了解决优化的难题，提出了残差网络，不让网络直接拟合原先的映射，而是拟合残差映射。
+Residual learning: a building block​	上图为残差网络中的一个模块，identity mapping 为恒等映射。由上图，残差网络可以理解为在前向网络中增加了一些快捷连接（shortcut connections），这些连接会跳过某些层，直接将原始数据传到之后的层。新增的快捷连接也不会增加模型的参数和复杂度，整个模型依然可以使用端到端的方法进行训练（比如随机梯度下降法）。
+不同层数的ResNet架构- 总结​	ResNet将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。
+ResNetV23 4 对resnet的改良​	实验表明，保持一个单纯的信息传送通道（如上图中 b 所示）对降低优化的难度有帮助。
+残差网络的分析
+原始版本的残差模块，利用公式描述如下： $$ y_l = h(x_l)&#43;F(x_l,W_l)&hellip;&hellip;(1) $$
+$$ x_{l&#43;1} = f(y_l)&hellip;&hellip;(2) $$
+其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射。
+ResNeXt5 6 7 DenseNet8 9 10 https://arxiv.org/pdf/1512.03385.pdf&#160;&#x21a9;&#xfe0e;
+https://blog.csdn.net/csdnldp/article/details/78313087&#160;&#x21a9;&#xfe0e;
+https://arxiv.org/pdf/1603.05027.pdf&#160;&#x21a9;&#xfe0e;
 https://www.cnblogs.com/puheng/p/9690160.html&#160;&#x21a9;&#xfe0e;
+https://arxiv.org/pdf/1611.05431.pdf&#160;&#x21a9;&#xfe0e;
 https://zhuanlan.zhihu.com/p/32913695&#160;&#x21a9;&#xfe0e;
 https://zhuanlan.zhihu.com/p/51075096&#160;&#x21a9;&#xfe0e;
+https://arxiv.org/pdf/1608.06993.pdf&#160;&#x21a9;&#xfe0e;
 https://zhuanlan.zhihu.com/p/43057737&#160;&#x21a9;&#xfe0e;
 https://zhuanlan.zhihu.com/p/37189203&#160;&#x21a9;&#xfe0e;" />
   <meta name="author" content="MeanVery" />
@@ -88,7 +102,7 @@ https://zhuanlan.zhihu.com/p/37189203&#160;&#x21a9;&#xfe0e;" />
   <meta itemprop="name" content="Seminar-20220824-ResNet, DenseNet">
 <meta itemprop="description" content="Seminar about ResNet and DenseNet"><meta itemprop="datePublished" content="2022-08-24T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-08-24T00:00:00+00:00" />
-<meta itemprop="wordCount" content="11">
+<meta itemprop="wordCount" content="60">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -175,30 +189,86 @@ https://zhuanlan.zhihu.com/p/37189203&#160;&#x21a9;&#xfe0e;" />
 
 
 <p>感谢陈露元同学的讲解！</p>
-<h2 id="resnet1cite">ResNet<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite></h2>
-<h2 id="resnetv22cite">ResNetV2<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
-<h2 id="resnext3cite4cite">ResNeXt<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></cite><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></cite></h2>
-<h2 id="densenet5cite6cite">DenseNet<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></cite></h2>
+<h2 id="resnet1cite-2cite">ResNet<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​		从之前已有的研究中可以看出，似乎神经网络的深度越深，学习效果就越好。但这个结论其实并不可靠：一个问题是，随着深度的增加而出现的梯度消失或梯度爆炸现象，影响最后的收敛，不过这种收敛问题可以通过正则化（regularization）得到部分解决；另一个问题是，网络即使收敛，在深度增加时，正确率却无法进一步提高甚至还会下降，称为网络的退化（degradation）问题。</p>
+<p>​		考虑一个极端的情形，如果增加的所有层都是前一层的直接复制，那么深层网络的训练误差应当和浅层网络相等，因此网络退化的根本原因是优化的问题，不是所有的系统都很容易优化。</p>
+<p>​		为了解决优化的难题，提出了残差网络，不让网络直接拟合原先的映射，而是拟合残差映射。</p>
+<div>
+    <center>
+    <img src="/resnet1.png"
+         alt="Residual learning: a building block"
+         style="zoom:50%"/>
+    Residual learning: a building block
+    </center>
+</div>
+<p>​		上图为残差网络中的一个模块，identity mapping 为恒等映射。由上图，残差网络可以理解为在前向网络中增加了一些快捷连接（shortcut connections），这些连接会跳过某些层，直接将原始数据传到之后的层。新增的快捷连接也不会增加模型的参数和复杂度，整个模型依然可以使用端到端的方法进行训练（比如随机梯度下降法）。</p>
+<div>
+	<center>
+	<img src="/resnet2.png"
+	     alt="不同层数的ResNet架构"
+	     style="zoom:50%"/>
+	不同层数的ResNet架构
+	</center>
+</div>
+- 总结
+<p>​		ResNet将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。</p>
+<h2 id="resnetv23cite-4cite">ResNetV2<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></cite> <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></cite></h2>
+<div>
+	<center>
+	<img src="/resnetv2.png"
+	     alt="对resnet的改良"
+	     style="zoom:50%"/>
+	对resnet的改良
+	</center>
+</div>
+<p>​		实验表明，保持一个单纯的信息传送通道（如上图中 b 所示）对降低优化的难度有帮助。</p>
+<ul>
+<li>
+<p>残差网络的分析</p>
+<p>原始版本的残差模块，利用公式描述如下：
+$$
+y_l = h(x_l)+F(x_l,W_l)&hellip;&hellip;(1)
+$$</p>
+<p>$$
+x_{l+1} = f(y_l)&hellip;&hellip;(2)
+$$</p>
+<p>其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射。</p>
+</li>
+</ul>
+<h2 id="resnext5cite--6cite-7cite">ResNeXt<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite>  <sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></cite> <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></cite></h2>
+<h2 id="densenet8cite--9cite-10cite">DenseNet<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></cite>  <sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></cite> <sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></cite></h2>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://blog.csdn.net/csdnldp/article/details/78313087">https://blog.csdn.net/csdnldp/article/details/78313087</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://arxiv.org/pdf/1512.03385.pdf">https://arxiv.org/pdf/1512.03385.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.cnblogs.com/puheng/p/9690160.html">https://www.cnblogs.com/puheng/p/9690160.html</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://blog.csdn.net/csdnldp/article/details/78313087">https://blog.csdn.net/csdnldp/article/details/78313087</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://zhuanlan.zhihu.com/p/32913695">https://zhuanlan.zhihu.com/p/32913695</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://arxiv.org/pdf/1603.05027.pdf">https://arxiv.org/pdf/1603.05027.pdf</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://zhuanlan.zhihu.com/p/51075096">https://zhuanlan.zhihu.com/p/51075096</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.cnblogs.com/puheng/p/9690160.html">https://www.cnblogs.com/puheng/p/9690160.html</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:5">
-<p><a href="https://zhuanlan.zhihu.com/p/43057737">https://zhuanlan.zhihu.com/p/43057737</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://arxiv.org/pdf/1611.05431.pdf">https://arxiv.org/pdf/1611.05431.pdf</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:6">
-<p><a href="https://zhuanlan.zhihu.com/p/37189203">https://zhuanlan.zhihu.com/p/37189203</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/32913695">https://zhuanlan.zhihu.com/p/32913695</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p><a href="https://zhuanlan.zhihu.com/p/51075096">https://zhuanlan.zhihu.com/p/51075096</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8">
+<p><a href="https://arxiv.org/pdf/1608.06993.pdf">https://arxiv.org/pdf/1608.06993.pdf</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9">
+<p><a href="https://zhuanlan.zhihu.com/p/43057737">https://zhuanlan.zhihu.com/p/43057737</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10">
+<p><a href="https://zhuanlan.zhihu.com/p/37189203">https://zhuanlan.zhihu.com/p/37189203</a>&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
