@@ -24,7 +24,7 @@ ResNet.version23 4 对resnet的改良​	实验表明，保持一个单纯的�
 残差网络的分析
 原始版本的残差模块，利用公式描述如下： $$ y_l = h(x_l)+F(x_l,W_l)&amp;hellip;(1) $$
 $$ x_{l+1} = f(y_l)&amp;hellip;(2) $$
-其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h(x_l}) = x_l\)。
+其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h{x_l}) = x_l\)。
 如果我们设\(f\)也是恒等映射，即\(x_{l+1} = y_l\)，则可将（2）式代入（1）式，可得： $$ x_{l+1} = x_l + F(x_l,W_l)&amp;hellip;(3) $$ 类似的可推得： $$ x_L= x_l + \displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)&amp;hellip;(4) $$ 由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始ResNet，深层特征实际是各项相乘。
 对损失函数求导可得： $$ \dfrac{\partial \varepsilon}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\dfrac{\partial x_L}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\Big(1+\dfrac{\partial}{\partial x_l}\displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)\Big)&amp;hellip;(5) $$ 由（5）式可得梯度被分解为两项，第一项确保了信息可以直接传播回任意浅层特征，第二项确保了即使权重任意小，层的梯度也不会消失。</description>
     </item>
