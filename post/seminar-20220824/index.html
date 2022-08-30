@@ -28,13 +28,13 @@ ResNet1 2 ​	从之前已有的研究中可以看出，似乎神经网络的深
 ​	考虑一个极端的情形，如果增加的所有层都是前一层的直接复制，那么深层网络的训练误差应当和浅层网络相等，因此网络退化的根本原因是优化的问题，不是所有的系统都很容易优化。
 ​	为了解决优化的难题，提出了残差网络，不让网络直接拟合原先的映射，而是拟合残差映射。
 Residual learning: a building block​	上图为残差网络中的一个模块，identity mapping 为恒等映射。由上图，残差网络可以理解为在前向网络中增加了一些快捷连接（shortcut connections），这些连接会跳过某些层，直接将原始数据传到之后的层。新增的快捷连接也不会增加模型的参数和复杂度，整个模型依然可以使用端到端的方法进行训练（比如随机梯度下降法）。
-不同层数的ResNet架构总结 ​	ResNet将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。
+不同层数的ResNet架构总结 ​	ResNet 将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。
 ResNet.version23 4 对resnet的改良​	实验表明，保持一个单纯的信息传送通道（如上图中 b 所示）对降低优化的难度有帮助。
 残差网络的分析
 原始版本的残差模块，利用公式描述如下： $$ y_l = h(x_l)&#43;F(x_l,W_l)&hellip;(1) $$
 $$ x_{l&#43;1} = f(y_l)&hellip;(2) $$
-其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h({x_l}) = x_l\)。
-如果我们设\(f\)也是恒等映射，即\(x_{l&#43;1} = y_l\)，则可将（2）式代入（1）式，可得： $$ x_{l&#43;1} = x_l &#43; F(x_l,W_l)&hellip;(3) $$ 类似的可推得： $$ x_L= x_l &#43; \displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)&hellip;(4) $$ 由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始ResNet，深层特征实际是各项相乘。
+其中，\(x_l\)为第\(l\)层残差模块的输入特征，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h({x_l}) = x_l\)。
+如果我们设\(f\)也是恒等映射，即\(x_{l&#43;1} = y_l\)，则可将（2）式代入（1）式，可得： $$ x_{l&#43;1} = x_l &#43; F(x_l,W_l)&hellip;(3) $$ 类似的可推得： $$ x_L= x_l &#43; \displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)&hellip;(4) $$ 由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始 ResNet，深层特征实际是各项相乘。
 对损失函数求导可得： $$ \dfrac{\partial \varepsilon}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\dfrac{\partial x_L}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\Big(1&#43;\dfrac{\partial}{\partial x_l}\displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)\Big)&hellip;(5) $$ 由（5）式可得梯度被分解为两项，第一项确保了信息可以直接传播回任意浅层特征，第二项确保了即使权重任意小，层的梯度也不会消失。" />
   <meta name="author" content="MeanVery" />
   
@@ -94,7 +94,7 @@ $$ x_{l&#43;1} = f(y_l)&hellip;(2) $$
   <meta itemprop="name" content="Seminar-20220824-ResNet, DenseNet">
 <meta itemprop="description" content="Seminar about ResNet and DenseNet"><meta itemprop="datePublished" content="2022-08-24T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-08-24T00:00:00+00:00" />
-<meta itemprop="wordCount" content="104">
+<meta itemprop="wordCount" content="165">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -207,7 +207,7 @@ $$ x_{l&#43;1} = f(y_l)&hellip;(2) $$
 <ul>
 <li>总结</li>
 </ul>
-<p>​		ResNet将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。</p>
+<p>​		ResNet 将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。</p>
 <h2 id="resnetversion23cite-4cite">ResNet.version2<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></cite> <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></cite></h2>
 <div>
 	<center>
@@ -229,7 +229,7 @@ $$</p>
 <p>$$
 x_{l+1} = f(y_l)&hellip;(2)
 $$</p>
-<p>其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h({x_l}) = x_l\)。</p>
+<p>其中，\(x_l\)为第\(l\)层残差模块的输入特征，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h({x_l}) = x_l\)。</p>
 <p>如果我们设\(f\)也是恒等映射，即\(x_{l+1} = y_l\)，则可将（2）式代入（1）式，可得：
 $$
 x_{l+1} = x_l + F(x_l,W_l)&hellip;(3)
@@ -238,7 +238,7 @@ $$
 $$
 x_L= x_l + \displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)&hellip;(4)
 $$
-由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始ResNet，深层特征实际是各项相乘。</p>
+由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始 ResNet，深层特征实际是各项相乘。</p>
 <p>对损失函数求导可得：
 $$
 \dfrac{\partial \varepsilon}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\dfrac{\partial x_L}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\Big(1+\dfrac{\partial}{\partial x_l}\displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)\Big)&hellip;(5)
@@ -261,7 +261,41 @@ $$
 <li>能够减少过拟合</li>
 </ul>
 <h2 id="resnext5cite--6cite-7cite">ResNeXt<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite>  <sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></cite> <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></cite></h2>
+<p>​		ResNeXt模型提出了一种用于图像分类的简单、高度模块化的网络架构。网络是通过重复一个模块来构建的，该模块聚合了一组具有相同拓扑结构的变换。该设计产生了一个同质的多分支架构，只需设置几个超参数。这个设计策略引入了一个新的维度，称之为“基数”（cardinality），作为深度和宽度这两个维度之外的一个重要因素。在 ImageNet-1K 数据集上的实验表明，即使在保持复杂性的限制条件下，增加基数也能够提高分类精度。此外，当容量增加时，增加基数比增加深度或宽度更有效。该模型在 ILSVRC 2016 分类任务中获得了第二名。研究者在 ImageNet-5K 集和 COCO 检测集上进一步测试 ResNeXt ，也显示出比 ResNet 更好的结果。</p>
+<p>​		Inception 具备一般性的模式：split-tranform-merge。输入被分成几个低维嵌入（通过\(1\times1\)卷积），由一组专门的过滤器（\(3\times3\)、\(5\times5\) 等）进行转换，并通过连接合并。但是由于构建过程中需要设置的参数过多，研究人员就必须考虑如何设置每一个参数，这也阻碍了人们将训练好的参数模型拓展到新数据集。</p>
+<p>​		ResNeXt 沿袭了了 VGG/ResNet 关于重复层结构的思想，但是方法上做出了一个改变——把要聚合起来的分组都采用相同的拓扑结构。这样做就大大减少了人为干预的影响，因为需要设计的参数变少了；同时降低了人为设置的参数过于适合特定数据集的风险。</p>
+<div>
+	<center>
+	<img src="/resnext1.png"
+	     alt="基数为32的ResNeXt模块"
+	     style="zoom:50%"/>
+	基数为32的ResNeXt模块
+	</center>
+</div>
+<br>
 <h2 id="densenet8cite--9cite-10cite">DenseNet<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></cite>  <sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></cite> <sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></cite></h2>
+<p>​		ResNet 表明，如果卷积网络中包含类似的 short connections，则效果会变得更好。研究人员遵循了这个思想，提出密集卷积网络 DenseNet，它以前馈的方式将每一层都与其他层连接起来：对于每一层，它前面层的特征图都被用作输入，而它自己的特征图被用作所有后续层的输入。DenseNet 缓解了梯度消失问题，加强了特征的传递和重复使用，并且显著减少了参数量。根据在四个图像识别基准任务（ CIFAR-10、CIFAR-100、SVHN 和 ImageNet ）上的表现评估，DenseNet 在大多数情况下的效果都比它之前已有的技术获得了增强，同时消耗更少的计算。</p>
+<div>
+	<center>
+	<img src="/densenet1.png"
+	     alt="5层的DenseNet模块示意图"
+	     style="zoom:50%"/>
+	5层的DenseNet模块示意图
+	</center>
+</div>
+<br>
+<p>​		实际上通过之前的研究表明，CNNs 变得更深了之后，在接近末尾时梯度就已经消失，各种能解决该问题的网络无一例外使用了 short paths 用来将浅层与深层直接相连。DenseNet 为了确保最大的信息流，直接将所有层彼此连接。与 ResNet相比，DenseNet 从不将特征通过求和，而是通过连接的方式来将特征组合到一起。</p>
+<p>​		看起来将每一层彼此连接非常复杂，但是 DenseNet 实际上比传统的卷积神经网络需要更少的参数，因为在 DenseNet 中不需要重复学习大量的特征图。在传统的卷积网络中，每一层从其前一层读取状态特征图，经过自己的变换再传递到下一层；由于每一层都有自己的权重参数，因此所需参数量很大。但是 DenseNet 明确区分了要添加的信息和要保留的信息，使得每一层仅将一小部分特征图添加到“集体知识”，并保持其余特征图不变，因此需要的参数反直觉地变少了。</p>
+<p>​		除了参数上的优化，DenseNet 改进了信息和梯度在整个网络中的流动，每一层都可以直接通过损失函数和原始输入影响梯度：这使得训练起来更容易，并可以设置更大的深度。此外密集连接还有正则化的效应，使得在小训练集上的过拟合风险降低。</p>
+<div>
+	<center>
+	<img src="/densenet2.png"
+	     alt="DenseNet结构示意表"
+	     style="zoom:60%"/>
+	DenseNet结构示意表
+	</center>
+</div>
+<br>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -306,6 +340,8 @@ $$
   
   
   <nav class="post-nav">
+    
+    <a class="prev" href="https://meanvery.github.io/post/seminar-20220827/"><span>←</span><span>Seminar-20220827-SENet, MobileNet</span></a>
      
     <a class="next" href="https://meanvery.github.io/post/seminar-20220820/"><span>Seminar-20220820-AlexNet, GoogLeNet, VGGNet</span><span>→</span></a>
     

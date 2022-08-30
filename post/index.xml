@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Wed, 24 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Seminar-20220827-SENet, MobileNet</title>
+      <link>https://meanvery.github.io/post/seminar-20220827/</link>
+      <pubDate>Sat, 27 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220827/</guid>
+      <description>感谢张若淇师兄的讲解！
+SENet1 2 MobileNet3 4 https://arxiv.org/pdf/1709.01507.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/347236731&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/pdf/1704.04861.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://blog.csdn.net/mzpmzk/article/details/82976871&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
     <item>
       <title>Seminar-20220824-ResNet, DenseNet</title>
       <link>https://meanvery.github.io/post/seminar-20220824/</link>
@@ -19,13 +32,13 @@ ResNet1 2 ​	从之前已有的研究中可以看出，似乎神经网络的深
 ​	考虑一个极端的情形，如果增加的所有层都是前一层的直接复制，那么深层网络的训练误差应当和浅层网络相等，因此网络退化的根本原因是优化的问题，不是所有的系统都很容易优化。
 ​	为了解决优化的难题，提出了残差网络，不让网络直接拟合原先的映射，而是拟合残差映射。
 Residual learning: a building block​	上图为残差网络中的一个模块，identity mapping 为恒等映射。由上图，残差网络可以理解为在前向网络中增加了一些快捷连接（shortcut connections），这些连接会跳过某些层，直接将原始数据传到之后的层。新增的快捷连接也不会增加模型的参数和复杂度，整个模型依然可以使用端到端的方法进行训练（比如随机梯度下降法）。
-不同层数的ResNet架构总结 ​	ResNet将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。
+不同层数的ResNet架构总结 ​	ResNet 将部分原始输入信息不经过矩阵乘法和非线性变换，直接传输到下一层，快捷连接如同在深层网络中建立起了信息的捷径。通过改变学习目标，残差网络不再学习完整的输出而是学习残差，不仅降低了学习的难度，而且解决了传统卷积层或者全连接层在信息传递时存在的丢失和损耗问题——直接将信息从输入绕道传到输出，一定程度上保护了信息的完整性。
 ResNet.version23 4 对resnet的改良​	实验表明，保持一个单纯的信息传送通道（如上图中 b 所示）对降低优化的难度有帮助。
 残差网络的分析
 原始版本的残差模块，利用公式描述如下： $$ y_l = h(x_l)+F(x_l,W_l)&amp;hellip;(1) $$
 $$ x_{l+1} = f(y_l)&amp;hellip;(2) $$
-其中，\(x_l\)为第\(l\)层残差模块，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h({x_l}) = x_l\)。
-如果我们设\(f\)也是恒等映射，即\(x_{l+1} = y_l\)，则可将（2）式代入（1）式，可得： $$ x_{l+1} = x_l + F(x_l,W_l)&amp;hellip;(3) $$ 类似的可推得： $$ x_L= x_l + \displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)&amp;hellip;(4) $$ 由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始ResNet，深层特征实际是各项相乘。
+其中，\(x_l\)为第\(l\)层残差模块的输入特征，\(W_l\)是权重系数，\(F\)是残差函数，\(f\)是ReLU函数，\(h\)是恒等映射，即\(h({x_l}) = x_l\)。
+如果我们设\(f\)也是恒等映射，即\(x_{l+1} = y_l\)，则可将（2）式代入（1）式，可得： $$ x_{l+1} = x_l + F(x_l,W_l)&amp;hellip;(3) $$ 类似的可推得： $$ x_L= x_l + \displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)&amp;hellip;(4) $$ 由（4）式可得任意深层特征都可以用浅层特征加上残差项来表达，而对原始 ResNet，深层特征实际是各项相乘。
 对损失函数求导可得： $$ \dfrac{\partial \varepsilon}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\dfrac{\partial x_L}{\partial x_l}=\dfrac{\partial \varepsilon}{\partial x_L}\Big(1+\dfrac{\partial}{\partial x_l}\displaystyle\sum_{i=l}^{L-1}F(x_i,W_i)\Big)&amp;hellip;(5) $$ 由（5）式可得梯度被分解为两项，第一项确保了信息可以直接传播回任意浅层特征，第二项确保了即使权重任意小，层的梯度也不会消失。</description>
     </item>
     
