@@ -263,7 +263,7 @@ $$
 <h2 id="resnext5cite--6cite-7cite">ResNeXt<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite>  <sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></cite> <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></cite></h2>
 <p>​		ResNeXt模型提出了一种用于图像分类的简单、高度模块化的网络架构。网络是通过重复一个模块来构建的，该模块聚合了一组具有相同拓扑结构的变换。该设计产生了一个同质的多分支架构，只需设置几个超参数。这个设计策略引入了一个新的维度，称之为“基数”（cardinality），作为深度和宽度这两个维度之外的一个重要因素。在 ImageNet-1K 数据集上的实验表明，即使在保持复杂性的限制条件下，增加基数也能够提高分类精度。此外，当容量增加时，增加基数比增加深度或宽度更有效。该模型在 ILSVRC 2016 分类任务中获得了第二名。研究者在 ImageNet-5K 集和 COCO 检测集上进一步测试 ResNeXt ，也显示出比 ResNet 更好的结果。</p>
 <p>​		Inception 具备一般性的模式：split-tranform-merge。输入被分成几个低维嵌入（通过\(1\times1\)卷积），由一组专门的过滤器（\(3\times3\)、\(5\times5\) 等）进行转换，并通过连接合并。但是由于构建过程中需要设置的参数过多，研究人员就必须考虑如何设置每一个参数，这也阻碍了人们将训练好的参数模型拓展到新数据集。</p>
-<p>​		ResNeXt 沿袭了了 VGG/ResNet 关于重复层结构的思想，但是方法上做出了一个改变——把要聚合起来的分组都采用相同的拓扑结构。这样做就大大减少了人为干预的影响，因为需要设计的参数变少了；同时降低了人为设置的参数过于适合特定数据集的风险。</p>
+<p>​		ResNeXt 沿袭了 VGG/ResNet 关于重复层结构的思想，但是方法上做出了一个改变——把要聚合起来的分组都采用相同的拓扑结构。这样做就大大减少了人为干预的影响，因为需要设计的参数变少了；同时降低了人为设置的参数过于适合特定数据集的风险。</p>
 <div>
 	<center>
 	<img src="/resnext1.png"
