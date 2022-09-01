@@ -87,7 +87,7 @@ A Squeeze-and-Excitation block​	其中， \(X\) 是初始的特征图，高�
   <meta itemprop="name" content="Seminar-20220827-SENet, MobileNet">
 <meta itemprop="description" content="Seminar about SENet and MobileNet"><meta itemprop="datePublished" content="2022-08-27T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-08-27T00:00:00+00:00" />
-<meta itemprop="wordCount" content="190">
+<meta itemprop="wordCount" content="400">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -211,8 +211,61 @@ A Squeeze-and-Excitation block​	其中， \(X\) 是初始的特征图，高�
 	</center>
 </div>
 <br>
-<p>​		综上，SENet 把重要通道的特征强化，非重要通道的特征弱化，得到了很好的效果。</p>
+<p>​		综上，SENet 实现了把重要通道的特征强化，非重要通道的特征弱化，得到了很好的效果。</p>
 <h2 id="mobilenet4cite-5cite">MobileNet<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></cite> <sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite></h2>
+<p>​		在现实的应用场景，比如机器人，自动行驶汽车中，识别任务需要在计算能力十分有限的平台上及时完成。MobileNet 旨在提出小型高效低延迟的网络模型，可以轻松满足移动和嵌入式视觉应用的要求。</p>
+<p>​		MobileNet 主要采取的的方式是深度可分离卷积（Depthwise Separable Convolution），将一个标准的卷积分解为一个深度卷积（depthwise convolution, DW）和一个 \(1 \times 1\) 的点卷积（pointwise convolution, PW）。DW 对输入的每一通道应用一个单独的卷积核，然后 PW 再把 DW 的输出合并到一起。和标准卷积一步到位相比，分成 DW 和 PW 两步之后，计算量和模型尺寸显著减少。</p>
+<div>
+	<center>
+	<img src="/mobilenet1.png"
+	     alt="Standard convolution(a) and DW(b), PW(c)"
+	     style="zoom:50%"/>
+	 Standard convolution(a) and DW(b), PW(c)
+	</center>
+</div>
+<br>
+<p>​		设卷积核 \(K\) 大小为 \(D_K \times D_K\) ，输入特征图 \(F\) ，高度宽度通道数为 \(D_F \times D_F \times M\) ，相应输出特征图 \(G\) 为 \(D_G \times D_G \times N\) 。</p>
+<ul>
+<li>标准卷积的计算量</li>
+</ul>
+<p>$$
+D_K \cdotp D_K \cdotp M \cdotp N \cdotp D_G \cdotp D_G&hellip;(1)
+$$</p>
+<ul>
+<li>深度可分离卷积的计算量</li>
+</ul>
+<p>$$
+D_K \cdotp D_K \cdotp M \cdotp D_G \cdotp D_G\space+\space M \cdotp N \cdotp D_G \cdotp D_G&hellip;(2)
+$$</p>
+<p>上述（1）（2）式做比较可得：
+$$
+\dfrac{D_K \cdotp D_K \cdotp M \cdotp D_G \cdotp D_G\space+\space M \cdotp N \cdotp D_G \cdotp D_G}{D_K \cdotp D_K \cdotp M \cdotp N \cdotp D_G \cdotp D_G}=\dfrac{1}{N}+\dfrac{1}{D_K^2}
+$$
+由上式可知，如果采用通常的 \(3 \times 3\) 卷积核（即 \(D_K=3\) ），则深度可分离卷积的计算量大约是标准卷积的 \(1/9\) 。并且后续实验表明，运算量大幅减少的代价是非常小的精度损失。</p>
+<div>
+	<center>
+	<img src="/mobilenet2.png"
+	     alt="Standard Convolution (left); Depthwise Separable Convolution (right)"
+	     style="zoom:50%"/>
+	 Standard Convolution (left); Depthwise Separable Convolution (right)
+	</center>
+</div>
+<br>
+<ul>
+<li>宽度因子</li>
+</ul>
+<p>​		尽管上述基本的 MobileNet 结构已经可以做到规模小，延迟低，但是为了更快更小，研究人员引入了宽度因子 \(\alpha\) ，对于给定的层和相应的宽度因子 \(\alpha\) ，输入通道数 \(M\) ， \(N\) 分别变换为 \(\alpha M\) ， \(\alpha N\) ，其中 \(\alpha \in (0,1\rbrack\) ，因此计算量进一步减小，重写计算量为：
+$$
+D_K \cdotp D_K \cdotp \alpha M \cdotp D_G \cdotp D_G\space+\space \alpha M \cdotp \alpha N \cdotp D_G \cdotp D_G
+$$</p>
+<ul>
+<li>分辨率因子</li>
+</ul>
+<p>​		引入分辨率因子 \(\rho\) ， \(\rho \in (0,1\rbrack\) ，来缩小特征图的尺寸从而减小计算量，结合宽度因子，重写计算量为：
+$$
+D_K \cdotp D_K \cdotp \alpha M \cdotp \rho D_G \cdotp \rho D_G\space+\space \alpha M \cdotp \alpha N \cdotp \rho D_G \cdotp \rho D_G
+$$
+<br></p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -242,6 +295,8 @@ A Squeeze-and-Excitation block​	其中， \(X\) 是初始的特征图，高�
   
   
   <nav class="post-nav">
+    
+    <a class="prev" href="https://meanvery.github.io/post/seminar-20220831/"><span>←</span><span>Seminar-20220831-ShuffleNet, EfficientNet</span></a>
      
     <a class="next" href="https://meanvery.github.io/post/seminar-20220824/"><span>Seminar-20220824-ResNet, DenseNet</span><span>→</span></a>
     

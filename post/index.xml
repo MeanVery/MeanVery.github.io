@@ -7,7 +7,24 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Sat, 27 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Seminar-20220831-ShuffleNet, EfficientNet</title>
+      <link>https://meanvery.github.io/post/seminar-20220831/</link>
+      <pubDate>Thu, 01 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220831/</guid>
+      <description>感谢周羿旭师兄的讲解！
+ShuffleNet1 2 3 4 EfficientNet5 6 7 8 https://arxiv.org/pdf/1707.01083&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/32304419&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/pdf/1807.11164&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/359470360&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/pdf/1905.11946&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://zhuanlan.zhihu.com/p/240795470&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/pdf/2104.00298&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://blog.csdn.net/qq_37541097/article/details/116933569&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
     <item>
       <title>Seminar-20220827-SENet, MobileNet</title>
       <link>https://meanvery.github.io/post/seminar-20220827/</link>
