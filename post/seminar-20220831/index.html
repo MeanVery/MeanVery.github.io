@@ -24,14 +24,12 @@
   
   
   <meta name="description" content="感谢周羿旭师兄的讲解！
-ShuffleNet1 2 3 4 EfficientNet5 6 7 8 https://arxiv.org/pdf/1707.01083&#160;&#x21a9;&#xfe0e;
-https://zhuanlan.zhihu.com/p/32304419&#160;&#x21a9;&#xfe0e;
-https://arxiv.org/pdf/1807.11164&#160;&#x21a9;&#xfe0e;
-https://zhuanlan.zhihu.com/p/359470360&#160;&#x21a9;&#xfe0e;
-https://arxiv.org/pdf/1905.11946&#160;&#x21a9;&#xfe0e;
-https://zhuanlan.zhihu.com/p/240795470&#160;&#x21a9;&#xfe0e;
-https://arxiv.org/pdf/2104.00298&#160;&#x21a9;&#xfe0e;
-https://blog.csdn.net/qq_37541097/article/details/116933569&#160;&#x21a9;&#xfe0e;" />
+ShuffleNet1 2 3 4 ​	研究人员注意到，由于计算代价颇大的密集 \(1 \times 1\) 卷积，Xception 和 ResNeXt 等最先进的架构在规模很小的网络中效率较低。于是使用了逐点组卷积来降低 \(1 \times 1\) 卷积的计算复杂度。 同时为了克服组卷积带来的副作用（通道间信息交流问题），研究人员提出了一种新颖的通道混洗操作（shuffle）来帮助信息在特征通道之间流动。 ​	基于这两种技术，他们构建了一个称为 ShuffleNet 的高效架构。 与当初流行的结构相比，对于给定的计算复杂度预算，ShuffleNet 允许更多的特征图通道编码更多信息，同时使得规模非常小的网络的性能也能达到较好的水平。
+​	在规模较小的网络中，计算代价昂贵的点卷积（pointwise convolution）导致了，如果想要保持较低的计算复杂度，就必须减少通道数量，然而这会使得准确率显著下降。为了解决这个问题，就只有进行稀疏连接（sparse connection），每个卷积操作仅作用于相关的输入通道组，即分组卷积，但是这又会阻碍通道间的信息交流，并因此弱化特征表达能力。
+​	所以在稀疏连接的基础上，还需要让分组卷积获得其他组的数据。由此想到了 channel shuffle 操作，在每个通道的基础上，再进行分组，得到通道的子序列，将这些子序列重新有规则地组合，形成下一层的输入。
+channel shuffle 示意图ShuffleNet Unit的设计EfficientNet5 6 7 8 ​	扩张卷积网络被广泛用于追求更高准确度，比如使用更多的层使得 ResNet-18 变为 ResNet-200。但是扩张卷积网络的过程其实还没有被人们琢磨清楚，现在也有许多方式来完成扩张，比如增加深度，宽度，分辨率。尽管人们可以随意选择维度对网络进行个性化的扩张，但是随意地调整后，需要繁复的参数调节，并且效果（准确率，效率等）并不一定优良。
+​	因此研究人员重新学习反思了卷积网络扩大规模的过程，并提出了关键性的问题——是否有一个标准化的方法去扩张网络，使之总能得到更好的准确率和效率。在实验过程中，研究人员发现，需要去平衡网络的深度，宽度和分辨率。但是出乎意料的是，不需要非常复杂的数学函数关系，这种平衡可以通过简单地以恒定比例缩放其中每一个维度来实现。
+​	在文章中，研究人员提出了复合缩放算法（Compound Scaling Method），使用了复合因子 \(\phi\) 来规范地缩放宽度，深度和分辨率： $$ depth:d=\alpha^\phi \ width:w=\beta^\phi \ resolution:r=\gamma^\phi \ s.t. \space \alpha \cdot \beta^2 \cdot \gamma^2 \approx 1 \ \space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\alpha \geq 1,\beta \geq1,\gamma \geq1 $$ ​	其中 \(\phi\) 是人为确定的因子，根据计算资源的变化进行不同的调整； \(\alpha,\beta,\gamma\) 为常数，可以根据小规模的网格搜索求解。" />
   <meta name="author" content="MeanVery" />
   
 
@@ -90,7 +88,7 @@ https://blog.csdn.net/qq_37541097/article/details/116933569&#160;&#x21a9;&#xfe0e
   <meta itemprop="name" content="Seminar-20220831-ShuffleNet, EfficientNet">
 <meta itemprop="description" content="Seminar about ShuffleNet and EfficientNet"><meta itemprop="datePublished" content="2022-09-01T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-09-01T00:00:00+00:00" />
-<meta itemprop="wordCount" content="17">
+<meta itemprop="wordCount" content="95">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -178,7 +176,48 @@ https://blog.csdn.net/qq_37541097/article/details/116933569&#160;&#x21a9;&#xfe0e
 
 <p>感谢周羿旭师兄的讲解！</p>
 <h2 id="shufflenet1cite-2cite-3cite-4cite">ShuffleNet<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite> <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></cite> <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></cite></h2>
+<p>​		研究人员注意到，由于计算代价颇大的密集 \(1 \times 1\) 卷积，Xception 和 ResNeXt 等最先进的架构在规模很小的网络中效率较低。于是使用了逐点组卷积来降低 \(1 \times 1\) 卷积的计算复杂度。 同时为了克服组卷积带来的副作用（通道间信息交流问题），研究人员提出了一种新颖的通道混洗操作（shuffle）来帮助信息在特征通道之间流动。
+​		基于这两种技术，他们构建了一个称为 ShuffleNet 的高效架构。 与当初流行的结构相比，对于给定的计算复杂度预算，ShuffleNet 允许更多的特征图通道编码更多信息，同时使得规模非常小的网络的性能也能达到较好的水平。</p>
+<p>​		在规模较小的网络中，计算代价昂贵的点卷积（pointwise convolution）导致了，如果想要保持较低的计算复杂度，就必须减少通道数量，然而这会使得准确率显著下降。为了解决这个问题，就只有进行稀疏连接（sparse connection），每个卷积操作仅作用于相关的输入通道组，即分组卷积，但是这又会阻碍通道间的信息交流，并因此弱化特征表达能力。</p>
+<p>​		所以在稀疏连接的基础上，还需要让分组卷积获得其他组的数据。由此想到了 channel shuffle 操作，在每个通道的基础上，再进行分组，得到通道的子序列，将这些子序列重新有规则地组合，形成下一层的输入。</p>
+<div>
+    <center>
+    <img src="/shufflenet1.png"
+         alt="channel shuffle 示意图"
+         style="zoom:50%"/>
+    channel shuffle 示意图
+    </center>
+</div>
+<br>
+<div>
+    <center>
+    <img src="/shufflenet2.png"
+         alt="ShuffleNet Unit的设计"
+         style="zoom:50%"/>
+    ShuffleNet Unit的设计
+    </center>
+</div>
+<br>
 <h2 id="efficientnet5cite-6cite-7cite-8cite">EfficientNet<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite> <sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></cite> <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></cite> <sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></cite></h2>
+<p>​		扩张卷积网络被广泛用于追求更高准确度，比如使用更多的层使得 ResNet-18 变为 ResNet-200。但是扩张卷积网络的过程其实还没有被人们琢磨清楚，现在也有许多方式来完成扩张，比如增加深度，宽度，分辨率。尽管人们可以随意选择维度对网络进行个性化的扩张，但是随意地调整后，需要繁复的参数调节，并且效果（准确率，效率等）并不一定优良。</p>
+<p>​		因此研究人员重新学习反思了卷积网络扩大规模的过程，并提出了关键性的问题——是否有一个标准化的方法去扩张网络，使之总能得到更好的准确率和效率。在实验过程中，研究人员发现，需要去平衡网络的深度，宽度和分辨率。但是出乎意料的是，不需要非常复杂的数学函数关系，这种平衡可以通过简单地以恒定比例缩放其中每一个维度来实现。</p>
+<p>​		在文章中，研究人员提出了复合缩放算法（Compound Scaling Method），使用了复合因子 \(\phi\) 来规范地缩放宽度，深度和分辨率：
+$$
+depth:d=\alpha^\phi \
+width:w=\beta^\phi \
+resolution:r=\gamma^\phi \
+s.t. \space \alpha \cdot \beta^2 \cdot \gamma^2 \approx 1 \
+\space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\alpha \geq 1,\beta \geq1,\gamma \geq1
+$$
+​		其中 \(\phi\) 是人为确定的因子，根据计算资源的变化进行不同的调整； \(\alpha,\beta,\gamma\) 为常数，可以根据小规模的网格搜索求解。</p>
+<div>
+    <center>
+    <img src="/efficientnet1.png"
+         alt="不同方式Scaling Up的示意图"
+         style="zoom:50%"/>
+    不同方式Scaling Up的示意图
+    </center>
+</div>
 <br>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -218,6 +257,8 @@ https://blog.csdn.net/qq_37541097/article/details/116933569&#160;&#x21a9;&#xfe0e
   
   
   <nav class="post-nav">
+    
+    <a class="prev" href="https://meanvery.github.io/post/seminar-20220903/"><span>←</span><span>Seminar-20220903-R-CNN, FPN</span></a>
      
     <a class="next" href="https://meanvery.github.io/post/seminar-20220827/"><span>Seminar-20220827-SENet, MobileNet</span><span>→</span></a>
     

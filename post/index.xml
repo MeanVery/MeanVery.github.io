@@ -7,7 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Thu, 01 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Seminar-20220903-R-CNN, FPN</title>
+      <link>https://meanvery.github.io/post/seminar-20220903/</link>
+      <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220903/</guid>
+      <description>感谢赵永瑞同学的讲解！
+R-CNN1 ​	因为研究者结合了区域提名（Region Proposals）和卷积神经网络（CNN），因此将其命名为 R-CNN。
+R-CNN 基本流程示意图​	由上图可知，在测试时，首先输入图片，依据选择性搜索（Selective Search）算法，得到大约 2000 个类别无关的区域提名；然后将提名的全部区域的边界，向外扩张 16 个像素，接着无论其大小或者纵横比怎么不同，都缩放到同一尺寸（ \(227 \times 227\) ）；再利用 CNN 提取出特征向量，其中包含了 5 个卷积层和 2 个全连接层，提取到的特征向量维度为 4096；最后通过线性支持向量机对区域进行分类。
+​	此外还面临着带标签数据不足，因此大型 CNN 难以训练的问题；在研究者提出的模型中使用了，在大型辅助数据集（ILSVRC）上进行带监督的预训练，然后再在小数据集（PASCAL）上进行参数等微调的方式。结果表明在数据有限时，这是一种相当有效的方式。
+​	在 R-CNN 后续研究中，研究人员发现只需要一个简单的边框回归方法，就可以让错误定位显著减少。
+FPN2 ​	识别图片中不同尺度的物体一直是计算机视觉中一个重要的任务。
+多尺度融合发展示意图​	图片金字塔（Feature Pyramids）为标准化方法提供了基本的思路，如上图中 （a）：将一张图片变换为不同尺寸，然后在每种尺寸上，进行卷积运算特征提取并进行预测。但是这种方式一张图片就要当作多张图片去训练和计算，时间成本太高。
+​	改进的方法如上图（b），对一张图片进行卷积操作，然后仅利用多次卷积后得到的深层语义特征进行预测。速度较快，但是没有用到浅层的信息，特征图分辨率也低，不能准确包含物体的位置信息。
+​	进一步改进如上图（c），对一张图片进行卷积操作，从每次卷积后的特征图上进行预测，虽然不需要额外的计算，但是单一尺度的语义特征不够丰富。
+​	如上图（d），为了融合不同尺度的特征，研究人员提出了 Feature Pyramid Network 即 FPN。
+​	在 FPN 中，主要包含了三个过程：自底向上，自顶向下，横向连接。
+FPN 示意图自底向上（Bottom-Up Pathway）
+将原始图片输入 CNN 进行特征提取，经过卷积层时，因为卷积核和步长等设置，有的输出图与输入图一致（这些卷积层归为一个 stage ），有的输出图缩小为原来的 \(1/2\) （划分到下一个 stage ）。将每个 stage 中的最后一层输出的特征抽取出来（最后一层经过了最多的计算，语义最丰富），由于第一个 stage 的输出特征图占用内存过大，因此舍弃。最后不同 stage 的输出图尺寸其实与原图尺寸依次保持着 4，8，16，32 倍的关系。</description>
+    </item>
+    
     <item>
       <title>Seminar-20220831-ShuffleNet, EfficientNet</title>
       <link>https://meanvery.github.io/post/seminar-20220831/</link>
@@ -15,14 +36,12 @@
       
       <guid>https://meanvery.github.io/post/seminar-20220831/</guid>
       <description>感谢周羿旭师兄的讲解！
-ShuffleNet1 2 3 4 EfficientNet5 6 7 8 https://arxiv.org/pdf/1707.01083&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/32304419&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://arxiv.org/pdf/1807.11164&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/359470360&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://arxiv.org/pdf/1905.11946&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://zhuanlan.zhihu.com/p/240795470&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://arxiv.org/pdf/2104.00298&amp;#160;&amp;#x21a9;&amp;#xfe0e;
-https://blog.csdn.net/qq_37541097/article/details/116933569&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+ShuffleNet1 2 3 4 ​	研究人员注意到，由于计算代价颇大的密集 \(1 \times 1\) 卷积，Xception 和 ResNeXt 等最先进的架构在规模很小的网络中效率较低。于是使用了逐点组卷积来降低 \(1 \times 1\) 卷积的计算复杂度。 同时为了克服组卷积带来的副作用（通道间信息交流问题），研究人员提出了一种新颖的通道混洗操作（shuffle）来帮助信息在特征通道之间流动。 ​	基于这两种技术，他们构建了一个称为 ShuffleNet 的高效架构。 与当初流行的结构相比，对于给定的计算复杂度预算，ShuffleNet 允许更多的特征图通道编码更多信息，同时使得规模非常小的网络的性能也能达到较好的水平。
+​	在规模较小的网络中，计算代价昂贵的点卷积（pointwise convolution）导致了，如果想要保持较低的计算复杂度，就必须减少通道数量，然而这会使得准确率显著下降。为了解决这个问题，就只有进行稀疏连接（sparse connection），每个卷积操作仅作用于相关的输入通道组，即分组卷积，但是这又会阻碍通道间的信息交流，并因此弱化特征表达能力。
+​	所以在稀疏连接的基础上，还需要让分组卷积获得其他组的数据。由此想到了 channel shuffle 操作，在每个通道的基础上，再进行分组，得到通道的子序列，将这些子序列重新有规则地组合，形成下一层的输入。
+channel shuffle 示意图ShuffleNet Unit的设计EfficientNet5 6 7 8 ​	扩张卷积网络被广泛用于追求更高准确度，比如使用更多的层使得 ResNet-18 变为 ResNet-200。但是扩张卷积网络的过程其实还没有被人们琢磨清楚，现在也有许多方式来完成扩张，比如增加深度，宽度，分辨率。尽管人们可以随意选择维度对网络进行个性化的扩张，但是随意地调整后，需要繁复的参数调节，并且效果（准确率，效率等）并不一定优良。
+​	因此研究人员重新学习反思了卷积网络扩大规模的过程，并提出了关键性的问题——是否有一个标准化的方法去扩张网络，使之总能得到更好的准确率和效率。在实验过程中，研究人员发现，需要去平衡网络的深度，宽度和分辨率。但是出乎意料的是，不需要非常复杂的数学函数关系，这种平衡可以通过简单地以恒定比例缩放其中每一个维度来实现。
+​	在文章中，研究人员提出了复合缩放算法（Compound Scaling Method），使用了复合因子 \(\phi\) 来规范地缩放宽度，深度和分辨率： $$ depth:d=\alpha^\phi \ width:w=\beta^\phi \ resolution:r=\gamma^\phi \ s.t. \space \alpha \cdot \beta^2 \cdot \gamma^2 \approx 1 \ \space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\alpha \geq 1,\beta \geq1,\gamma \geq1 $$ ​	其中 \(\phi\) 是人为确定的因子，根据计算资源的变化进行不同的调整； \(\alpha,\beta,\gamma\) 为常数，可以根据小规模的网格搜索求解。</description>
     </item>
     
     <item>

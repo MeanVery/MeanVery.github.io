@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>Seminar-20220903-R-CNN, FPN - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="感谢赵永瑞同学的讲解！
+R-CNN1 ​	因为研究者结合了区域提名（Region Proposals）和卷积神经网络（CNN），因此将其命名为 R-CNN。
+R-CNN 基本流程示意图​	由上图可知，在测试时，首先输入图片，依据选择性搜索（Selective Search）算法，得到大约 2000 个类别无关的区域提名；然后将提名的全部区域的边界，向外扩张 16 个像素，接着无论其大小或者纵横比怎么不同，都缩放到同一尺寸（ \(227 \times 227\) ）；再利用 CNN 提取出特征向量，其中包含了 5 个卷积层和 2 个全连接层，提取到的特征向量维度为 4096；最后通过线性支持向量机对区域进行分类。
+​	此外还面临着带标签数据不足，因此大型 CNN 难以训练的问题；在研究者提出的模型中使用了，在大型辅助数据集（ILSVRC）上进行带监督的预训练，然后再在小数据集（PASCAL）上进行参数等微调的方式。结果表明在数据有限时，这是一种相当有效的方式。
+​	在 R-CNN 后续研究中，研究人员发现只需要一个简单的边框回归方法，就可以让错误定位显著减少。
+FPN2 ​	识别图片中不同尺度的物体一直是计算机视觉中一个重要的任务。
+多尺度融合发展示意图​	图片金字塔（Feature Pyramids）为标准化方法提供了基本的思路，如上图中 （a）：将一张图片变换为不同尺寸，然后在每种尺寸上，进行卷积运算特征提取并进行预测。但是这种方式一张图片就要当作多张图片去训练和计算，时间成本太高。
+​	改进的方法如上图（b），对一张图片进行卷积操作，然后仅利用多次卷积后得到的深层语义特征进行预测。速度较快，但是没有用到浅层的信息，特征图分辨率也低，不能准确包含物体的位置信息。
+​	进一步改进如上图（c），对一张图片进行卷积操作，从每次卷积后的特征图上进行预测，虽然不需要额外的计算，但是单一尺度的语义特征不够丰富。
+​	如上图（d），为了融合不同尺度的特征，研究人员提出了 Feature Pyramid Network 即 FPN。
+​	在 FPN 中，主要包含了三个过程：自底向上，自顶向下，横向连接。
+FPN 示意图自底向上（Bottom-Up Pathway）
+将原始图片输入 CNN 进行特征提取，经过卷积层时，因为卷积核和步长等设置，有的输出图与输入图一致（这些卷积层归为一个 stage ），有的输出图缩小为原来的 \(1/2\) （划分到下一个 stage ）。将每个 stage 中的最后一层输出的特征抽取出来（最后一层经过了最多的计算，语义最丰富），由于第一个 stage 的输出特征图占用内存过大，因此舍弃。最后不同 stage 的输出图尺寸其实与原图尺寸依次保持着 4，8，16，32 倍的关系。" />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Seminar-20220903-R-CNN, FPN" />
+<meta property="og:description" content="Seminar about R-CNN, FPN" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/seminar-20220903/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-09-05T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-09-05T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="Seminar-20220903-R-CNN, FPN">
+<meta itemprop="description" content="Seminar about R-CNN, FPN"><meta itemprop="datePublished" content="2022-09-05T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-09-05T00:00:00+00:00" />
+<meta itemprop="wordCount" content="110">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Seminar-20220903-R-CNN, FPN"/>
+<meta name="twitter:description" content="Seminar about R-CNN, FPN"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      <time>Sep 5, 2022</time>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>Seminar-20220903-R-CNN, FPN</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<p>感谢赵永瑞同学的讲解！</p>
+<h2 id="r-cnn1cite">R-CNN<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite></h2>
+<p>​		因为研究者结合了区域提名（Region Proposals）和卷积神经网络（CNN），因此将其命名为 R-CNN。</p>
+<div>
+	<center>
+	<img src="/rcnn1.png"
+	     alt="R-CNN 基本流程示意图"
+	     style="zoom:70%"/>
+	R-CNN 基本流程示意图
+	</center>
+</div>
+<br>
+<p>​		由上图可知，在测试时，首先输入图片，依据选择性搜索（Selective Search）算法，得到大约 2000 个类别无关的区域提名；然后将提名的全部区域的边界，向外扩张 16 个像素，接着无论其大小或者纵横比怎么不同，都缩放到同一尺寸（ \(227 \times 227\) ）；再利用 CNN 提取出特征向量，其中包含了 5 个卷积层和 2 个全连接层，提取到的特征向量维度为 4096；最后通过线性支持向量机对区域进行分类。</p>
+<p>​		此外还面临着带标签数据不足，因此大型 CNN 难以训练的问题；在研究者提出的模型中使用了，在大型辅助数据集（ILSVRC）上进行带监督的预训练，然后再在小数据集（PASCAL）上进行参数等微调的方式。结果表明在数据有限时，这是一种相当有效的方式。</p>
+<p>​		在 R-CNN 后续研究中，研究人员发现只需要一个简单的边框回归方法，就可以让错误定位显著减少。</p>
+<h2 id="fpn2cite">FPN<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​		识别图片中不同尺度的物体一直是计算机视觉中一个重要的任务。</p>
+<div>
+	<center>
+	<img src="/fpn1.png"
+	     alt="多尺度融合发展示意图"
+	     style="zoom:50%"/>
+	多尺度融合发展示意图
+	</center>
+</div>
+<br>
+<p>​		图片金字塔（Feature Pyramids）为标准化方法提供了基本的思路，如上图中 （a）：将一张图片变换为不同尺寸，然后在每种尺寸上，进行卷积运算特征提取并进行预测。但是这种方式一张图片就要当作多张图片去训练和计算，时间成本太高。</p>
+<p>​		改进的方法如上图（b），对一张图片进行卷积操作，然后仅利用多次卷积后得到的深层语义特征进行预测。速度较快，但是没有用到浅层的信息，特征图分辨率也低，不能准确包含物体的位置信息。</p>
+<p>​		进一步改进如上图（c），对一张图片进行卷积操作，从每次卷积后的特征图上进行预测，虽然不需要额外的计算，但是单一尺度的语义特征不够丰富。</p>
+<p>​		如上图（d），为了融合不同尺度的特征，研究人员提出了 Feature Pyramid Network 即 FPN。</p>
+<p>​		在 FPN 中，主要包含了三个过程：自底向上，自顶向下，横向连接。</p>
+<div>
+	<center>
+	<img src="/fpn2.png"
+	     alt="FPN 示意图"
+	     style="zoom:50%"/>
+	FPN 示意图
+	</center>
+</div>
+<br>
+<ul>
+<li>
+<p>自底向上（Bottom-Up Pathway）</p>
+<p>将原始图片输入 CNN 进行特征提取，经过卷积层时，因为卷积核和步长等设置，有的输出图与输入图一致（这些卷积层归为一个 stage ），有的输出图缩小为原来的 \(1/2\) （划分到下一个 stage ）。将每个 stage 中的最后一层输出的特征抽取出来（最后一层经过了最多的计算，语义最丰富），由于第一个 stage 的输出特征图占用内存过大，因此舍弃。最后不同 stage 的输出图尺寸其实与原图尺寸依次保持着 4，8，16，32 倍的关系。</p>
+</li>
+<li>
+<p>自顶向下（Top-Down Pathway）和横向连接（Lateral Connection）</p>
+<p>将自底向上过程中得到的特征图依次向下融合传递。最上层的特征图直接可以经过 \(1 \times 1\) 降维后，用于一次预测并准备进行横向连接。然后经过上采样，研究人员使用了最近邻上采样。</p>
+<ul>
+<li>
+<p>最近邻上采样</p>
+<p>在等待求解的像素的四个邻近像素中，将距离最近的一个的像素值直接赋给待求像素。计算量小，但是可能会造成生成的图像灰度不连续。</p>
+</li>
+</ul>
+<p>上采样后得到与下一层的特征图同样尺寸的特征图，但是通道数不同，因此将下一层的特征图也进行 \(1 \times 1\) 降维后，再利用加法融合成一张特征图。</p>
+<p>融合完成后，还需要进行一个 \(3 \times 3\) 的卷积，目的是消除上采样产生的灰度不连续的“混叠效应”（Aliasing Effect），卷积后即得到最后的特征输出，同时由于输出的特征共用回归器和分类器，因此输出的维度被统一设置为 \(256 \times 256\) ，经过以上操作得到的最终的特征图用于预测。</p>
+</li>
+</ul>
+<h2 id="region-proposal区域提名">Region Proposal（区域提名）</h2>
+<ul>
+<li>Selective Search</li>
+<li>Anchor</li>
+</ul>
+<br>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf">https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://arxiv.org/pdf/1612.03144.pdf">https://arxiv.org/pdf/1612.03144.pdf</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+     
+    <a class="next" href="https://meanvery.github.io/post/seminar-20220831/"><span>Seminar-20220831-ShuffleNet, EfficientNet</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>
