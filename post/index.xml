@@ -41,7 +41,9 @@ ShuffleNet1 2 3 4 ​	研究人员注意到，由于计算代价颇大的密集 
 ​	所以在稀疏连接的基础上，还需要让分组卷积获得其他组的数据。由此想到了 channel shuffle 操作，在每个通道的基础上，再进行分组，得到通道的子序列，将这些子序列重新有规则地组合，形成下一层的输入。
 channel shuffle 示意图ShuffleNet Unit的设计EfficientNet5 6 7 8 ​	扩张卷积网络被广泛用于追求更高准确度，比如使用更多的层使得 ResNet-18 变为 ResNet-200。但是扩张卷积网络的过程其实还没有被人们琢磨清楚，现在也有许多方式来完成扩张，比如增加深度，宽度，分辨率。尽管人们可以随意选择维度对网络进行个性化的扩张，但是随意地调整后，需要繁复的参数调节，并且效果（准确率，效率等）并不一定优良。
 ​	因此研究人员重新学习反思了卷积网络扩大规模的过程，并提出了关键性的问题——是否有一个标准化的方法去扩张网络，使之总能得到更好的准确率和效率。在实验过程中，研究人员发现，需要去平衡网络的深度，宽度和分辨率。但是出乎意料的是，不需要非常复杂的数学函数关系，这种平衡可以通过简单地以恒定比例缩放其中每一个维度来实现。
-​	在文章中，研究人员提出了复合缩放算法（Compound Scaling Method），使用了复合因子 \(\phi\) 来规范地缩放宽度，深度和分辨率： $$ depth:d=\alpha^\phi \ width:w=\beta^\phi \ resolution:r=\gamma^\phi \ s.t. \space \alpha \cdot \beta^2 \cdot \gamma^2 \approx 1 \ \space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\space\alpha \geq 1,\beta \geq1,\gamma \geq1 $$ ​	其中 \(\phi\) 是人为确定的因子，根据计算资源的变化进行不同的调整； \(\alpha,\beta,\gamma\) 为常数，可以根据小规模的网格搜索求解。</description>
+​	在文章中，研究人员提出了复合缩放算法（Compound Scaling Method），使用了复合因子 \(\phi\) 来规范地缩放宽度，深度和分辨率： $$ \alpha \geq 1,\beta \geq1,\gamma \geq1 $$
+$$ depth:d=\alpha^\phi $$
+$$ width:w=\beta^\phi $$</description>
     </item>
     
     <item>
