@@ -192,7 +192,6 @@ $$
 <p>​	设置先验框需要对超参数（尺寸、长宽比、数目）进行较为精细的调节，且先验框固定下来后，在处理形状复杂的目标以及小目标时受到挑战较大。由于先验框数量巨大，但是 ground truth 数目较少，因此大多数先验框成为负样本，造成正负样本不均衡并引起损失函数难以衡量的问题。</p>
 <p>​	FCOS则不需要先验框。FCOS直接对 feature map 中的每个位置对应原图的边框都进行回归，换言之将每个位置都作为训练样本。并且在 FCOS 中，某个位置落入任何 ground truth 即可认定它为一个正样本，对于落入多个 ground truth 的复杂位置， FCOS 采用多级检测的方法解决，类似于多尺度特征融合，但是 FCOS 直接限定不同特征级别的边界框的回归范围。</p>
 <p>​	初步的实验结果表明，距离 ground truth 较远的位置产生了很多低质量的预测框，于是 FCOS 提出了中心度的概念，离 groound truth 越远，边框的权重越低，经过最终的非最大化抑制，低质量的边框就会被滤除，因此显著提高了检测性能。</p>
-<br>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -214,7 +213,7 @@ $$
   
   <nav class="post-nav">
     
-    <a class="prev" href="https://meanvery.github.io/post/seminar-20220914/"><span>←</span><span>Seminar-20220914-SSD, YOLO</span></a>
+    <a class="prev" href="https://meanvery.github.io/post/seminar-20220914/"><span>←</span><span>Seminar-20220914-YOLO, SSD</span></a>
      
     <a class="next" href="https://meanvery.github.io/post/seminar-20220903/"><span>Seminar-20220903-R-CNN, FPN</span><span>→</span></a>
     

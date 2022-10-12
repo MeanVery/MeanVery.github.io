@@ -24,7 +24,16 @@
   
   
   <meta name="description" content="感谢周羿旭老师的讲解！
-PAN1 DANet2 https://arxiv.org/pdf/1908.05900.pdf&#160;&#x21a9;&#xfe0e;
+PAN1 ​	场景中的文字检测一直是人们感兴趣的任务，近年来也取得了不错的发展，但是依然存在两个较大的困难阻碍了该技术在实际生活中的运用：一是速度和精度不平衡；二是对复杂形状文字的建模很困难。
+PAN思路示意图​	Pixel Aggregation Network （PAN）的思路是，用分割网络预测文字所在的区域，并得到“核参数”以及相似向量，然后在预测的核中重建完整的文字实例，最后可以预测分割任意形状的文字实例。PAN 整体结构示意图​	输入图片后，利用一个轻量化的网络结构对原始图片进行卷积运算，得到不同尺度的特征图，然后将不同尺度的特征图的通道数统一减小为某个值，接着通过特征金字塔强化单元（Feature Pyramid Enhancement Module）计算，再通过特征融合单元（Feature Fusion Module）进行特征融合，得到最终的特征图，再从该特征图中得到想要的分割区域、核参数、相似向量。
+DANet2 ​	Dual Attention Network（DANet）双重注意力网络，特点是自适应地集成局部特征和全局依赖，在传统的扩张 FCN 上附加了两种类型的注意力模块，分别模拟空间和通道维度中的语义依赖性。
+位置注意力模块
+通过所处位置处的特征加权来选择性地聚合每个位置的特征，无论距离如何，类似的特征都会被关联起来。
+通道注意力模块
+整合所有通道映射间的相关特征来选择性地强调存在相互依赖的通道映射。
+​	将以上两个模块的输出相加来改进特征的表示，得到了更精确的分割结果。
+DANet 整体结构示意图​	对于两个，首先使用卷积得到三个特征图；reshape 表示将矩阵展开成一维向量，transpose 表示进行转置操作。其余过程则完全符合注意力机制的运算过程。最后将两个模块的结果融合成最终的特征图，再计算得到分割结果。
+https://arxiv.org/pdf/1908.05900.pdf&#160;&#x21a9;&#xfe0e;
 https://arxiv.org/pdf/1809.02983.pdf&#160;&#x21a9;&#xfe0e;" />
   <meta name="author" content="MeanVery" />
   
@@ -84,7 +93,7 @@ https://arxiv.org/pdf/1809.02983.pdf&#160;&#x21a9;&#xfe0e;" />
   <meta itemprop="name" content="Seminar-20221007-PAN, DANet">
 <meta itemprop="description" content="Seminar about PAN, DANet"><meta itemprop="datePublished" content="2022-10-08T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-10-08T00:00:00+00:00" />
-<meta itemprop="wordCount" content="5">
+<meta itemprop="wordCount" content="40">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -172,8 +181,50 @@ https://arxiv.org/pdf/1809.02983.pdf&#160;&#x21a9;&#xfe0e;" />
 
 <p>感谢周羿旭老师的讲解！</p>
 <h2 id="pan1cite">PAN<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite></h2>
-<h2 id="danet2cite">DANet<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​	场景中的文字检测一直是人们感兴趣的任务，近年来也取得了不错的发展，但是依然存在两个较大的困难阻碍了该技术在实际生活中的运用：一是速度和精度不平衡；二是对复杂形状文字的建模很困难。</p>
+<div>
+    <center>
+    <img src="/pan1.png"
+         alt="PAN 思路示意图"
+         style="zoom:50%"/>
+    PAN思路示意图
+    </center>
+</div>
 <br>
+​	Pixel Aggregation Network （PAN）的思路是，用分割网络预测文字所在的区域，并得到“核参数”以及相似向量，然后在预测的核中重建完整的文字实例，最后可以预测分割任意形状的文字实例。
+<div>
+    <center>
+    <img src="/pan2.png"
+         alt="PAN 整体结构示意图"
+         style="zoom:50%"/>
+    PAN 整体结构示意图
+    </center>
+</div>
+<br>
+<p>​	输入图片后，利用一个轻量化的网络结构对原始图片进行卷积运算，得到不同尺度的特征图，然后将不同尺度的特征图的通道数统一减小为某个值，接着通过特征金字塔强化单元（Feature Pyramid Enhancement Module）计算，再通过特征融合单元（Feature Fusion Module）进行特征融合，得到最终的特征图，再从该特征图中得到想要的分割区域、核参数、相似向量。</p>
+<h2 id="danet2cite">DANet<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​	Dual Attention Network（DANet）双重注意力网络，特点是自适应地集成局部特征和全局依赖，在传统的扩张 FCN 上附加了两种类型的注意力模块，分别模拟空间和通道维度中的语义依赖性。</p>
+<ul>
+<li>
+<p>位置注意力模块</p>
+<p>通过所处位置处的特征加权来选择性地聚合每个位置的特征，无论距离如何，类似的特征都会被关联起来。</p>
+</li>
+<li>
+<p>通道注意力模块</p>
+<p>整合所有通道映射间的相关特征来选择性地强调存在相互依赖的通道映射。</p>
+</li>
+</ul>
+<p>​	将以上两个模块的输出相加来改进特征的表示，得到了更精确的分割结果。</p>
+<div>
+    <center>
+    <img src="/dan1.png"
+         alt="DANet 整体结构示意图"
+         style="zoom:50%"/>
+    DANet 整体结构示意图
+    </center>
+</div>
+<br>
+<p>​	对于两个，首先使用卷积得到三个特征图；reshape 表示将矩阵展开成一维向量，transpose 表示进行转置操作。其余过程则完全符合注意力机制的运算过程。最后将两个模块的结果融合成最终的特征图，再计算得到分割结果。</p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>

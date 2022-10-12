@@ -183,7 +183,6 @@ https://arxiv.org/abs/1505.04597&#160;&#x21a9;&#xfe0e;" />
 <h2 id="unet2cite">UNet<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
 <p>​	UNet 的应用场景是针对医学图像分割的，而医学图像的特点之一是样本量较少。 UNet实际上通过自身的卷积生成了额外可以用于计算的样本，同时样本之间信息可以互补，因此实现了较好的分割效果。</p>
 <p>​	UNet 的前半段和一般的网络一样进行卷积特征提取，经过几次卷积池化后得到较小的特征图，然后利用上采样，将小的特征图又逐步恢复到原始尺寸。在这两个过程中，某些层的特征图大小是一样的，因此将大小一样的特征图结合起来，就得到了更多的可以用于预测的样本。最终的预测就是在这些原始卷积特征图，和卷积上采样特征图上进行的。</p>
-<br>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -207,7 +206,7 @@ https://arxiv.org/abs/1505.04597&#160;&#x21a9;&#xfe0e;" />
     
     <a class="prev" href="https://meanvery.github.io/post/seminar-20221003/"><span>←</span><span>Seminar-20221003-RefineNet, HRNet</span></a>
      
-    <a class="next" href="https://meanvery.github.io/post/seminar-20220914/"><span>Seminar-20220914-SSD, YOLO</span><span>→</span></a>
+    <a class="next" href="https://meanvery.github.io/post/seminar-20220914/"><span>Seminar-20220914-YOLO, SSD</span><span>→</span></a>
     
   </nav>
   

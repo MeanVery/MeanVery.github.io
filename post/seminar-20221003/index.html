@@ -24,7 +24,11 @@
   
   
   <meta name="description" content="感谢周羿旭老师的讲解！
-RefineNet1 HRNet2 https://arxiv.org/pdf/1611.06612.pdf&#160;&#x21a9;&#xfe0e;
+RefineNet1 ​	反卷积（转置卷积）是上采样的一种方式，但是不能恢复浅层的特征，在 DeepLab 中，研究人员使用了空洞卷积来解决这一问题，但是空洞卷积也有两个问题：一是对高像素的特征图，卷积运算会消耗大量的运算资源，因此高像素图通常会经过 resize 变为低像素图；二是空洞卷积的特性，使得在计算过程中丢失了一些连续性的细节信息。
+RefineNet 示意图​	如上图所示，RefineNet为了利用浅层的特征信息，卷积计算出小尺寸特征图后，还原为较大尺寸的特征图，再和较大的特征图连接在一起作为新的特征图，来进行最后的分割预测。
+HRNet2 ​	为了使得分割目标的位置信息尽可能的精确，其中一个做法就是维持高分辨率的特征图，RefineNet 就时通过下采样（卷积）得到深层的强语义信息，然后再上采样恢复到高分辨率的浅层特征图，HRNet 认为这样的做法会使得大量的有效信息在上下采样的过程中丢失。于是研究人员提出了以下结构：
+HRNet 示意图​	如上图所示，HRNet 并行了多个分辨率的分支，同时在分支之间同样有信息交互，达到了深层语义特征和浅层位置特征等兼得的目的。
+https://arxiv.org/pdf/1611.06612.pdf&#160;&#x21a9;&#xfe0e;
 https://arxiv.org/pdf/1908.07919.pdf&#160;&#x21a9;&#xfe0e;" />
   <meta name="author" content="MeanVery" />
   
@@ -84,7 +88,7 @@ https://arxiv.org/pdf/1908.07919.pdf&#160;&#x21a9;&#xfe0e;" />
   <meta itemprop="name" content="Seminar-20221003-RefineNet, HRNet">
 <meta itemprop="description" content="Seminar about RefineNet, HRNet"><meta itemprop="datePublished" content="2022-10-04T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-10-04T00:00:00+00:00" />
-<meta itemprop="wordCount" content="5">
+<meta itemprop="wordCount" content="24">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -172,8 +176,29 @@ https://arxiv.org/pdf/1908.07919.pdf&#160;&#x21a9;&#xfe0e;" />
 
 <p>感谢周羿旭老师的讲解！</p>
 <h2 id="refinenet1cite">RefineNet<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite></h2>
-<h2 id="hrnet2cite">HRNet<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​	反卷积（转置卷积）是上采样的一种方式，但是不能恢复浅层的特征，在 DeepLab 中，研究人员使用了空洞卷积来解决这一问题，但是空洞卷积也有两个问题：一是对高像素的特征图，卷积运算会消耗大量的运算资源，因此高像素图通常会经过 resize 变为低像素图；二是空洞卷积的特性，使得在计算过程中丢失了一些连续性的细节信息。</p>
+<div>
+    <center>
+    <img src="/refinenet1.png"
+         alt="RefineNet 示意图"
+         style="zoom:50%"/>
+    RefineNet 示意图
+    </center>
+</div>
 <br>
+<p>​	如上图所示，RefineNet为了利用浅层的特征信息，卷积计算出小尺寸特征图后，还原为较大尺寸的特征图，再和较大的特征图连接在一起作为新的特征图，来进行最后的分割预测。</p>
+<h2 id="hrnet2cite">HRNet<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​	为了使得分割目标的位置信息尽可能的精确，其中一个做法就是维持高分辨率的特征图，RefineNet 就时通过下采样（卷积）得到深层的强语义信息，然后再上采样恢复到高分辨率的浅层特征图，HRNet 认为这样的做法会使得大量的有效信息在上下采样的过程中丢失。于是研究人员提出了以下结构：</p>
+<div>
+    <center>
+    <img src="/hrnet1.png"
+         alt="HRNet 示意图"
+         style="zoom:50%"/>
+    HRNet 示意图
+    </center>
+</div>
+<br>
+<p>​	如上图所示，HRNet 并行了多个分辨率的分支，同时在分支之间同样有信息交互，达到了深层语义特征和浅层位置特征等兼得的目的。</p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>

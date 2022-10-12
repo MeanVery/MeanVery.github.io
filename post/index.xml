@@ -25,7 +25,16 @@ Self Attention Transformer1 https://arxiv.org/pdf/1706.03762.pdf&amp;#160;&amp;#
       
       <guid>https://meanvery.github.io/post/seminar-20221007/</guid>
       <description>感谢周羿旭老师的讲解！
-PAN1 DANet2 https://arxiv.org/pdf/1908.05900.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+PAN1 ​	场景中的文字检测一直是人们感兴趣的任务，近年来也取得了不错的发展，但是依然存在两个较大的困难阻碍了该技术在实际生活中的运用：一是速度和精度不平衡；二是对复杂形状文字的建模很困难。
+PAN思路示意图​	Pixel Aggregation Network （PAN）的思路是，用分割网络预测文字所在的区域，并得到“核参数”以及相似向量，然后在预测的核中重建完整的文字实例，最后可以预测分割任意形状的文字实例。PAN 整体结构示意图​	输入图片后，利用一个轻量化的网络结构对原始图片进行卷积运算，得到不同尺度的特征图，然后将不同尺度的特征图的通道数统一减小为某个值，接着通过特征金字塔强化单元（Feature Pyramid Enhancement Module）计算，再通过特征融合单元（Feature Fusion Module）进行特征融合，得到最终的特征图，再从该特征图中得到想要的分割区域、核参数、相似向量。
+DANet2 ​	Dual Attention Network（DANet）双重注意力网络，特点是自适应地集成局部特征和全局依赖，在传统的扩张 FCN 上附加了两种类型的注意力模块，分别模拟空间和通道维度中的语义依赖性。
+位置注意力模块
+通过所处位置处的特征加权来选择性地聚合每个位置的特征，无论距离如何，类似的特征都会被关联起来。
+通道注意力模块
+整合所有通道映射间的相关特征来选择性地强调存在相互依赖的通道映射。
+​	将以上两个模块的输出相加来改进特征的表示，得到了更精确的分割结果。
+DANet 整体结构示意图​	对于两个，首先使用卷积得到三个特征图；reshape 表示将矩阵展开成一维向量，transpose 表示进行转置操作。其余过程则完全符合注意力机制的运算过程。最后将两个模块的结果融合成最终的特征图，再计算得到分割结果。
+https://arxiv.org/pdf/1908.05900.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
 https://arxiv.org/pdf/1809.02983.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
@@ -36,7 +45,11 @@ https://arxiv.org/pdf/1809.02983.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</descript
       
       <guid>https://meanvery.github.io/post/seminar-20221003/</guid>
       <description>感谢周羿旭老师的讲解！
-RefineNet1 HRNet2 https://arxiv.org/pdf/1611.06612.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+RefineNet1 ​	反卷积（转置卷积）是上采样的一种方式，但是不能恢复浅层的特征，在 DeepLab 中，研究人员使用了空洞卷积来解决这一问题，但是空洞卷积也有两个问题：一是对高像素的特征图，卷积运算会消耗大量的运算资源，因此高像素图通常会经过 resize 变为低像素图；二是空洞卷积的特性，使得在计算过程中丢失了一些连续性的细节信息。
+RefineNet 示意图​	如上图所示，RefineNet为了利用浅层的特征信息，卷积计算出小尺寸特征图后，还原为较大尺寸的特征图，再和较大的特征图连接在一起作为新的特征图，来进行最后的分割预测。
+HRNet2 ​	为了使得分割目标的位置信息尽可能的精确，其中一个做法就是维持高分辨率的特征图，RefineNet 就时通过下采样（卷积）得到深层的强语义信息，然后再上采样恢复到高分辨率的浅层特征图，HRNet 认为这样的做法会使得大量的有效信息在上下采样的过程中丢失。于是研究人员提出了以下结构：
+HRNet 示意图​	如上图所示，HRNet 并行了多个分辨率的分支，同时在分支之间同样有信息交互，达到了深层语义特征和浅层位置特征等兼得的目的。
+https://arxiv.org/pdf/1611.06612.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
 https://arxiv.org/pdf/1908.07919.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
@@ -57,7 +70,7 @@ https://arxiv.org/abs/1505.04597&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
     <item>
-      <title>Seminar-20220914-SSD, YOLO</title>
+      <title>Seminar-20220914-YOLO, SSD</title>
       <link>https://meanvery.github.io/post/seminar-20220914/</link>
       <pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate>
       
