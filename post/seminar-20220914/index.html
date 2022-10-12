@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>Seminar-20220914-SSD, YOLO - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="感谢周羿旭师兄的讲解！
+YOLO1 YOLO 模型示意图​	YOLO的模型相当简单，仅仅是一个卷积网络，同时预测多个边界框及其对应的类别概率。YOLO可以进行端到端的训练，在保持实时级速率的同时也维持了较高的平均准确度。
+​	如上图，YOLO将输入图片的分辨率变为 \(448 \times 448\)，经过卷积运算后，在 \(7 \times 7\)的图中进行边框与类别预测， \(7 \times 7=49\)个像素格子，如果物体的中心落在某个像素格子内，那么这个格子就负责预测该物体。格子预测一组值，包含了边界框的坐标，边界框的高度和宽度，边界框内物体的类别概率（可能的类别数为 20，因此有 20 个概率值）。因此最后输出，包含的值一共有\(7 \times 7 \times (4&#43;20)\)个。
+​	YOLO的设计也有如下几个新颖的地方
+激活函数
+在网络的最后一层，研究人员用了对数激活函数，在其他层，用了如下的漏整流线性激活函数（Leaky Rectified Linear Activation）: $$ \phi(x) = \begin{cases} 1.1x &amp;\text{if } x &gt;0 \ .1x &amp;\text{otherwise } \end{cases} $$
+损失函数
+作者考虑到，定位误差和分类误差对于总误差的影响应该是不同的，宁愿定位偏差大一点，不可以分类错误。由此给两种误差加上系数 \(\lambda\)来设置对总误差的影响。
+总体形式采用了平方和误差（Sum-squared Error）。作者又考虑到，对于小边界框和大边界框，产生同样距离的偏差影响程度是不一样的，对小边界框的影响更大。为了缓解这个问题，求解损失函数时，代入的是边界框高度和宽度的平方根而不是其原有值。
+另外，没有物体的边界框，不应该求解其损失函数，所以引入了判定函数\(\delta\)，如果没有物体，函数取值为0，有物体则为1。
+最终得到的损失函数如下： $$ \sum_{\substack{0\leq i\leq 48}} \bigg(\lambda \delta \big((x_i-\tilde{x_i})^2&#43;(y_i-\tilde{y_i})^2&#43;(\sqrt{w_i}-\sqrt{\tilde{w_i}})^2&#43;(\sqrt{h_i}-\sqrt{\tilde{h_i}})^2\big)&#43;\sum_{\substack{c\in class}}(p_i(c)-\tilde{p_i}(c))^2\bigg) $$
+YOLO也有以下缺点：
+如果两个物体的中心落在同一格子中，则YOLO只能预测其中一个物体（给其中一个物体较大的概率分数）； 很难推广到具有新的或不寻常的纵横比或配置的对象； 大边界框中的小偏移通常影响较小，但小边界框中的小偏移对IoU的影响很大。YOLO主要的误差来源于定位的不准确。 SSD2 ​	SSD的核心设计理念有以下三点：" />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Seminar-20220914-SSD, YOLO" />
+<meta property="og:description" content="Seminar about SSD, YOLO" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/seminar-20220914/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-09-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-09-20T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="Seminar-20220914-SSD, YOLO">
+<meta itemprop="description" content="Seminar about SSD, YOLO"><meta itemprop="datePublished" content="2022-09-20T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-09-20T00:00:00+00:00" />
+<meta itemprop="wordCount" content="98">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Seminar-20220914-SSD, YOLO"/>
+<meta name="twitter:description" content="Seminar about SSD, YOLO"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      <time>Sep 20, 2022</time>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>Seminar-20220914-SSD, YOLO</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<p>感谢周羿旭师兄的讲解！</p>
+<h2 id="yolo1cite">YOLO<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite></h2>
+<div>
+	<center>
+	<img src="/yolo1.png"
+	     alt="YOLO 模型示意图"
+	     style="zoom:50%"/>
+	YOLO 模型示意图
+	</center>
+</div>
+<br>
+<p>​	YOLO的模型相当简单，仅仅是一个卷积网络，同时预测多个边界框及其对应的类别概率。YOLO可以进行端到端的训练，在保持实时级速率的同时也维持了较高的平均准确度。</p>
+<p>​	如上图，YOLO将输入图片的分辨率变为 \(448 \times 448\)，经过卷积运算后，在 \(7 \times 7\)的图中进行边框与类别预测， \(7 \times 7=49\)个像素格子，如果物体的中心落在某个像素格子内，那么这个格子就负责预测该物体。格子预测一组值，包含了边界框的坐标，边界框的高度和宽度，边界框内物体的类别概率（可能的类别数为 20，因此有 20 个概率值）。因此最后输出，包含的值一共有\(7 \times 7 \times (4+20)\)个。</p>
+<p>​	YOLO的设计也有如下几个新颖的地方</p>
+<ul>
+<li>
+<p>激活函数</p>
+<p>在网络的最后一层，研究人员用了对数激活函数，在其他层，用了如下的漏整流线性激活函数（Leaky Rectified Linear Activation）:
+$$
+\phi(x) = \begin{cases}
+1.1x &amp;\text{if } x &gt;0 \
+.1x &amp;\text{otherwise } 
+\end{cases}
+$$</p>
+</li>
+<li>
+<p>损失函数</p>
+<p>作者考虑到，定位误差和分类误差对于总误差的影响应该是不同的，宁愿定位偏差大一点，不可以分类错误。由此给两种误差加上系数 \(\lambda\)来设置对总误差的影响。</p>
+<p>总体形式采用了平方和误差（Sum-squared Error）。作者又考虑到，对于小边界框和大边界框，产生同样距离的偏差影响程度是不一样的，对小边界框的影响更大。为了缓解这个问题，求解损失函数时，代入的是边界框高度和宽度的平方根而不是其原有值。</p>
+<p>另外，没有物体的边界框，不应该求解其损失函数，所以引入了判定函数\(\delta\)，如果没有物体，函数取值为0，有物体则为1。</p>
+<p>最终得到的损失函数如下：
+$$
+\sum_{\substack{0\leq i\leq 48}} \bigg(\lambda \delta \big((x_i-\tilde{x_i})^2+(y_i-\tilde{y_i})^2+(\sqrt{w_i}-\sqrt{\tilde{w_i}})^2+(\sqrt{h_i}-\sqrt{\tilde{h_i}})^2\big)+\sum_{\substack{c\in class}}(p_i(c)-\tilde{p_i}(c))^2\bigg)
+$$</p>
+</li>
+</ul>
+<p>YOLO也有以下缺点：</p>
+<ol>
+<li>如果两个物体的中心落在同一格子中，则YOLO只能预测其中一个物体（给其中一个物体较大的概率分数）；</li>
+<li>很难推广到具有新的或不寻常的纵横比或配置的对象；</li>
+<li>大边界框中的小偏移通常影响较小，但小边界框中的小偏移对IoU的影响很大。YOLO主要的误差来源于定位的不准确。</li>
+</ol>
+<h2 id="ssd2cite">SSD<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<p>​	SSD的核心设计理念有以下三点：</p>
+<ol>
+<li>
+<p>采用多尺度特征图用于检测</p>
+<p>在 CNN 中，浅层的特征图信息较为具体，比如颜色位置特征明显，但是深层的特征经过池化与卷积，变得十分抽象同时特征图的尺寸变小。于是 SSD 利用浅层，尺度较大像素较多的特征图对小目标进行检测，而尺寸较小像素较少经过卷积池化抽象的深层特征图用于大目标检测。</p>
+</li>
+<li>
+<p>采用卷积进行检测</p>
+<p>在 YOLO 的最后采用了全连接层，但是 SSD 直接采用卷积对不同的特征图进行检测提取。</p>
+</li>
+<li>
+<p>设置先验边界框（类似anchor）</p>
+<p>对每个用于预测的特征图中的每一像素单元，设置尺度或者长宽比不同的先验边界框，预测的结果框是以这些先验的框作为基准的。</p>
+<p>在 SSD 的训练过程中，先验框和 ground truth 的匹配基于两点：一是对每个 ground truth ，找到与之计算出 IoU 最大的先验框；二是只要 IoU 计算结果大于设定的阈值即可设置为匹配的框。实际上通常只采用原则二。</p>
+</li>
+</ol>
+<br>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://arxiv.org/pdf/1506.02640v3.pdf">https://arxiv.org/pdf/1506.02640v3.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://arxiv.org/pdf/1512.02325.pdf">https://arxiv.org/pdf/1512.02325.pdf</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://meanvery.github.io/post/seminar-20220921/"><span>←</span><span>Seminar-20220921-FCN, UNet</span></a>
+     
+    <a class="next" href="https://meanvery.github.io/post/seminar-20220917/"><span>Seminar-20220917-RetinaNet, FCOS</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

@@ -7,7 +7,90 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Mon, 05 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 11 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Seminar-20221010-Self Attention, Transformer</title>
+      <link>https://meanvery.github.io/post/seminar-20221010/</link>
+      <pubDate>Tue, 11 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20221010/</guid>
+      <description>感谢陈露元同学、胡占斌同学的讲解！
+Self Attention Transformer1 https://arxiv.org/pdf/1706.03762.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+    <item>
+      <title>Seminar-20221007-PAN, DANet</title>
+      <link>https://meanvery.github.io/post/seminar-20221007/</link>
+      <pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20221007/</guid>
+      <description>感谢周羿旭老师的讲解！
+PAN1 DANet2 https://arxiv.org/pdf/1908.05900.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/pdf/1809.02983.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+    <item>
+      <title>Seminar-20221003-RefineNet, HRNet</title>
+      <link>https://meanvery.github.io/post/seminar-20221003/</link>
+      <pubDate>Tue, 04 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20221003/</guid>
+      <description>感谢周羿旭老师的讲解！
+RefineNet1 HRNet2 https://arxiv.org/pdf/1611.06612.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/pdf/1908.07919.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+    <item>
+      <title>Seminar-20220921-FCN, UNet</title>
+      <link>https://meanvery.github.io/post/seminar-20220921/</link>
+      <pubDate>Tue, 27 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220921/</guid>
+      <description>感谢高丹阳师姐的讲解！
+FCN1 ​	Fully Convolutional Networks 将网络结构中的全连接层全部替换为了卷积层。
+​	前面的结构采用的是传统的 CNN 结构，但是最后把全连接层替换为卷积层，生成多通道的特征图，每一个通道代表了被分为的类别，并可以计算出相应的损失函数。
+​	网络原本的全连接层不能接收任意尺寸的特征图，但是在修改为卷积层后，则可以接收任意尺寸的输入特征图了。同时由于最后还是在进行卷积操作，因此可以利用插值等上采样方法将经过池化和卷积被缩小的特征图恢复到原图的尺寸，形成在原图上的像素级预测。
+UNet2 ​	UNet 的应用场景是针对医学图像分割的，而医学图像的特点之一是样本量较少。 UNet实际上通过自身的卷积生成了额外可以用于计算的样本，同时样本之间信息可以互补，因此实现了较好的分割效果。
+​	UNet 的前半段和一般的网络一样进行卷积特征提取，经过几次卷积池化后得到较小的特征图，然后利用上采样，将小的特征图又逐步恢复到原始尺寸。在这两个过程中，某些层的特征图大小是一样的，因此将大小一样的特征图结合起来，就得到了更多的可以用于预测的样本。最终的预测就是在这些原始卷积特征图，和卷积上采样特征图上进行的。
+https://arxiv.org/pdf/1411.4038.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;
+https://arxiv.org/abs/1505.04597&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+    </item>
+    
+    <item>
+      <title>Seminar-20220914-SSD, YOLO</title>
+      <link>https://meanvery.github.io/post/seminar-20220914/</link>
+      <pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220914/</guid>
+      <description>感谢周羿旭师兄的讲解！
+YOLO1 YOLO 模型示意图​	YOLO的模型相当简单，仅仅是一个卷积网络，同时预测多个边界框及其对应的类别概率。YOLO可以进行端到端的训练，在保持实时级速率的同时也维持了较高的平均准确度。
+​	如上图，YOLO将输入图片的分辨率变为 \(448 \times 448\)，经过卷积运算后，在 \(7 \times 7\)的图中进行边框与类别预测， \(7 \times 7=49\)个像素格子，如果物体的中心落在某个像素格子内，那么这个格子就负责预测该物体。格子预测一组值，包含了边界框的坐标，边界框的高度和宽度，边界框内物体的类别概率（可能的类别数为 20，因此有 20 个概率值）。因此最后输出，包含的值一共有\(7 \times 7 \times (4+20)\)个。
+​	YOLO的设计也有如下几个新颖的地方
+激活函数
+在网络的最后一层，研究人员用了对数激活函数，在其他层，用了如下的漏整流线性激活函数（Leaky Rectified Linear Activation）: $$ \phi(x) = \begin{cases} 1.1x &amp;amp;\text{if } x &amp;gt;0 \ .1x &amp;amp;\text{otherwise } \end{cases} $$
+损失函数
+作者考虑到，定位误差和分类误差对于总误差的影响应该是不同的，宁愿定位偏差大一点，不可以分类错误。由此给两种误差加上系数 \(\lambda\)来设置对总误差的影响。
+总体形式采用了平方和误差（Sum-squared Error）。作者又考虑到，对于小边界框和大边界框，产生同样距离的偏差影响程度是不一样的，对小边界框的影响更大。为了缓解这个问题，求解损失函数时，代入的是边界框高度和宽度的平方根而不是其原有值。
+另外，没有物体的边界框，不应该求解其损失函数，所以引入了判定函数\(\delta\)，如果没有物体，函数取值为0，有物体则为1。
+最终得到的损失函数如下： $$ \sum_{\substack{0\leq i\leq 48}} \bigg(\lambda \delta \big((x_i-\tilde{x_i})^2+(y_i-\tilde{y_i})^2+(\sqrt{w_i}-\sqrt{\tilde{w_i}})^2+(\sqrt{h_i}-\sqrt{\tilde{h_i}})^2\big)+\sum_{\substack{c\in class}}(p_i(c)-\tilde{p_i}(c))^2\bigg) $$
+YOLO也有以下缺点：
+如果两个物体的中心落在同一格子中，则YOLO只能预测其中一个物体（给其中一个物体较大的概率分数）； 很难推广到具有新的或不寻常的纵横比或配置的对象； 大边界框中的小偏移通常影响较小，但小边界框中的小偏移对IoU的影响很大。YOLO主要的误差来源于定位的不准确。 SSD2 ​	SSD的核心设计理念有以下三点：</description>
+    </item>
+    
+    <item>
+      <title>Seminar-20220917-RetinaNet, FCOS</title>
+      <link>https://meanvery.github.io/post/seminar-20220917/</link>
+      <pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20220917/</guid>
+      <description>感谢高丹阳师姐的讲解！
+RetinaNet1 ​	针对现有单阶段法 (one-stage) 目标检测模型中前景 (positive) 和背景 (negatives) 类别的不平衡问题，研究者提出了一种叫做 Focal Loss 的损失函数。为了检测提出的 Focal Loss 损失函数的有效性，所以作者提出了一种简单的模型 RetinaNet。
+​	RetinaNet 的特征提取选择了残差网络 ResNet，特征融合选择了 FPN 结构。
+Focal Loss 损失函数 $$ FL(p_t)=-(1-p_t)^\gamma log(p_t) $$ \(p_t\) 是由模型预测的属于前景的概率 p 得来，如果是前景则 \(p_t\) 取值为 \(p\) ，否则取值为 \(1-p\) 。 \(\gamma \)是一个范围在 [0,5] 的参数。
+当 \(p_t\) 趋向于 1 时，说明该样本容易区分，调制因子 \((1-p_t)^\gamma \) 趋向于 0，即对 Loss 的贡献会很小；如果某个样本被错分，则 \(p_t\) 很小，此时调制因子 \((1-p_t)^\gamma \) 趋向于 1，相比最原始的损失函数，对 Loss 的影响减小。
+同时参数 \(\gamma \) 能够调整权重衰减的速率，经过实验验证后得到当 \(\gamma =2 \)时，效果最好。</description>
+    </item>
+    
     <item>
       <title>Seminar-20220903-R-CNN, FPN</title>
       <link>https://meanvery.github.io/post/seminar-20220903/</link>
