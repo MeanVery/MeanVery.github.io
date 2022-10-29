@@ -7,7 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Tue, 11 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Seminar-20221017-Bert, ViT</title>
+      <link>https://meanvery.github.io/post/seminar-20221021/</link>
+      <pubDate>Mon, 24 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/seminar-20221021/</guid>
+      <description>感谢白宇师兄的讲解！
+Bert12 Bert和GPT,ELMo 对比示意图​	Bert 可以真正结合上下文信息，而不想 GPT 那样只能接收上文信息，同时采用了“Masked Language Model”随机屏蔽一些单词，以这个作为预训练目标，缓解单向语言模型的约束。
+​	Bert 和之前的模型类似之处在于都采用了两个阶段，首先是 pre-training，然后是 fine-tuning。在 pre-training 阶段，Bert 在没有标注的数据上进行无监督学习，在 fine-tuning 阶段，Bert 首先利用预训练得到的参数初始化模型，然后利用下游任务中，标记好的模型进行带监督的学习，并对所有的参数进行微调。
+​	为了能够处理各种任务，Bert 给出了句子级别的表示方案，包括句子和句子对。Bert 的输入分为了三块，Token Embeddings，Segment Embeddings 和 Position Embeddings。Token Embeddings 中，每个句子会以一个特殊的类别量作为开头，同时这个量也会作为分类任务的输出。Segment Embeddings 也可以用来分割句子，但其实主要用于区分句子对。Position Embeddings 用于词定位。
+​	Bert 采用了两种非监督任务来进行预训练，一个是token-level 级别的屏蔽模型（Masked LM），一个是 sentence level 级别的 Next Sentence Prediction。Bert 的损失函数也是两个任务的损失函数之和。
+Masked Language Model
+其实在类似完型填空的任务中，如果直接使用双向语言模型，那么模型就可以间接知道要预测的单词，所以为了解决这个问题，谷歌提出了 Masked LM，随机屏蔽一些 token，并通过上下文预测这些 token。在具体的实验中，Bert 会随机屏蔽每个序列中 15% 的 token 并用 mask token 来代替。但是真实的任务中没有 mask token，所以为了使得模型知道 mask 掉的内容相当于噪声，谷歌的方法是，保持一些 mask token 始终是 mask，一些会被随机单词取代，一些会保持原单词不变。</description>
+    </item>
+    
     <item>
       <title>Seminar-20221010-Self Attention, Transformer</title>
       <link>https://meanvery.github.io/post/seminar-20221010/</link>
@@ -15,7 +30,24 @@
       
       <guid>https://meanvery.github.io/post/seminar-20221010/</guid>
       <description>感谢陈露元同学、胡占斌同学的讲解！
-Self Attention Transformer1 https://arxiv.org/pdf/1706.03762.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
+Self Attention ​	首先是应用在语言处理领域，对词语进行位置编码，然后经过自注意力机制算法，就可以自动得到具备相关性的计算结果。这种相关性使得该结构可以掌握关联信息，捕捉到距离较长的词语之间的关系，使得翻译任务得到了更好的处理。
+位置编码
+在我看来，后续的计算其实是对编码的计算，那么就要保证编码尽可能全面地反应了对象的信息，同时还具备一些其他的功能，比如可以反映编码之间的关联。所以编码其实也是一个需要仔细斟酌的问题，实际上也经历了较多过程的演化。
+用整型值标记位置
+第一个位置标记 1，第二个位置标记 2……以此类推。
+这种方式的缺点是，模型应用时遇到的序列可能比训练时所用的序列长，导致模型的泛化性能较差。其次，这种编码方式会让编码随着序列长度的增加越变越大，没有一个确定的界限。
+用 [0,1] 范围标记位置
+有多少个位置就在该区间内等距离地取多少个点的值。
+这种方式下，当序列的长度不同时，位置之间的相对距离会变化，数值变化使得模型对位置之间的关系的理解出现偏差。
+用二进制向量标记位置
+缺点是编码出来的位置向量，其实在空间内是离散的，不同位置之间的变化不连续，会产生数学计算上的不方便。
+用周期函数 sinx/cosx 标记位置
+低位给予较小的周期，高位给予很大的周期，这样随着序列长度的增加，高位变动缓慢，低位变动迅速。同时可以使得位置向量的值是有界的且位于连续空间，模型在处理时就更容易泛化。并且还可以通过简单的计算，得到两个词向量的距离关系，有助于衡量词之间的关联。
+自注意力机制
+将得到的位置编码矩阵经过计算后，分别又得到 Q、K、V 矩阵，借助注意力公式： $$ Attention(Q,K,V)=softmax(QK^T/\sqrt d_k)V $$ 计算出每个词的注意力，相当于对初始的词向量，加入了整句话中与之有关的信息，重新优化了每个词的编码，使之内涵更加丰富。
+Transformer1 Transformer 结构示意图​	encoder 对输入的内容进行位置编码，然后利用了多头注意力机制，即使用多个矩阵相乘，得到多组 Q、K、V 矩阵再进行后续的计算。Transformer 中也利用了残差的思想，将处理前的信息直接传递到经过多头注意力机制处理后的位置，通过加法融合在一起，再进行 LN，即层正则化，因为每一层代表了一个句子，层正则化才可以处理到一句话之类的信息，如果还是应用 BN 来处理，不同句子相对位置相同的词向量之间其实不具有有效的信息。然后把融合正则化完的结果进行前向传播，再次融合并正则化后作为一部分传递到 decoder。
+​	decoder 实际上对训练时需要输出的数据，进行了位置编码并输入模型，按照同样的多头注意力机制算法进行计算，将输出的结果，结合 encoder 传递过来的部分，再进行一次注意力机制计算，就得到了输入和输出之间的注意力关系。最后经过一个利用了残差思想的前向传播网络，经过线性整合与 softmax 之后，得到输出结果的概率值。
+https://arxiv.org/pdf/1706.03762.pdf&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
     </item>
     
     <item>
