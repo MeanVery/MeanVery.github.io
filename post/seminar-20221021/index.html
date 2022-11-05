@@ -19,17 +19,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
   
-  <title>Seminar-20221017-Bert, ViT - Very的计算机学习</title>
+  <title>Seminar-20221017-BERT, ViT - Very的计算机学习</title>
 
   
   
   <meta name="description" content="感谢白宇师兄的讲解！
-Bert12 Bert和GPT,ELMo 对比示意图​	Bert 可以真正结合上下文信息，而不想 GPT 那样只能接收上文信息，同时采用了“Masked Language Model”随机屏蔽一些单词，以这个作为预训练目标，缓解单向语言模型的约束。
-​	Bert 和之前的模型类似之处在于都采用了两个阶段，首先是 pre-training，然后是 fine-tuning。在 pre-training 阶段，Bert 在没有标注的数据上进行无监督学习，在 fine-tuning 阶段，Bert 首先利用预训练得到的参数初始化模型，然后利用下游任务中，标记好的模型进行带监督的学习，并对所有的参数进行微调。
-​	为了能够处理各种任务，Bert 给出了句子级别的表示方案，包括句子和句子对。Bert 的输入分为了三块，Token Embeddings，Segment Embeddings 和 Position Embeddings。Token Embeddings 中，每个句子会以一个特殊的类别量作为开头，同时这个量也会作为分类任务的输出。Segment Embeddings 也可以用来分割句子，但其实主要用于区分句子对。Position Embeddings 用于词定位。
-​	Bert 采用了两种非监督任务来进行预训练，一个是token-level 级别的屏蔽模型（Masked LM），一个是 sentence level 级别的 Next Sentence Prediction。Bert 的损失函数也是两个任务的损失函数之和。
-Masked Language Model
-其实在类似完型填空的任务中，如果直接使用双向语言模型，那么模型就可以间接知道要预测的单词，所以为了解决这个问题，谷歌提出了 Masked LM，随机屏蔽一些 token，并通过上下文预测这些 token。在具体的实验中，Bert 会随机屏蔽每个序列中 15% 的 token 并用 mask token 来代替。但是真实的任务中没有 mask token，所以为了使得模型知道 mask 掉的内容相当于噪声，谷歌的方法是，保持一些 mask token 始终是 mask，一些会被随机单词取代，一些会保持原单词不变。" />
+BERT12 Bert和GPT,ELMo 对比示意图​	BERT 可以真正结合上下文信息，而不想 GPT 那样只能接收上文信息，同时采用了“Masked Language Model”随机屏蔽一些单词，以这个作为预训练目标，缓解单向语言模型的约束。
+​	BERT 和之前的模型类似之处在于都采用了两个阶段，首先是 pre-training，然后是 fine-tuning。在 pre-training 阶段，BERT 在没有标注的数据上进行无监督学习，在 fine-tuning 阶段，BERT 首先利用预训练得到的参数初始化模型，然后利用下游任务中，标记好的模型进行带监督的学习，并对所有的参数进行微调。
+​	为了能够处理各种任务，BERT 给出了句子级别的表示方案，包括单个句子和句子对，同时在 BERT 中，句子实际上指的是任意长度的连续文本，而不是语法意义上的某个句子。
+​	BERT 的编码采用的是 WordPiece。每个序列的开头都是一个特殊的类别标记 CLS。区分句子对中前后两句的方法：首先是用特殊的分隔符标记 SEP 把不同的句子隔开，然后在每个标记中加入一个学习得到的编码，以此来显示该标记是属于句子队中的句子 A 还是句子 B。
+​	最终一个标记的表示其实是由 3 个部分组成，1 是标记本身的含义编码，2 是显示属于哪个句子的编码，3 是学习得到的位置编码，如下图：
+BERT 输入编码示意图​	​	BERT 采用了两种非监督任务来进行预训练，一个是 token-level 级别的屏蔽模型（Masked LM），一个是 sentence level 级别的 Next Sentence Prediction。BERT 的损失函数也是两个任务的损失函数之和。
+Masked Language Model ( MLM )
+其实在类似完型填空的任务中，如果直接使用双向语言模型，那么模型就可以间接知道要预测的单词，所以为了解决这个问题，谷歌提出了 Masked LM，随机屏蔽一些 token，并通过上下文预测这些 token。在具体的实验中，BERT 会随机屏蔽每个序列中 15% 的 token 并用 mask token 来代替。但是真实的任务中以及在进行参数的微调时，没有 mask token，所以为了缓解 mask 的影响，谷歌的方法是：选中 15% 的标记，准备进行 mask，在这 15% 当中，选择 80% 直接 mask 掉， 选择 10% 赋予随机的标记，最后 10% 保持原来的标记不变。然后这 15% 的位置将在交叉熵损失函数的控制下，来用于预测原本的值。" />
   <meta name="author" content="MeanVery" />
   
 
@@ -76,8 +78,8 @@ Masked Language Model
   
   
   
-  <meta property="og:title" content="Seminar-20221017-Bert, ViT" />
-<meta property="og:description" content="Seminar about Bert, ViT" />
+  <meta property="og:title" content="Seminar-20221017-BERT, ViT" />
+<meta property="og:description" content="Seminar about BERT, ViT" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://meanvery.github.io/post/seminar-20221021/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-10-24T00:00:00+00:00" />
@@ -85,15 +87,15 @@ Masked Language Model
 
 
   
-  <meta itemprop="name" content="Seminar-20221017-Bert, ViT">
-<meta itemprop="description" content="Seminar about Bert, ViT"><meta itemprop="datePublished" content="2022-10-24T00:00:00+00:00" />
+  <meta itemprop="name" content="Seminar-20221017-BERT, ViT">
+<meta itemprop="description" content="Seminar about BERT, ViT"><meta itemprop="datePublished" content="2022-10-24T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-10-24T00:00:00+00:00" />
-<meta itemprop="wordCount" content="135">
+<meta itemprop="wordCount" content="162">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Seminar-20221017-Bert, ViT"/>
-<meta name="twitter:description" content="Seminar about Bert, ViT"/>
+<meta name="twitter:title" content="Seminar-20221017-BERT, ViT"/>
+<meta name="twitter:description" content="Seminar about BERT, ViT"/>
 
   
   
@@ -162,7 +164,7 @@ Masked Language Model
       <span>MeanVery</span>
       
     </p>
-    <h1>Seminar-20221017-Bert, ViT</h1>
+    <h1>Seminar-20221017-BERT, ViT</h1>
   </header>
   <section class="post-content">
 
@@ -175,7 +177,7 @@ Masked Language Model
 
 
 <p>感谢白宇师兄的讲解！</p>
-<h2 id="bert1cite2cite">Bert<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
+<h2 id="bert1cite2cite">BERT<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></cite><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></cite></h2>
 <div>
     <center>
     <img src="/bert1.png"
@@ -185,17 +187,31 @@ Masked Language Model
     </center>
 </div>
 <br>
-<p>​	Bert 可以真正结合上下文信息，而不想 GPT 那样只能接收上文信息，同时采用了“Masked Language Model”随机屏蔽一些单词，以这个作为预训练目标，缓解单向语言模型的约束。</p>
-<p>​	Bert 和之前的模型类似之处在于都采用了两个阶段，首先是 pre-training，然后是 fine-tuning。在 pre-training 阶段，Bert 在没有标注的数据上进行无监督学习，在 fine-tuning 阶段，Bert 首先利用预训练得到的参数初始化模型，然后利用下游任务中，标记好的模型进行带监督的学习，并对所有的参数进行微调。</p>
-<p>​	为了能够处理各种任务，Bert 给出了句子级别的表示方案，包括句子和句子对。Bert 的输入分为了三块，Token Embeddings，Segment Embeddings 和 Position Embeddings。Token Embeddings 中，每个句子会以一个特殊的类别量作为开头，同时这个量也会作为分类任务的输出。Segment Embeddings 也可以用来分割句子，但其实主要用于区分句子对。Position Embeddings 用于词定位。</p>
-<p>​	Bert 采用了两种非监督任务来进行预训练，一个是token-level 级别的屏蔽模型（Masked LM），一个是 sentence level 级别的 Next Sentence Prediction。Bert 的损失函数也是两个任务的损失函数之和。</p>
+<p>​	BERT 可以真正结合上下文信息，而不想 GPT 那样只能接收上文信息，同时采用了“Masked Language Model”随机屏蔽一些单词，以这个作为预训练目标，缓解单向语言模型的约束。</p>
+<p>​	BERT 和之前的模型类似之处在于都采用了两个阶段，首先是 pre-training，然后是 fine-tuning。在 pre-training 阶段，BERT 在没有标注的数据上进行无监督学习，在 fine-tuning 阶段，BERT 首先利用预训练得到的参数初始化模型，然后利用下游任务中，标记好的模型进行带监督的学习，并对所有的参数进行微调。</p>
+<p>​	为了能够处理各种任务，BERT 给出了句子级别的表示方案，包括单个句子和句子对，同时在 BERT 中，句子实际上指的是任意长度的连续文本，而不是语法意义上的某个句子。</p>
+<p>​	BERT 的编码采用的是 WordPiece。每个序列的开头都是一个特殊的类别标记 CLS。区分句子对中前后两句的方法：首先是用特殊的分隔符标记 SEP 把不同的句子隔开，然后在每个标记中加入一个学习得到的编码，以此来显示该标记是属于句子队中的句子 A 还是句子 B。</p>
+<p>​	最终一个标记的表示其实是由 3 个部分组成，1 是标记本身的含义编码，2 是显示属于哪个句子的编码，3 是学习得到的位置编码，如下图：</p>
+<div>
+    <center>
+    <img src="/bert2.png"
+         alt="BERT 输入编码示意图"
+         style="zoom:50%"/>
+    BERT 输入编码示意图
+    </center>
+</div>
+<p>​	<br></p>
+<p>​	BERT 采用了两种非监督任务来进行预训练，一个是 token-level 级别的屏蔽模型（Masked LM），一个是 sentence level 级别的 Next Sentence Prediction。BERT 的损失函数也是两个任务的损失函数之和。</p>
 <ul>
 <li>
-<p>Masked Language Model</p>
-<p>其实在类似完型填空的任务中，如果直接使用双向语言模型，那么模型就可以间接知道要预测的单词，所以为了解决这个问题，谷歌提出了 Masked LM，随机屏蔽一些 token，并通过上下文预测这些 token。在具体的实验中，Bert 会随机屏蔽每个序列中 15% 的 token 并用 mask token 来代替。但是真实的任务中没有 mask token，所以为了使得模型知道 mask 掉的内容相当于噪声，谷歌的方法是，保持一些 mask token 始终是 mask，一些会被随机单词取代，一些会保持原单词不变。</p>
+<p>Masked Language Model ( MLM )</p>
+<p>其实在类似完型填空的任务中，如果直接使用双向语言模型，那么模型就可以间接知道要预测的单词，所以为了解决这个问题，谷歌提出了 Masked LM，随机屏蔽一些 token，并通过上下文预测这些 token。在具体的实验中，BERT 会随机屏蔽每个序列中 15% 的 token 并用 mask token 来代替。但是真实的任务中以及在进行参数的微调时，没有 mask token，所以为了缓解 mask 的影响，谷歌的方法是：选中 15% 的标记，准备进行 mask，在这 15% 当中，选择 80% 直接 mask 掉， 选择 10% 赋予随机的标记，最后 10% 保持原来的标记不变。然后这 15% 的位置将在交叉熵损失函数的控制下，来用于预测原本的值。</p>
+</li>
+<li>
+<p>Next Sentence Prediction ( NSP )</p>
 </li>
 </ul>
-<p>​	而 Next Sentence Prediction 主要用于预测句子之间的关系。</p>
+<p>​</p>
 <p>​	在 fine-tuning 阶段，只需要将具体的输入和输出适配到 Bert 中，并且用端到端的训练去微调模型的参数，就可以适用于各种任务，实际只需要在核心模型中添加类似分类层的层次即可。</p>
 <h2 id="vit3cite4cite5cite">ViT<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></cite><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></cite><sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></cite></h2>
 <p>Vision Transformer (ViT) 最核心的结论是，当拥有足够多的数据进行预训练的时候，ViT 的表现就会超过 CNN，突破 transformer 缺少归纳偏置的限制，可以在下游任务中获得较好的迁移效果。</p>
