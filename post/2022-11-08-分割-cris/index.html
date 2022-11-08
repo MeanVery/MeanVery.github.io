@@ -92,7 +92,7 @@
   <meta itemprop="name" content="分割-CRIS">
 <meta itemprop="description" content="CLIP-Driven Referring Image Segmentation"><meta itemprop="datePublished" content="2022-11-08T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-08T00:00:00+00:00" />
-<meta itemprop="wordCount" content="539">
+<meta itemprop="wordCount" content="534">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -294,9 +294,7 @@ $$</p>
 <p>​	基于得到的文本特征 \(z_t\) 和一系列像素级特征 \(z_v\) ，作者使用了一个对比损失函数来优化两个模态之间的关系： \(z_t\) 会趋于变得和与之相关的 \(z_v\) 相似，而和与之不相关的 \(z_v\) 更加迥异。</p>
 <p>​	在点积（dot product）表示的相似性下，文本到像素的对比损失公式化如下：
 $$
-L^i_{con}(z_t,z_v^i)= \begin{cases}-log\sigma(z_t \cdot z^i_v) &amp; \text i\in\mathcal{P}\
--log(1-\sigma(z_t \cdot z^i_v)) &amp; \text i\in\mathcal{N}
-\end{cases}\
+L^i_{con}(z_t,z_v^i)=\begin{cases}-log\sigma(z_t \cdot z^i_v) &amp; i\in\mathcal{P}\-log(1-\sigma(z_t \cdot z^i_v)) &amp; i\in\mathcal{N}\end{cases}
 $$
 ​	 综合起来看可以得到整体公式如下：
 $$
