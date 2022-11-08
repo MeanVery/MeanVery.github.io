@@ -7,7 +7,26 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 08 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>分割-CRIS</title>
+      <link>https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-cris/</link>
+      <pubDate>Tue, 08 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-cris/</guid>
+      <description>CRIS: CLIP-Driven Referring Image Segmentation ​	参考图像分割（Referring Image Segmentation，以下称其为“参考分割”）致力于研究分割出图片中符合语言描述的对象：给出词汇“人脸”，该研究就分割出图像中的人脸。
+摘要（Abstract） ​	受到语言-图像对比预训练（Contrastive Language-Image Pretraining , CLIP）的启发，作者提出了 CRIS，设计了一个视觉语言解码器，将文本表示中细粒度的语义信息作用到每一个像素级别运算的激活上，增强了这两种模态的一致性。同时提出了文本到像素的对比学习方法，强迫文本特征和相关的像素级特征具有相似性，和不相关的像素级特征具有差异性。在无需任何后处理的情况下，CRIS 在三个基准数据集上的实验测试结果都显著优于之前的最佳结果。
+1.介绍（Introduction） ​	与语义分割和实例分割不同的是，参考分割不局限于找出某个特定类别的对象，而是根据输入的语言表达找出对应的特定区域，显然如果这项技术发展成熟，可以用于交互图像编辑以及人机交互等领域。
+​	但是由于语言文本和图像是不同的模态，各自具备不同的属性，因此很难使得文本特征与像素相匹配。不过得益于强大的深度学习，早期的方案是直接将文本特征和图像特征连接起来，使用合并得到的特征去生成分割的遮罩；随后，为了增强两种模态之间的交互，人们提出了一系列基于语言-图像注意力机制的方法来更好地学习跨模态的特征。
+​	现在的方法则是利用外部给定知识加强学习效果，主要利用单模态预训练（预训练的图像或文本编码器），但是这就缺少了多模态间的关联信息。通过对大规模的无标注的数据进行语言监督，视觉语言预训练能够学习大量的多模态表示。CLIP 从 4 亿图片-文本对中学习到了图片级别的视觉概念，使得许多多模态任务取得了巨大的进展，包括图像-文本检索，视频-文本检索。但是，将 CLIP 直接应用到参考分割中，效果并不理想，如下图：
+参考分割效果示意图​	​	因为图片级别预测和像素级别预测具有巨大的差异，牵扯关注图片的全局信息，而后者还需要学习细粒度即小区域的视觉表示。
+​	在文章中，作者基于 CLIP 进行参考分割，尝试增强跨模态匹配的能力。考虑到参考分割的特点，作者提出了一个有效且灵活的框架——CLIP-Driven Referring Image Segmentation（CRIS），可以将 CLIP 得到的大量跨模态但是相关的知识用于完成文本-像素的匹配。
+​	首先，作者提出了一个视觉语言解码器（visual-language decoder），一方面它可以通过自注意力机制，捕捉图片中距离较远但是相关的像素级特征；另一方面，它可以通过交叉注意力机制，自适应地将精细的文本特征融合到图片的像素级特征中。
+​	其次，作者引入了文本-像素的对比学习，它可以在多模态空间中，将语言特征和相关的像素级特征匹配起来，同时分离不相关的像素级特征。基于这个方案中语言和像素级视觉特征的交互，模型可以明确学习到细粒度即小区域的视觉概念。
+​	作者认为他们的研究主要有以下三个贡献：
+提出了 CLIP-Driven Referring Image Segmentation（CRIS），将 CLIP 得到的知识用于匹配文本和像素； 创新地提出了”视觉语言解码器“、”文本-像素对比学习“来充分利用跨模态的知识； 在三个基准数据集上的实验结果显著优于之前的最佳水平。 2.相关工作（Related Work） 视觉-语言预训练（Vision-Language Pretraining） ​	利用语义监督下的大规模图片数据，人们提出了许多方法来通过文本表示学习到视觉表示。MIL-NCE 主要探索利用嘈杂的大规模的 Howto100M 教学视频，通过端到端的方式学习得到更好的视频编码器；SimVLM 利用大规模的弱监督来降低训练复杂性，采用单前缀语言以端到端的方式来建模目标。得益于从互联网中收集到了大规模的图像文本对，CLIP 在嵌入空间中对两个模态的表达式的匹配取得了引人瞩目的成功，它采用强大的语言模型和视觉特征编码器进行对比学习，捕捉显著的视觉特征实现零镜头（Zero-Shot）分类。最近一系列将 CLIP 模型所得知识用于下游任务（比如视频标题、视频-文本检索和图像生成）的工作都取得了卓越的成果。</description>
+    </item>
+    
     <item>
       <title>Seminar-20221017-BERT, ViT</title>
       <link>https://meanvery.github.io/post/seminar-20221021/</link>
