@@ -92,7 +92,7 @@
   <meta itemprop="name" content="分割-CRIS">
 <meta itemprop="description" content="CLIP-Driven Referring Image Segmentation"><meta itemprop="datePublished" content="2022-11-08T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-08T00:00:00+00:00" />
-<meta itemprop="wordCount" content="539">
+<meta itemprop="wordCount" content="554">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -249,10 +249,8 @@ $$
 $$
 F_{m3}=[\sigma(F_{m4} W_{m4}), \sigma(F_{v3} W_{v3})]
 $$</p>
-<p>得到 \(F\_{m2}\) 如下：
-$$
-F_{m2}=[\sigma(F_{m3} W_{m3}), \sigma(F&rsquo;<em>{v2} W</em>{v2})],F&rsquo;<em>{v2}=Avg(F</em>{v2})
-$$</p>
+<p>得到 \(F_{m2}\) 如下：</p>
+\(F_{m2}=[\sigma(F_{m3} W_{m3}), \sigma(F'_{v2} W_{v2})],F'_{v2}=Avg(F_{v2})\)
 <p>其中， \(Avg(\cdot)\) 表示核大小为 \(2 \times 2\) ，步长为 2 的平均池化； \([ , ]\) 表示连接操作。</p>
 <p>随后，作者将三个多模态特征相连，并使用 \(1 \times 1\) 卷积来融合它们，公式如下：
 $$
@@ -292,9 +290,14 @@ $$</p>
 <p>$$
 z_t=F_sW_t+b_t
 $$</p>
-<p>​	其中， \(z_t \in \Reals^D \)， \(z_v \in \Reals^{N \times D} \) 。N的尺寸为 \(H/4 \times W/4} \) ， \(Up \) 表示 4 倍上采样， \(W_v,W_t\) 是两个可学习的变换矩阵，将 \(F_c \) 和 \(F_s \) 变换成同一维度 \(D \) ， \(b_v,b_t\) 是两个可学习的偏置量。</p>
+<p>​	其中， \(z_t \in \Reals^D \)， \(z_v \in \Reals^{N \times D} \) 。N的尺寸为 \(H/4 \times W/4\) ， \(Up \) 表示 4 倍上采样， \(W_v,W_t\) 是两个可学习的变换矩阵，将 \(F_c \) 和 \(F_s \) 变换成同一维度 \(D \) ， \(b_v,b_t\) 是两个可学习的偏置量。</p>
 <p>​	基于得到的文本特征 \(z_t\) 和一系列像素级特征 \(z_v\) ，作者使用了一个对比损失函数来优化两个模态之间的关系： \(z_t\) 会趋于变得和与之相关的 \(z_v\) 相似，而和与之不相关的 \(z_v\) 更加迥异。</p>
-<p>​	在点积（dot product）表示的相似性下，文本到像素的对比损失公式化如下：
+<p>​	在点积（dot product）表示的相似性下，文本到像素的对比损失公式化如下：</p>
+<p>\(L\^i_{con}(z_t,z^i_v)= \begin{cases}-log\sigma(z_t \cdot z^i_v) & \text i\in\mathcal{P}\\
+									-log(1-\sigma(z_t \cdot z^i_v)) & \text i\in\mathcal{N}
+					\end{cases}\\
+L_{con}(z_t, z_v)=\frac{1}{|\mathcal{P}\cup\mathcal{N}|}\sum_{\begin{subarray}{l}i\in\mathcal{P}\cup\mathcal{N}
+\end{subarray}}L^i_{con}(z_t, z^i_v)\) 
 $$
 L^i_{con}(z_t,z_v^i)= \begin{cases}-log\sigma(z_t \cdot z^i_v) &amp; \text i\in\mathcal{P}\
 -log(1-\sigma(z_t \cdot z^i_v)) &amp; \text i\in\mathcal{N}
@@ -303,7 +306,7 @@ L_{con}(z_t, z_v)=\frac{1}{|\mathcal{P}\cup\mathcal{N}|}\sum_{\begin{subarray}{l
 \end{subarray}}L^i_{con}(z_t, z^i_v)
 $$
 ​	 <br></p>
-<p>​	其中，\(\mathcal{p},\mathcal{N}\) 表示真实情况（Ground Truth）的 1（是目标对象）和 0（不是目标对象）， \(\sigma\) 表示 sigmoid 函数。最后，为了获得最终的分割结果，作者将 \(\sigma(z_t \cdot z_v)\) 转换成 \(H/4 \times W/4\) ，再将其上采样恢复到原图的尺寸。</p>
+<p>​	其中，\(\mathcal{P},\mathcal{N}\) 表示真实情况（Ground Truth）的 1（是目标对象）和 0（不是目标对象）， \(\sigma\) 表示 sigmoid 函数。最后，为了获得最终的分割结果，作者将 \(\sigma(z_t \cdot z_v)\) 转换成 \(H/4 \times W/4\) ，再将其上采样恢复到原图的尺寸。</p>
 <br>
 </section>
 
