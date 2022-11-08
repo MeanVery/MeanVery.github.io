@@ -92,7 +92,7 @@
   <meta itemprop="name" content="分割-CRIS">
 <meta itemprop="description" content="CLIP-Driven Referring Image Segmentation"><meta itemprop="datePublished" content="2022-11-08T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-08T00:00:00+00:00" />
-<meta itemprop="wordCount" content="534">
+<meta itemprop="wordCount" content="540">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -292,11 +292,12 @@ z_t=F_sW_t+b_t
 $$</p>
 <p>​	其中， \(z_t \in \Reals^D \)， \(z_v \in \Reals^{N \times D} \) 。N的尺寸为 \(H/4 \times W/4\) ， \(Up \) 表示 4 倍上采样， \(W_v,W_t\) 是两个可学习的变换矩阵，将 \(F_c \) 和 \(F_s \) 变换成同一维度 \(D \) ， \(b_v,b_t\) 是两个可学习的偏置量。</p>
 <p>​	基于得到的文本特征 \(z_t\) 和一系列像素级特征 \(z_v\) ，作者使用了一个对比损失函数来优化两个模态之间的关系： \(z_t\) 会趋于变得和与之相关的 \(z_v\) 相似，而和与之不相关的 \(z_v\) 更加迥异。</p>
-<p>​	在点积（dot product）表示的相似性下，文本到像素的对比损失公式化如下：
-$$
-L^i_{con}(z_t,z_v^i)=\begin{cases}-log\sigma(z_t \cdot z^i_v) &amp; i\in\mathcal{P}\-log(1-\sigma(z_t \cdot z^i_v)) &amp; i\in\mathcal{N}\end{cases}
-$$
-​	 综合起来看可以得到整体公式如下：
+<p>​	在点积（dot product）表示的相似性下，文本到像素的对比损失公式化如下：</p>
+<p>​	当像素属于 \(\mathcal{P}\) 时：</p>
+\(L^i_{con} (z_t,z_v^i)=-log \sigma(z_t \cdot z^i_v)\)
+<p>​	当像素属于 \(\mathcal{N}\) 时：</p>
+\(L^i_{con} (z_t,z_v^i)=-log(1-\sigma(z_t \cdot z^i_v))\)
+<p>​	 综合起来看可以得到整体公式如下：
 $$
 L_{con}(z_t, z_v)=\frac{1}{|\mathcal{P}\cup\mathcal{N}|}\sum_{\begin{subarray}{l}i\in\mathcal{P}\cup\mathcal{N}
 \end{subarray}}L^i_{con}(z_t, z^i_v)
