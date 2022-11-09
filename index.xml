@@ -7,13 +7,32 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Tue, 08 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>分割-CRIS</title>
-      <link>https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-cris/</link>
+      <title>分割-全景图像的语义分割</title>
+      <link>https://meanvery.github.io/post/2022-11-09-%E5%88%86%E5%89%B2-%E5%85%A8%E6%99%AF%E5%9B%BE%E5%83%8F%E7%9A%84%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2/</link>
+      <pubDate>Wed, 09 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/2022-11-09-%E5%88%86%E5%89%B2-%E5%85%A8%E6%99%AF%E5%9B%BE%E5%83%8F%E7%9A%84%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2/</guid>
+      <description>Bending Reality: Distortion-aware Transformers for Adapting to Panoramic Semantic Segmentation 摘要（Abstract） ​	带有 360 度方向视野的全景图像包含了环境的详尽信息，为场景理解提供了坚实的基础。为了以鲁棒的全景分割模型体现其中的潜力，需要大量代价昂贵的像素级标注。这样的标注主要用于窄角度、针孔相机，虽然是现成的，但是对训练全景模型来说，这样的标注是次优的。全景图像中的畸变和与普通图片迥异的特征分布，使直接利用标注丰富的针孔图像来训练全景模型的效果很差。为了克服这一主要差异并结合针孔和全景视野的标注，作者提出了在可变形片嵌入（Deformable Patch Embedding, DPE）组件和可变形多层感知机（Deformable MLP, DMLP）组件中去学习物体的变形和全景图片的畸变，这些组件都被加入了作者设计的模型——Transformer for PAnoramic Semantic Segmentation（Trans4PASS）。最后，作者通过生成多尺度原型特征，并在其设计的共同原型适应（Mutual Prototypical Adaptation, MPA）中匹配它们，以实现无监督领域的自适应，从而将针孔和全景特征嵌入中的共享语义联系在一起。
+1. 介绍（Introduction） ​	首先，全景语义分割通常在使用等矩形投影变换得到的 2 维全景图片上执行，变换过程伴随着图像畸变和物体变形，如下图：
+针孔图片与全景图片示意图​	其次，由于在全景图片领域，带标注的数据集稀缺，因此模型训练通常需要在与之匹配的窄视野数据集上进行。
+​	以上两点导致全景图像的语义分割性能显著差于针孔图像。考虑到全景图的复杂性，提出了变异卷积和注意力增强模型，以减轻图像畸变并扩大卷积神经网络（CNN）的感受野。但是它们在处理针孔图像到全景图像的严重变形时，依然是次优的；同时它们不能建立起在全景图像中蕴含的长程依赖性，而这恰恰是得到精确分割结果的关键。
+​	鉴于这些挑战，作者提出了 Trans4PASS 结构，通过两个新颖的设计克服了图片失真和物体变形：
+可变形片嵌入（Deformable Patch Embedding, DPE）
+位于初始的图片序列化阶段，以及中间的特征阐释阶段，使得模型可以在学习全景图片失真的同时保持其语义信息。
+可变形多层感知机（Deformable MLP, DMLP）
+位于特征解析阶段，我们将片与学习到的空间补偿混合，以增强对全局上下文的建模。
+​	标注丰富的针孔图像与标注稀缺的全景图像间的不匹配问题，也可以通过无监督域自适应（Unsupervised Domain Adaptation, UDA）方法来解决，其中，将带标注的 2 维针孔图像作为源图像，将全景图像作为目标图像。根据之前的工作，作者将这种方案称为 PIN2PAN。可以看出，这样做避免了对全景图像进行标注的昂贵代价，同时又使用了大规模的带标注数据来训练鲁棒的用于分割的 Transformer。
+​	与 UDA 的常见对抗性学习和伪标签自学习方法不同，作者提出了共同原型适应（Mutual Prototypical Adaptation, MPA），它生成针孔图像特征和全景图像多尺度嵌入特征的共同原型，提取了两个领域的原型知识，并被证实效果优于把两个领域分开提取。作者展示了 MPA 以联合方式与伪标签一起工作，在特征空间中提供了互补的匹配激励。</description>
+    </item>
+    
+    <item>
+      <title>分割-基于 CLIP 的参考分割</title>
+      <link>https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-%E5%9F%BA%E4%BA%8Eclip%E7%9A%84%E5%8F%82%E8%80%83%E5%88%86%E5%89%B2/</link>
       <pubDate>Tue, 08 Nov 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-cris/</guid>
+      <guid>https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-%E5%9F%BA%E4%BA%8Eclip%E7%9A%84%E5%8F%82%E8%80%83%E5%88%86%E5%89%B2/</guid>
       <description>CRIS: CLIP-Driven Referring Image Segmentation ​	参考图像分割（Referring Image Segmentation，以下称其为“参考分割”）致力于研究分割出图片中符合语言描述的对象：给出词汇“人脸”，该研究就分割出图像中的人脸。
 摘要（Abstract） ​	受到语言-图像对比预训练（Contrastive Language-Image Pretraining , CLIP）的启发，作者提出了 CRIS，设计了一个视觉语言解码器，将文本表示中细粒度的语义信息作用到每一个像素级别运算的激活上，增强了这两种模态的一致性。同时提出了文本到像素的对比学习方法，强迫文本特征和相关的像素级特征具有相似性，和不相关的像素级特征具有差异性。在无需任何后处理的情况下，CRIS 在三个基准数据集上的实验测试结果都显著优于之前的最佳结果。
 1.介绍（Introduction） ​	与语义分割和实例分割不同的是，参考分割不局限于找出某个特定类别的对象，而是根据输入的语言表达找出对应的特定区域，显然如果这项技术发展成熟，可以用于交互图像编辑以及人机交互等领域。

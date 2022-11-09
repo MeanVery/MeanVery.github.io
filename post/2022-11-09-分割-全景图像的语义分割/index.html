@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>分割-全景图像的语义分割 - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="Bending Reality: Distortion-aware Transformers for Adapting to Panoramic Semantic Segmentation 摘要（Abstract） ​	带有 360 度方向视野的全景图像包含了环境的详尽信息，为场景理解提供了坚实的基础。为了以鲁棒的全景分割模型体现其中的潜力，需要大量代价昂贵的像素级标注。这样的标注主要用于窄角度、针孔相机，虽然是现成的，但是对训练全景模型来说，这样的标注是次优的。全景图像中的畸变和与普通图片迥异的特征分布，使直接利用标注丰富的针孔图像来训练全景模型的效果很差。为了克服这一主要差异并结合针孔和全景视野的标注，作者提出了在可变形片嵌入（Deformable Patch Embedding, DPE）组件和可变形多层感知机（Deformable MLP, DMLP）组件中去学习物体的变形和全景图片的畸变，这些组件都被加入了作者设计的模型——Transformer for PAnoramic Semantic Segmentation（Trans4PASS）。最后，作者通过生成多尺度原型特征，并在其设计的共同原型适应（Mutual Prototypical Adaptation, MPA）中匹配它们，以实现无监督领域的自适应，从而将针孔和全景特征嵌入中的共享语义联系在一起。
+1. 介绍（Introduction） ​	首先，全景语义分割通常在使用等矩形投影变换得到的 2 维全景图片上执行，变换过程伴随着图像畸变和物体变形，如下图：
+针孔图片与全景图片示意图​	其次，由于在全景图片领域，带标注的数据集稀缺，因此模型训练通常需要在与之匹配的窄视野数据集上进行。
+​	以上两点导致全景图像的语义分割性能显著差于针孔图像。考虑到全景图的复杂性，提出了变异卷积和注意力增强模型，以减轻图像畸变并扩大卷积神经网络（CNN）的感受野。但是它们在处理针孔图像到全景图像的严重变形时，依然是次优的；同时它们不能建立起在全景图像中蕴含的长程依赖性，而这恰恰是得到精确分割结果的关键。
+​	鉴于这些挑战，作者提出了 Trans4PASS 结构，通过两个新颖的设计克服了图片失真和物体变形：
+可变形片嵌入（Deformable Patch Embedding, DPE）
+位于初始的图片序列化阶段，以及中间的特征阐释阶段，使得模型可以在学习全景图片失真的同时保持其语义信息。
+可变形多层感知机（Deformable MLP, DMLP）
+位于特征解析阶段，我们将片与学习到的空间补偿混合，以增强对全局上下文的建模。
+​	标注丰富的针孔图像与标注稀缺的全景图像间的不匹配问题，也可以通过无监督域自适应（Unsupervised Domain Adaptation, UDA）方法来解决，其中，将带标注的 2 维针孔图像作为源图像，将全景图像作为目标图像。根据之前的工作，作者将这种方案称为 PIN2PAN。可以看出，这样做避免了对全景图像进行标注的昂贵代价，同时又使用了大规模的带标注数据来训练鲁棒的用于分割的 Transformer。
+​	与 UDA 的常见对抗性学习和伪标签自学习方法不同，作者提出了共同原型适应（Mutual Prototypical Adaptation, MPA），它生成针孔图像特征和全景图像多尺度嵌入特征的共同原型，提取了两个领域的原型知识，并被证实效果优于把两个领域分开提取。作者展示了 MPA 以联合方式与伪标签一起工作，在特征空间中提供了互补的匹配激励。" />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="分割-全景图像的语义分割" />
+<meta property="og:description" content="Panoramic Semantic Segmentation" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/2022-11-09-%E5%88%86%E5%89%B2-%E5%85%A8%E6%99%AF%E5%9B%BE%E5%83%8F%E7%9A%84%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-11-09T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="分割-全景图像的语义分割">
+<meta itemprop="description" content="Panoramic Semantic Segmentation"><meta itemprop="datePublished" content="2022-11-09T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-11-09T00:00:00+00:00" />
+<meta itemprop="wordCount" content="551">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="分割-全景图像的语义分割"/>
+<meta name="twitter:description" content="Panoramic Semantic Segmentation"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      <time>Nov 9, 2022</time>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>分割-全景图像的语义分割</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<h2 id="bending-reality-distortion-aware-transformers-for-adapting-to-panoramic-semantic-segmentation">Bending Reality: Distortion-aware Transformers for Adapting to Panoramic Semantic Segmentation</h2>
+<h4 id="摘要abstract">摘要（Abstract）</h4>
+<p>​	带有 360 度方向视野的全景图像包含了环境的详尽信息，为场景理解提供了坚实的基础。为了以鲁棒的全景分割模型体现其中的潜力，需要大量代价昂贵的像素级标注。这样的标注主要用于窄角度、针孔相机，虽然是现成的，但是对训练全景模型来说，这样的标注是次优的。全景图像中的畸变和与普通图片迥异的特征分布，使直接利用标注丰富的针孔图像来训练全景模型的效果很差。为了克服这一主要差异并结合针孔和全景视野的标注，作者提出了在可变形片嵌入（Deformable Patch Embedding, DPE）组件和可变形多层感知机（Deformable MLP, DMLP）组件中去学习物体的变形和全景图片的畸变，这些组件都被加入了作者设计的模型——Transformer for PAnoramic Semantic Segmentation（Trans4PASS）。最后，作者通过生成多尺度原型特征，并在其设计的共同原型适应（Mutual Prototypical Adaptation, MPA）中匹配它们，以实现无监督领域的自适应，从而将针孔和全景特征嵌入中的共享语义联系在一起。</p>
+<h4 id="1-介绍introduction">1. 介绍（Introduction）</h4>
+<p>​	首先，全景语义分割通常在使用等矩形投影变换得到的 2 维全景图片上执行，变换过程伴随着图像畸变和物体变形，如下图：</p>
+<div>
+    <center>
+    <img src="/trans4pass1.png"
+         alt="针孔图片与全景图片示意图"
+         style="zoom:50%"/>
+    针孔图片与全景图片示意图
+    </center>
+</div>
+<br>
+<p>​	其次，由于在全景图片领域，带标注的数据集稀缺，因此模型训练通常需要在与之匹配的窄视野数据集上进行。</p>
+<p>​	以上两点导致全景图像的语义分割性能显著差于针孔图像。考虑到全景图的复杂性，提出了变异卷积和注意力增强模型，以减轻图像畸变并扩大卷积神经网络（CNN）的感受野。但是它们在处理针孔图像到全景图像的严重变形时，依然是次优的；同时它们不能建立起在全景图像中蕴含的长程依赖性，而这恰恰是得到精确分割结果的关键。</p>
+<p>​	鉴于这些挑战，作者提出了 Trans4PASS 结构，通过两个新颖的设计克服了图片失真和物体变形：</p>
+<ul>
+<li>
+<p>可变形片嵌入（Deformable Patch Embedding, DPE）</p>
+<p>位于初始的图片序列化阶段，以及中间的特征阐释阶段，使得模型可以在学习全景图片失真的同时保持其语义信息。</p>
+</li>
+<li>
+<p>可变形多层感知机（Deformable MLP, DMLP）</p>
+<p>位于特征解析阶段，我们将片与学习到的空间补偿混合，以增强对全局上下文的建模。</p>
+</li>
+</ul>
+<p>​	标注丰富的针孔图像与标注稀缺的全景图像间的不匹配问题，也可以通过无监督域自适应（Unsupervised Domain Adaptation, UDA）方法来解决，其中，将带标注的 2 维针孔图像作为源图像，将全景图像作为目标图像。根据之前的工作，作者将这种方案称为 PIN2PAN。可以看出，这样做避免了对全景图像进行标注的昂贵代价，同时又使用了大规模的带标注数据来训练鲁棒的用于分割的 Transformer。</p>
+<p>​	与 UDA 的常见对抗性学习和伪标签自学习方法不同，作者提出了共同原型适应（Mutual Prototypical Adaptation, MPA），它生成针孔图像特征和全景图像多尺度嵌入特征的共同原型，提取了两个领域的原型知识，并被证实效果优于把两个领域分开提取。作者展示了 MPA 以联合方式与伪标签一起工作，在特征空间中提供了互补的匹配激励。</p>
+<p>​	总的来说，作者认为自己的贡献如下：</p>
+<ul>
+<li>针对全景失真，通过可变形片嵌入模块、可变形多层感知机模块，提出了失真感知 Transformer 用于完成全景语义分割；</li>
+<li>提出了共同原型自适应，通过提取两个领域共同的原型知识来迁移模型，并通过在特征空间和输出空间中的伪标签对两个领域的知识进行匹配来增强效果；</li>
+<li>提出的基于 PIN2PAN 方案的模型在 Stanford2D3D 和 DensePASS 两个基准数据集中都取得了不错的效果。</li>
+</ul>
+<h4 id="2-相关工作related-work">2. 相关工作（Related Work）</h4>
+<h5 id="21-全景语义分割semantic--and-panoramic-segmentation">2.1 全景语义分割（Semantic- and panoramic segmentation）</h5>
+<p>​	密集的语义分割任务自从被 FCN 通过端到端方式解决，就取得了巨大的进展。许多工作都是基于 FCN 来进行的，通过扩大感受野、精细化上下文先验等方法来增强其效果。为了增强非邻近块之间的联系，自注意力机制被用于学习长程依赖性，以 Transformer 为主干的结构逐渐将以卷积为主干的结构取代。然后，人们使用密集预测变换器和语义分割变换器，从序列到序列学习的角度看待图像感知。最近，类似 MLP 的，由可选择的空间与信道混合的架构，引发了人们对新的识别任务的兴趣。大多数用于窄视野图像的方法，在 360 度全景图像领域的表现都会大幅降低。</p>
+<p>​	在本文中，作者设计了一个新颖的 Transformer 结构来解决全景分割问题，在提出伊始就考虑到了宽视野问题，并通过基于 MLP 的信道混合，处理全景图像不同的语义分布。</p>
+<p>​	许多针对全景的工作都假设目标全景领域具有丰富的带标注的数据集，但作者则摒弃了这个假设，以无监督迁移学习的视角，通过 PIN2PAN 自适应方法，以及针孔相机已有的大规模带标注图像，来对全景图像模型进行训练。</p>
+<p>​	在实验中，作者提出的结构可以同时泛化到室内场景和室外场景。</p>
+<h5 id="22-无监督领域自适应unsupervised-domain-adaptation">2.2 无监督领域自适应（Unsupervised domain adaptation）</h5>
+<p>​	领域自适应已被深入研究，用于增强模型对没见过的场景的泛化能力，通常基于两个主要的范式：自训练，对抗学习。自训练方法通常会创建伪标签，通过迭代改进逐渐适应新领域。对抗学习则是利用 GANs 的思想来执行图像翻译，或者强制让布局匹配和特征一致性对齐。更多的适应方法，则考虑不确定性降低、模型集成、类别级对齐或对抗熵最小化。</p>
+<p>​	与本文相关的是，PIT 通过基于视域的自适应来解决相机差距，而 P2PDA 首先通过学习注意力机制相关性来解决 PIN2PAN 场景的迁移问题。</p>
+<p>​	除了失真自适应结构设计外，作者以特征原型自适应的角度来看待 PIN2PAN 方案，逐类别对全景知识进行提取。和使用单一原型用于源领域和目标领域的方法不同，作者提出了共同原型自适应，同时探索了源和目标的特征嵌入用于增强视域上的迁移效果。</p>
+<h4 id="3-方法论methodology">3. 方法论（Methodology）</h4>
+<h5 id="31-trans4pass-的结构trans4pass-architecture">3.1 Trans4PASS 的结构（Trans4PASS Architecture）</h5>
+<div>
+    <center>
+    <img src="/trans4pass2.png"
+         alt="Trans4PASS 示意图"
+         style="zoom:50%"/>
+    Trans4PASS 示意图
+    </center>
+</div>
+<br>
+<p>​	为了探索全景语义分割的 Transformer 模型，作者设计了 T（Tiny）和 S（Small）两个版本的 Trans4PASS 模型，T 和 S 模型都有4个阶段，对于 T 模型的 4 个阶段，每个阶段包含 2 层；对于 S 模型的 4 个阶段，分别包含 3，4，6，3 层。如上图所示，特征维度随着深度变大而减小。</p>
+<p>​	对于一张 \(H \times W \times 3\) 的输入图片，Trans4PASS 使用 PE 模块（Patch Embedding Module）将图片划分成小片。</p>
+<p>​	为了处理全景图像中严重的失真，可变形片嵌入（Deformable Patch Embedding, DPE）被用于编码器和解码器。在编码器中，每个在第 \(l^th\) 个阶段的特征图 \(f_l \in {f_1,f_2,f_3,f_4}\) ，被其对应的第 \(l^th\) 个步长下采样， \(l^th stride \in {4,8,16,32}\) 。通道的维度 \(C_l \in {64,128,320,512}\) 逐步增加。</p>
+<p>​	和类似 FPN 的编码器与基于 vanilla-MLP 的编码器不同，作者人提出了可变形多层感知机（DMLP）编码器结构，可以混合由可变形片嵌入（DPE）得到的特征片。</p>
+<p>​	基于编码器提取到的 4 个多尺度特征，4 个可变形解码器层将其处理成尺寸都为 \(H/4 \times W/4 \times C_emb\) 的形状，此处作者设 \(C_emb=128\) 。随后在线性层中将 128 个通道变换为和待分的类别数量相等。</p>
+<h5 id="32-可变形片嵌入deformable-patch-embedding-dpe">3.2 可变形片嵌入（Deformable Patch Embedding, DPE）</h5>
+<p>​	360 度相机捕捉的球形拓扑图像在极坐标系中的范围可表示为： \(\theta \in [0,2\pi), \phi \in[0,\pi]\) 。为了将其在 2 维空间内呈现，人们通常使用等矩形投影法（equirectangular projection）在类欧几里得空间（euclidean-like space）中将球形数据转换为全景格式，这就会导致严重的形状畸变，固定采样位置的常用片嵌入模块不能合理反映这些形状畸变以及全面的场景。</p>
+<p>​	受到可变形卷积、重叠片嵌入的启发，作者提出了可变形片嵌入，并将其应用到编码器和解码器的输入上，划分全景图片和特征。对一张输入的图片或者特征图，设其尺寸为 \(f \in \Reals^{H \times W        \times C_{in} } \) 。</p>
+<p>​	一个标准的片嵌入模块将其划分为一个 2 维的片序列 \(z \in \Reals^{ HW / s^2 \times s^2 C_{in}}\) 。_其中 \(HW / s^2 \) 是片的数量，s 是片的边长，该序列的每个元素都被传输到一个线性投影层，将其维度变换为 \(C_{out}\) 。</p>
+<p>​	考虑 z 中的一个片，作者对位置 \((i,j)|i,j \in [1,s]\) 定义了一个相对位置偏移，对于一个标准的片嵌入，这些偏移均位于 \(\Delta_{(i,j)} \in [\lfloor -s/2 \rfloor,\lfloor s/2 \rfloor]^2\) 。</p>
+<p>​	作者想要在片嵌入阶段直接解决由等矩形投影法引起的失真，因此在可变形片嵌入中，作者让模型去学习一个数据相关的补偿 \(\Delta^{DPE} \in \N^{H \times W \times 2}\) ，可以更好地处理物体之间的空间关联。</p>
+<p>​	DPE 本身是可学习的，基于原始输入 \(f\) 来预测相对偏移。</p>
+<p>​	对于长度 H：
+$$
+\Delta^{DPE}<em>{(i,j)}=[min(max(-\frac{H}{r},g(f)</em>{(i,j)}),\frac{H}{r})]
+$$
+​	对于宽度 W，类似地有：
+$$
+\Delta^{DPE}<em>{(i,j)}=[min(max(-\frac{W}{r},g(f)</em>{(i,j)}),\frac{W}{r})]
+$$
+​	其中， \(g(\cdot)\) 是偏移预测函数，是通过可变形卷积操作来实现的。超参数 r 是为了限制偏移量，在实验中作者将其设为 4。学习到的偏移使得 DPE 具有自适应性同时可以感知图片失真。</p>
+<p>​	作者提出的 DPE 被设计用于像素级预测任务，可以灵活地取代 raw PE 而无需耦合之前的迭代。直觉上，带有 DPE 的模型可以从针孔图像获取知识，通过获取数据中的严重变形，更好地适应全景图像中的失真。</p>
+<h5 id="33-可变形多层感知机deformable-mlp-dmlp">3.3 可变形多层感知机（Deformable MLP, DMLP）</h5>
+<p>​	除了编码器的特殊设计，带有自适应特征解析能力的解码器对分割 Transformer 非常重要。</p>
+<p>​	作者提出了一个机制来联合 Transformer 中的自注意力和 360 度图像中的变形特征，使得处理全景图像也可以从长程依赖中获益。为了在可接受的计算复杂度下实现失真感知效果，作者提出了可变形多层感知机模块（DMLP）。在解码器的每个阶段，DMLP 在特定的大接收域下，跨通道对片进行混合，改善了前文中 DPE 对图片特征的表达。</p>
+<div>
+    <center>
+    <img src="/trans4pass3.png"
+         alt="MLP 示意图"
+         style="zoom:50%"/>
+    MLP 示意图
+    </center>
+</div>
+<br>
+<p>​	上图展示了不同的基于 MLP 的模型差异，vanilla MLP 执行传统线性投影，不学习任何空间上下文信息；CycleMLP 有一个人为设限的空间接收域，固定的混合片偏移；对于 DMLP，则是以自适应的方式生成一个学习得到的更广范围上的空间偏移。</p>
+<p>​	给定输入特征图 \(f \in \Reals^{H \times W \times C\_{in}} \) ，空间偏移被逐通道预测，公式和 \(\Delta^{DPE}\_{(i,j)}\) 的预测相同。然后展开为 \(\Delta^{DMLC}_{(k,c)}\) 。</p>
+<p>​	对于最终的混合特征 \(z \in \Reals^{HW \times C_{in} } \) ，满足如下公式：
+$$
+\hat{z}<em>{(k,c)}=\sum</em>{\mathclap{1\le k\le HW}}\space\space\space\space\space\space\space\sum_{\mathclap{1\le c\le C_{in}}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}
+$$
+​	其中， \(w \in \Reals^{C_{in} \times C\_{out}} \) 是全连接层的权重矩阵。</p>
+<p>​	四个阶段的编码器结果可以依次表示如下：
+$$
+\hat{z}<em>l=DPE(C_l,C</em>{emb})(z_l),\forall l\in \set{1,2,3,4}
+$$</p>
+<p>$$
+\hat{z}<em>l=DMLP(C</em>{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l
+$$</p>
+<p>$$
+\hat{z}<em>l=MLP(C</em>{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l
+$$</p>
+<p>$$
+\hat{z}_l=Up(H/4,W/4)(\hat{z}_l),\forall l
+$$</p>
+<p>$$
+p=LN(C_{emb},C_K)(\sum_{\mathclap{l=1}}\hat{z}_l)
+$$</p>
+<p>​	其中 \(Up(\cdot)\) 和 \(LN(\cdot)\) 分别表示上采样和层标准化， \(p\) 是 \(K\) 个类别的预测。</p>
+<h5 id="34-共同原型自适应mutual-prototypical-adaptation-mpa">3.4 共同原型自适应（Mutual Prototypical Adaptation, MPA）</h5>
+<p>​	由于全景图片领域缺乏大规模的训练数据，作者把目光投向了源自于语义原型的 PIN2PAN 领域自适应，提出了共同原型自适应（MPA），通过源图像真实标签和伪标签来得到原型，再从原型中提取知识。其中，伪标签依赖于针孔图像和全景图像之间少有的共同属性，例如镜头前方角度的场景分布。</p>
+<p>​	本文的共同原型是从源图像和目标图像的特征嵌入中学习得到的，然后被投影到一个共享的隐藏空间，并存储在一个动态库（dynamic bank）。</p>
+<div>
+    <center>
+    <img src="/trans4pass4.png"
+         alt="MPA 示意图"
+         style="zoom:50%"/>
+    MPA 示意图
+    </center>
+</div>
+<br>
+<p>​	带标注的源数据集（针孔图像）表示为：
+$$
+\mathcal{D}^s=\set{(x^s,y^s)|x^s\in\Reals^{H\times W\times 3},y^s\in\set{0,1}^{H\times W\times K}}
+$$
+​	不带标注的目标数据集（全景图像）表示为：
+$$
+\mathcal{D}^t=\set{(x^t)|x^t\in\Reals^{H\times W\times 3}}
+$$
+​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
+$$
+\mathcal{L}^s_{SEG}=-\textstyle\sum_{i,j,k=1}^{H,W,K}y^s_{(i,j,k)}log(p^s_{(i,j,k)})
+$$
+​	其中， \(p^s\_{(i,j,k)}\) 表示源图像上的像素 \(x^s_{(i,j)}\) 被预测为第 k 类的概率。</p>
+<p>​	为了将源图像预训练模型泛化到目标数据，利用了基于目标图像中像素 \(x^t_{(i,j)}\) 的伪标签 \(\hat{y}^t\_{(i,j,k)}\) ，在目标领域进行自监督学习（Self-Supervised Learning, SSL），损失函数如下：
+$$
+\mathcal{L}^t_{SSL}=-\textstyle\sum_{i,j,k=1}^{H,W,K}\hat{y}^t_{(i,j,k)}log(p^t_{(i,j,k)})
+$$
+​	伪标签是按照模型预测的最可能的结果给出的。但是，用困难的伪标签进行训练会使得模型过于敏感脆弱，并且对性能的提升微弱。因此作者更支持特征空间中的基于原型的匹配，这样做会带来两个好处：1. 在特征空间中使用困难的伪标签相比将其作为直接目标，减小了困难伪标签的影响；2. 实现了在特征空间中语义相似性的互补和匹配。</p>
+<p>​	具体地说，给定 \(n_s\) 幅源特征图， \(n_t\) 幅目标图像，其集合为 \(F={f^s_1,...,f ^s_{n_s}}\cup {f^t_1,...,f ^t _{n_t}}\) 。同时，每一幅特征图都是由 4 个阶段的多尺度特征图融合获得的，且特征图要么和其源图像的 Ground Truth 标签关联，要么和其目标图像的伪标签相关。</p>
+<p>​	为了计算共同原型库 M，需要使用所有特征图中带有某个特定标签的像素嵌入。初始化的 M 是通过计算整个数据集中的逐类别平均嵌入得到的，而在训练时，通过如下公式对第 k 个共同原型属性进行更新：
+$$
+P^{t+1}_k\leftarrow mP^{t-1}_k+(1-m)P^t_k,momentum\space m=0.999
+$$
+​	共同原型自适应的损失函数受到了知识蒸馏损失的启发，可以使得源嵌入特征趋近于原型特征，目标特征具有与源嵌入特征相同的形状，相似的计算，为了简洁，以下只给出源嵌入特征的损失函数：</p>
+<p>$$
+\mathcal{L}^s_{MPA}=-\lambda\mathcal{T}^2KL(\phi(\hat{f^s/\mathcal{T}})||\phi(f^s/\mathcal{T}))\-(1-\lambda)CE(y^s,\phi(f^s))
+$$</p>
+<p>​	其中， \(KL(\cdot)\) 表示 K-L 散度，用于量化两种概率分布之间的差异； \(CE(\cdot)\) 表示交叉熵损失函数； \(\phi(\cdot)\) 表示 Softmax 函数。 \(\mathcal{T},\lambda\) 为超参数。</p>
+<p>​	最终的损失函数通过权重 \(\alpha=0.001\) 结合起来，公式如下：
+$$
+\mathcal{L}=\mathcal{L}^s_{SEG}+\mathcal{L}^t_{SSL}+\alpha(\mathcal{L}^s_{MPA}+\mathcal{L}^t_{MPA})
+$$</p>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+     
+    <a class="next" href="https://meanvery.github.io/post/2022-11-08-%E5%88%86%E5%89%B2-%E5%9F%BA%E4%BA%8Eclip%E7%9A%84%E5%8F%82%E8%80%83%E5%88%86%E5%89%B2/"><span>分割-基于 CLIP 的参考分割</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>
