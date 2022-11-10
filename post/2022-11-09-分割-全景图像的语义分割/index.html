@@ -92,7 +92,7 @@
   <meta itemprop="name" content="分割-全景图像的语义分割">
 <meta itemprop="description" content="Panoramic Semantic Segmentation"><meta itemprop="datePublished" content="2022-11-09T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-09T00:00:00+00:00" />
-<meta itemprop="wordCount" content="538">
+<meta itemprop="wordCount" content="540">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -270,9 +270,9 @@
 \(\hat{z}_{(k,c)}=\sum_{\mathclap{1\le k\le HW}}\space\space\space\space\space\space\space\sum_{\mathclap{1\le c\le C_{in}}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}\)
 <p>​	其中， \(w \in \Reals^{C_{in} \times C\_{out}} \) 是全连接层的权重矩阵。</p>
 <p>​	四个阶段的编码器结果可以依次表示如下：</p>
-<p>\(\hat{z}\_l=DPE(C_l,C_{emb})(z_l),\forall l\in \set{1,2,3,4}\) <br></p>
+<p>\(\hat{z}_l=DPE(C_l,C\_{emb})(z_l),\forall l\in \set{1,2,3,4}\) <br></p>
 <p>\(\hat{z}_l=DMLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\) <br></p>
-<p>\(\hat{z}_l=MLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\) <br></p>
+<p>\(\hat{z}_l=MLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\)<br></p>
 <p>\(\hat{z}_l=Up(H/4,W/4)(\hat{z}_l),\forall l\) <br></p>
 \(p=LN(C_{emb},C_K)(\sum_{\mathclap{l=1}}\hat{z}_l)\)
 <p>​	其中 \(Up(\cdot)\) 和 \(LN(\cdot)\) 分别表示上采样和层标准化， \(p\) 是 \(K\) 个类别的预测。</p>
@@ -291,7 +291,7 @@
 <p>​	带标注的源数据集（针孔图像）表示为：</p>
 \(\mathcal{D}^s =\set{(x^s ,y^s )|x^s \in \Reals^{H\times W\times 3},y^s \in\set{0,1}^{H\times W\times K}}\)
 <p>​	不带标注的目标数据集（全景图像）表示为：</p>
-\(\mathcal{D}\^t=\set{(x\^t)|x^t \in\Reals^{H\times W\times 3}}\)
+\(\mathcal{D}^t =\set{(x^t )|x^t \in\Reals^{H\times W\times 3}}\)
 <p>​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
 $$
 \mathcal{L}^s_{SEG}=-\textstyle\sum_{i,j,k=1}^{H,W,K}y^s_{(i,j,k)}log(p^s_{(i,j,k)})
@@ -309,6 +309,7 @@ P^{t+1}_k\leftarrow mP^{t-1}_k+(1-m)P^t_k,momentum\space m=0.999
 $$
 ​	共同原型自适应的损失函数受到了知识蒸馏损失的启发，可以使得源嵌入特征趋近于原型特征，目标特征具有与源嵌入特征相同的形状，相似的计算，为了简洁，以下只给出源嵌入特征的损失函数：</p>
 \(\mathcal{L}^s_{MPA}=-\lambda\mathcal{T}^2KL(\phi(\hat{f^s/\mathcal{T}})||\phi(f^s/\mathcal{T}))-(1-\lambda)CE(y^s,\phi(f^s))\)
+<br>
 <p>​	其中， \(KL(\cdot)\) 表示 K-L 散度，用于量化两种概率分布之间的差异； \(CE(\cdot)\) 表示交叉熵损失函数； \(\phi(\cdot)\) 表示 Softmax 函数。 \(\mathcal{T},\lambda\) 为超参数。</p>
 <p>​	最终的损失函数通过权重 \(\alpha=0.001\) 结合起来，公式如下：
 $$
