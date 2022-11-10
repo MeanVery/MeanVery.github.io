@@ -92,7 +92,7 @@
   <meta itemprop="name" content="分割-全景图像的语义分割">
 <meta itemprop="description" content="Panoramic Semantic Segmentation"><meta itemprop="datePublished" content="2022-11-09T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-09T00:00:00+00:00" />
-<meta itemprop="wordCount" content="540">
+<meta itemprop="wordCount" content="574">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -267,11 +267,17 @@
 <p>​	上图展示了不同的基于 MLP 的模型差异，vanilla MLP 执行传统线性投影，不学习任何空间上下文信息；CycleMLP 有一个人为设限的空间接收域，固定的混合片偏移；对于 DMLP，则是以自适应的方式生成一个学习得到的更广范围上的空间偏移。</p>
 <p>​	给定输入特征图 \(f \in \Reals^{H \times W \times C\_{in}} \) ，空间偏移被逐通道预测，公式和 \(\Delta^{DPE}\_{(i,j)}\) 的预测相同。然后展开为 \(\Delta^{DMLC}_{(k,c)}\) 。</p>
 <p>​	对于最终的混合特征 \(z \in \Reals^{HW \times C_{in} } \) ，满足如下公式：</p>
-\(\hat{z}_{(k,c)}=\sum_{\mathclap{1\le k\le HW}}\space\space\space\space\space\space\space\sum_{\mathclap{1\le c\le C_{in}}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}\)
-<p>​	其中， \(w \in \Reals^{C_{in} \times C\_{out}} \) 是全连接层的权重矩阵。</p>
+<p>\(\hat{z}_{(k,c)}=\sum_{\mathclap{1\le k\le HW}}\space\space\space\space\space\space\space\sum_{\mathclap{1\le c\le C_{in}}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}\) 
+$$
+\hat{z}<em>{(k,c)}=\textstyle\sum</em>{1\le k\le HW}\textstyle\sum_{1\le c\le C_{in}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}
+$$
+​	其中， \(w \in \Reals^{C_{in} \times C\_{out}} \) 是全连接层的权重矩阵。</p>
 <p>​	四个阶段的编码器结果可以依次表示如下：</p>
-<p>\(\hat{z}_l=DPE(C_l,C\_{emb})(z_l),\forall l\in \set{1,2,3,4}\) <br></p>
-<p>\(\hat{z}_l=DMLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\) <br></p>
+<p>\(\hat{z}_l=DPE(C_l,C\_{emb})(z_l),\forall l\in \set{1,2,3,4}\) <br>
+$$
+\hat{z}<em>l=DPE(C_l,C</em>{emb})(z_l),\forall l\in \set{1,2,3,4}
+$$
+\(\hat{z}_l=DMLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\) <br></p>
 <p>\(\hat{z}_l=MLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\)<br></p>
 <p>\(\hat{z}_l=Up(H/4,W/4)(\hat{z}_l),\forall l\) <br></p>
 \(p=LN(C_{emb},C_K)(\sum_{\mathclap{l=1}}\hat{z}_l)\)
@@ -289,10 +295,16 @@
 </div>
 <br>
 <p>​	带标注的源数据集（针孔图像）表示为：</p>
-\(\mathcal{D}^s =\set{(x^s ,y^s )|x^s \in \Reals^{H\times W\times 3},y^s \in\set{0,1}^{H\times W\times K}}\)
-<p>​	不带标注的目标数据集（全景图像）表示为：</p>
-\(\mathcal{D}^t =\set{(x^t )|x^t \in\Reals^{H\times W\times 3}}\)
-<p>​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
+<p>\(\mathcal{D}^s =\set{(x^s ,y^s )|x^s \in \Reals^{H\times W\times 3},y^s \in\set{0,1}^{H\times W\times K}}\) 
+$$
+\mathcal{D}^s =\set{(x^s ,y^s )|x^s \in \Reals^{H\times W\times 3},y^s \in\set{0,1}^{H\times W\times K}}
+$$
+​	不带标注的目标数据集（全景图像）表示为：</p>
+<p>\(\mathcal{D}^t =\set{(x^t )|x^t \in\Reals^{H\times W\times 3}}\) 
+$$
+\mathcal{D}^t =\set{(x^t )|x^t \in\Reals^{H\times W\times 3}}
+$$
+​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
 $$
 \mathcal{L}^s_{SEG}=-\textstyle\sum_{i,j,k=1}^{H,W,K}y^s_{(i,j,k)}log(p^s_{(i,j,k)})
 $$
