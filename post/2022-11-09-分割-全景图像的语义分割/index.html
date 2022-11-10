@@ -289,9 +289,9 @@
 </div>
 <br>
 <p>​	带标注的源数据集（针孔图像）表示为：</p>
-\(\mathcal{D}^s =\set{(x^s ,y^s) | x^s \in \Reals^{H\times W\times 3},y^s \in \set{0,1}^{H\times W\times K}}\)
+\(D^s =\set{(x^s ,y^s) | x^s \in \Reals^{H\times W\times 3},y^s \in \set{0,1}^{H\times W\times K}}\)
 <p>​	不带标注的目标数据集（全景图像）表示为：</p>
-\(\mathcal{D}^t =\set{(x^t ) | x^t \in \Reals^{H\times W\times 3}}\)
+\(D^t =\set{(x^t ) | x^t \in \Reals^{H\times W\times 3}}\)
 <p>​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
 $$
 \mathcal{L}^s_{SEG}=-\textstyle\sum_{i,j,k=1}^{H,W,K}y^s_{(i,j,k)}log(p^s_{(i,j,k)})
