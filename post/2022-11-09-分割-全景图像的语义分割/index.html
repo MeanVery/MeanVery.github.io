@@ -31,7 +31,7 @@
 可变形片嵌入（Deformable Patch Embedding, DPE）
 位于初始的图片序列化阶段，以及中间的特征阐释阶段，使得模型可以在学习全景图片失真的同时保持其语义信息。
 可变形多层感知机（Deformable MLP, DMLP）
-位于特征解析阶段，我们将片与学习到的空间补偿混合，以增强对全局上下文的建模。
+位于特征解析阶段，我们将片与学习到的空间偏移混合，以增强对全局上下文的建模。
 ​	标注丰富的针孔图像与标注稀缺的全景图像间的不匹配问题，也可以通过无监督域自适应（Unsupervised Domain Adaptation, UDA）方法来解决，其中，将带标注的 2 维针孔图像作为源图像，将全景图像作为目标图像。根据之前的工作，作者将这种方案称为 PIN2PAN。可以看出，这样做避免了对全景图像进行标注的昂贵代价，同时又使用了大规模的带标注数据来训练鲁棒的用于分割的 Transformer。
 ​	与 UDA 的常见对抗性学习和伪标签自学习方法不同，作者提出了共同原型适应（Mutual Prototypical Adaptation, MPA），它生成针孔图像特征和全景图像多尺度嵌入特征的共同原型，提取了两个领域的原型知识，并被证实效果优于把两个领域分开提取。作者展示了 MPA 以联合方式与伪标签一起工作，在特征空间中提供了互补的匹配激励。" />
   <meta name="author" content="MeanVery" />
@@ -92,7 +92,7 @@
   <meta itemprop="name" content="分割-全景图像的语义分割">
 <meta itemprop="description" content="Panoramic Semantic Segmentation"><meta itemprop="datePublished" content="2022-11-09T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-09T00:00:00+00:00" />
-<meta itemprop="wordCount" content="551">
+<meta itemprop="wordCount" content="531">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -202,7 +202,7 @@
 </li>
 <li>
 <p>可变形多层感知机（Deformable MLP, DMLP）</p>
-<p>位于特征解析阶段，我们将片与学习到的空间补偿混合，以增强对全局上下文的建模。</p>
+<p>位于特征解析阶段，我们将片与学习到的空间偏移混合，以增强对全局上下文的建模。</p>
 </li>
 </ul>
 <p>​	标注丰富的针孔图像与标注稀缺的全景图像间的不匹配问题，也可以通过无监督域自适应（Unsupervised Domain Adaptation, UDA）方法来解决，其中，将带标注的 2 维针孔图像作为源图像，将全景图像作为目标图像。根据之前的工作，作者将这种方案称为 PIN2PAN。可以看出，这样做避免了对全景图像进行标注的昂贵代价，同时又使用了大规模的带标注数据来训练鲁棒的用于分割的 Transformer。</p>
@@ -236,25 +236,21 @@
 <br>
 <p>​	为了探索全景语义分割的 Transformer 模型，作者设计了 T（Tiny）和 S（Small）两个版本的 Trans4PASS 模型，T 和 S 模型都有4个阶段，对于 T 模型的 4 个阶段，每个阶段包含 2 层；对于 S 模型的 4 个阶段，分别包含 3，4，6，3 层。如上图所示，特征维度随着深度变大而减小。</p>
 <p>​	对于一张 \(H \times W \times 3\) 的输入图片，Trans4PASS 使用 PE 模块（Patch Embedding Module）将图片划分成小片。</p>
-<p>​	为了处理全景图像中严重的失真，可变形片嵌入（Deformable Patch Embedding, DPE）被用于编码器和解码器。在编码器中，每个在第 \(l^th\) 个阶段的特征图 \(f_l \in {f_1,f_2,f_3,f_4}\) ，被其对应的第 \(l^th\) 个步长下采样， \(l^th stride \in {4,8,16,32}\) 。通道的维度 \(C_l \in {64,128,320,512}\) 逐步增加。</p>
+<p>​	为了处理全景图像中严重的失真，可变形片嵌入（Deformable Patch Embedding, DPE）被用于编码器和解码器。在编码器中，每个在第 \(l^{th}\) 个阶段的特征图 \(f_l \in {f_1,f_2,f_3,f_4}\) ，被其对应的第 \(l^{th}\) 个步长下采样， \(l^{th} stride \in {4,8,16,32}\) 。通道的维度 \(C_l \in {64,128,320,512}\) 逐步增加。</p>
 <p>​	和类似 FPN 的编码器与基于 vanilla-MLP 的编码器不同，作者人提出了可变形多层感知机（DMLP）编码器结构，可以混合由可变形片嵌入（DPE）得到的特征片。</p>
-<p>​	基于编码器提取到的 4 个多尺度特征，4 个可变形解码器层将其处理成尺寸都为 \(H/4 \times W/4 \times C_emb\) 的形状，此处作者设 \(C_emb=128\) 。随后在线性层中将 128 个通道变换为和待分的类别数量相等。</p>
+<p>​	基于编码器提取到的 4 个多尺度特征，4 个可变形解码器层将其处理成尺寸都为 \(H/4 \times W/4 \times C_{emb}\) 的形状，此处作者设 \(C_emb=128\) 。随后在线性层中将 128 个通道变换为和待分的类别数量相等。</p>
 <h5 id="32-可变形片嵌入deformable-patch-embedding-dpe">3.2 可变形片嵌入（Deformable Patch Embedding, DPE）</h5>
 <p>​	360 度相机捕捉的球形拓扑图像在极坐标系中的范围可表示为： \(\theta \in [0,2\pi), \phi \in[0,\pi]\) 。为了将其在 2 维空间内呈现，人们通常使用等矩形投影法（equirectangular projection）在类欧几里得空间（euclidean-like space）中将球形数据转换为全景格式，这就会导致严重的形状畸变，固定采样位置的常用片嵌入模块不能合理反映这些形状畸变以及全面的场景。</p>
 <p>​	受到可变形卷积、重叠片嵌入的启发，作者提出了可变形片嵌入，并将其应用到编码器和解码器的输入上，划分全景图片和特征。对一张输入的图片或者特征图，设其尺寸为 \(f \in \Reals^{H \times W        \times C_{in} } \) 。</p>
-<p>​	一个标准的片嵌入模块将其划分为一个 2 维的片序列 \(z \in \Reals^{ HW / s^2 \times s^2 C_{in}}\) 。_其中 \(HW / s^2 \) 是片的数量，s 是片的边长，该序列的每个元素都被传输到一个线性投影层，将其维度变换为 \(C_{out}\) 。</p>
+<p>​	一个标准的片嵌入模块将其划分为一个 2 维的片序列 \(z \in \Reals^{ HW / s^2 \times s^2 C\_{in}}\) 。其中 \(HW / s^2 \) 是片的数量，s 是片的边长，该序列的每个元素都被传输到一个线性投影层，将其维度变换为 \(C_{out}\) 。</p>
 <p>​	考虑 z 中的一个片，作者对位置 \((i,j)|i,j \in [1,s]\) 定义了一个相对位置偏移，对于一个标准的片嵌入，这些偏移均位于 \(\Delta_{(i,j)} \in [\lfloor -s/2 \rfloor,\lfloor s/2 \rfloor]^2\) 。</p>
 <p>​	作者想要在片嵌入阶段直接解决由等矩形投影法引起的失真，因此在可变形片嵌入中，作者让模型去学习一个数据相关的补偿 \(\Delta^{DPE} \in \N^{H \times W \times 2}\) ，可以更好地处理物体之间的空间关联。</p>
 <p>​	DPE 本身是可学习的，基于原始输入 \(f\) 来预测相对偏移。</p>
-<p>​	对于长度 H：
-$$
-\Delta^{DPE}<em>{(i,j)}=[min(max(-\frac{H}{r},g(f)</em>{(i,j)}),\frac{H}{r})]
-$$
-​	对于宽度 W，类似地有：
-$$
-\Delta^{DPE}<em>{(i,j)}=[min(max(-\frac{W}{r},g(f)</em>{(i,j)}),\frac{W}{r})]
-$$
-​	其中， \(g(\cdot)\) 是偏移预测函数，是通过可变形卷积操作来实现的。超参数 r 是为了限制偏移量，在实验中作者将其设为 4。学习到的偏移使得 DPE 具有自适应性同时可以感知图片失真。</p>
+<p>​	对于长度 H：</p>
+<p>​	\(\Delta^{DPE}_{(i,j)}=[min(max(-\frac{H}{r},g(f)_{(i,j)}),\frac{H}{r})]\)</p>
+<p>​	对于宽度 W，类似地有：</p>
+<p>​	\(\Delta^{DPE}_{(i,j)}=[min(max(-\frac{W}{r},g(f)_{(i,j)}),\frac{W}{r})]\)</p>
+<p>​	其中， \(g(\cdot)\) 是偏移预测函数，是通过可变形卷积操作来实现的。超参数 r 是为了限制偏移量，在实验中作者将其设为 4。学习到的偏移使得 DPE 具有自适应性同时可以感知图片失真。</p>
 <p>​	作者提出的 DPE 被设计用于像素级预测任务，可以灵活地取代 raw PE 而无需耦合之前的迭代。直觉上，带有 DPE 的模型可以从针孔图像获取知识，通过获取数据中的严重变形，更好地适应全景图像中的失真。</p>
 <h5 id="33-可变形多层感知机deformable-mlp-dmlp">3.3 可变形多层感知机（Deformable MLP, DMLP）</h5>
 <p>​	除了编码器的特殊设计，带有自适应特征解析能力的解码器对分割 Transformer 非常重要。</p>
@@ -270,27 +266,15 @@ $$
 <br>
 <p>​	上图展示了不同的基于 MLP 的模型差异，vanilla MLP 执行传统线性投影，不学习任何空间上下文信息；CycleMLP 有一个人为设限的空间接收域，固定的混合片偏移；对于 DMLP，则是以自适应的方式生成一个学习得到的更广范围上的空间偏移。</p>
 <p>​	给定输入特征图 \(f \in \Reals^{H \times W \times C\_{in}} \) ，空间偏移被逐通道预测，公式和 \(\Delta^{DPE}\_{(i,j)}\) 的预测相同。然后展开为 \(\Delta^{DMLC}_{(k,c)}\) 。</p>
-<p>​	对于最终的混合特征 \(z \in \Reals^{HW \times C_{in} } \) ，满足如下公式：
-$$
-\hat{z}<em>{(k,c)}=\sum</em>{\mathclap{1\le k\le HW}}\space\space\space\space\space\space\space\sum_{\mathclap{1\le c\le C_{in}}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}
-$$
-​	其中， \(w \in \Reals^{C_{in} \times C\_{out}} \) 是全连接层的权重矩阵。</p>
-<p>​	四个阶段的编码器结果可以依次表示如下：
-$$
-\hat{z}<em>l=DPE(C_l,C</em>{emb})(z_l),\forall l\in \set{1,2,3,4}
-$$</p>
-<p>$$
-\hat{z}<em>l=DMLP(C</em>{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l
-$$</p>
-<p>$$
-\hat{z}<em>l=MLP(C</em>{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l
-$$</p>
-<p>$$
-\hat{z}_l=Up(H/4,W/4)(\hat{z}_l),\forall l
-$$</p>
-<p>$$
-p=LN(C_{emb},C_K)(\sum_{\mathclap{l=1}}\hat{z}_l)
-$$</p>
+<p>​	对于最终的混合特征 \(z \in \Reals^{HW \times C_{in} } \) ，满足如下公式：</p>
+\(\hat{z}_{(k,c)}=\sum_{\mathclap{1\le k\le HW}}\space\space\space\space\space\space\space\sum_{\mathclap{1\le c\le C_{in}}}w^T_{(k,c)}\cdot z_{(k+\Delta^{DMLP}_{(k,c)},c)}\)
+<p>​	其中， \(w \in \Reals^{C_{in} \times C\_{out}} \) 是全连接层的权重矩阵。</p>
+<p>​	四个阶段的编码器结果可以依次表示如下：</p>
+\(\hat{z}_l=DPE(C_l,C_{emb})(z_l),\forall l\in \set{1,2,3,4}\)
+\(\hat{z}_l=DMLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\)
+\(\hat{z}_l=MLP(C_{emb},C_{emb})(\hat{z}_l)+\hat{z},\forall l\)
+\(\hat{z}_l=Up(H/4,W/4)(\hat{z}_l),\forall l\)
+\(p=LN(C_{emb},C_K)(\sum_{\mathclap{l=1}}\hat{z}_l)\)
 <p>​	其中 \(Up(\cdot)\) 和 \(LN(\cdot)\) 分别表示上采样和层标准化， \(p\) 是 \(K\) 个类别的预测。</p>
 <h5 id="34-共同原型自适应mutual-prototypical-adaptation-mpa">3.4 共同原型自适应（Mutual Prototypical Adaptation, MPA）</h5>
 <p>​	由于全景图片领域缺乏大规模的训练数据，作者把目光投向了源自于语义原型的 PIN2PAN 领域自适应，提出了共同原型自适应（MPA），通过源图像真实标签和伪标签来得到原型，再从原型中提取知识。其中，伪标签依赖于针孔图像和全景图像之间少有的共同属性，例如镜头前方角度的场景分布。</p>
@@ -304,15 +288,11 @@ $$</p>
     </center>
 </div>
 <br>
-<p>​	带标注的源数据集（针孔图像）表示为：
-$$
-\mathcal{D}^s=\set{(x^s,y^s)|x^s\in\Reals^{H\times W\times 3},y^s\in\set{0,1}^{H\times W\times K}}
-$$
-​	不带标注的目标数据集（全景图像）表示为：
-$$
-\mathcal{D}^t=\set{(x^t)|x^t\in\Reals^{H\times W\times 3}}
-$$
-​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
+<p>​	带标注的源数据集（针孔图像）表示为：</p>
+\(\mathcal{D}^s=\set{(x^s,y^s)|x^s\in\Reals^{H\times W\times 3},y^s\in\set{0,1}^{H\times W\times K}}\)
+<p>​	不带标注的目标数据集（全景图像）表示为：</p>
+\(\mathcal{D}^t=\set{(x^t)|x^t\in\Reals^{H\times W\times 3}}\)
+<p>​	领域自适应的目标是，从源图像学习语义并通过 K 个共享属性迁移到目标领域，该网络的训练是在 \(D^s\) 上进行的，其损失函数如下：
 $$
 \mathcal{L}^s_{SEG}=-\textstyle\sum_{i,j,k=1}^{H,W,K}y^s_{(i,j,k)}log(p^s_{(i,j,k)})
 $$
@@ -328,9 +308,7 @@ $$
 P^{t+1}_k\leftarrow mP^{t-1}_k+(1-m)P^t_k,momentum\space m=0.999
 $$
 ​	共同原型自适应的损失函数受到了知识蒸馏损失的启发，可以使得源嵌入特征趋近于原型特征，目标特征具有与源嵌入特征相同的形状，相似的计算，为了简洁，以下只给出源嵌入特征的损失函数：</p>
-<p>$$
-\mathcal{L}^s_{MPA}=-\lambda\mathcal{T}^2KL(\phi(\hat{f^s/\mathcal{T}})||\phi(f^s/\mathcal{T}))\-(1-\lambda)CE(y^s,\phi(f^s))
-$$</p>
+\(\mathcal{L}^s_{MPA}=-\lambda\mathcal{T}^2KL(\phi(\hat{f^s/\mathcal{T}})||\phi(f^s/\mathcal{T}))\\-(1-\lambda)CE(y^s,\phi(f^s))\)
 <p>​	其中， \(KL(\cdot)\) 表示 K-L 散度，用于量化两种概率分布之间的差异； \(CE(\cdot)\) 表示交叉熵损失函数； \(\phi(\cdot)\) 表示 Softmax 函数。 \(\mathcal{T},\lambda\) 为超参数。</p>
 <p>​	最终的损失函数通过权重 \(\alpha=0.001\) 结合起来，公式如下：
 $$
