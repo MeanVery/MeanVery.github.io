@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>分割-从语义到实例 - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="Beyond Semantic to Instance Segmentation: Weakly-Supervised Instance Segmentation via Semantic Knowledge Transfer and Self-Refinement 摘要（Abstract） ​	弱监督实例学习（Weakly-Supervised Instance Segmentation, WSIS）被认为是比弱监督语义学习（Weakly-Supervised Semantic Segmentation, WSSS）更加具有挑战的任务。和 WSSS 相比，WSIS 需要逐语义对象定位，这在只给出了图片标签的任务中是比较困难的。为了解决这个问题，大多数的 WSIS 方法使用了现有的提案技术，这需要带有实例或者物体水平标注的预训练，并且这样做也违背了全图级别监督的基本定义。
+​	在本文中，作者提出了一个新颖的方法，其中包含两个创新设计。第一，为了摒弃对现有实例提案（proposals）的需求，作者提出了语义知识迁移，通过迁移 WSSS 的知识到 WSIS 来获得伪实例标签。第二，作者提出了一个自优化方法，在自监督方案下优化伪实例标签，并使用优化后的标签在联网方式下进行训练。
+​	同时，作者发现了一个错误现象“语义漂移”（Semantic Drift），是由伪标签被分类为背景时导致的实例缺失引起的。语义漂移导致了背景和语义的混淆，使得分割能力变差。而作者提出的自优化方法可以解决语义漂移问题。
+​	在 PASCAL VOC 2012 和 MS COCO 数据集上的广泛实验显示了作者提出的方法的有效性，且是在没有使用现成提案技术的基础上达到了较好的表现。
+1. 介绍（Introduction） ​	在广泛使用类激活图（Class Activation Maps, CAMs）在图片级别标注的数据集上，获得逐类别定位图的基础上，弱监督语义学习已经取得了巨大的成就。但是 CAMs 没有提供逐实例的定位图，所以使用图片级别标注的弱监督实例分割仍然是一个未解决的问题。
+​	为了提取逐实例的信息，大多 WSIS 方法使用了现成的提案技术。PRM 从 MCG 生成的分割建议中获取合适的实例掩码，并生成伪实例标签。LIID 使用了一个预训练的显著性实例分割器，可以生成类别无关的实例级别的掩码。作者注意到 MCG 和显著性实例分割器分别需要使用带物体边界标注的预训练和类别无关的实例掩码。
+提案引导的 WSIS 的两个限制​	如上图，提案引导的 WSIS 方法的两个限制：第一，对现有提案方法的依赖性极高，由于提案技术常常针对普通物体，使得模型难以泛化到其他特定的领域比如医学图像；另外，严格地说，使用提案技术并用物体或者实例标注的数据集进行训练，违背了图片级别监督分割的定义。第二，这些方法无法解决，因为包含缺失实例和噪音的，伪实例标签引起的效果变差。上图中，尽管所有的奶牛在视觉语义上相似，左边两个缺失的奶牛被引导为背景类别，右边的奶牛被引导为奶牛类。作者称这种问题为语义漂移。在背景和实例之间的语义漂移使得网络发生混淆并弱化了收敛能力。" />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="分割-从语义到实例" />
+<meta property="og:description" content="Beyond Semantic to Instance Segmentation" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/2022-11-14-%E5%88%86%E5%89%B2-%E4%BB%8E%E8%AF%AD%E4%B9%89%E5%88%B0%E5%AE%9E%E4%BE%8B/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-11-14T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="分割-从语义到实例">
+<meta itemprop="description" content="Beyond Semantic to Instance Segmentation"><meta itemprop="datePublished" content="2022-11-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-11-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="320">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="分割-从语义到实例"/>
+<meta name="twitter:description" content="Beyond Semantic to Instance Segmentation"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      <time>Nov 14, 2022</time>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>分割-从语义到实例</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<h2 id="beyond-semantic-to-instance-segmentation-weakly-supervised-instance-segmentation-via-semantic-knowledge-transfer-and-self-refinement">Beyond Semantic to Instance Segmentation: Weakly-Supervised Instance Segmentation via Semantic Knowledge Transfer and Self-Refinement</h2>
+<h4 id="摘要abstract">摘要（Abstract）</h4>
+<p>​	弱监督实例学习（Weakly-Supervised Instance Segmentation, WSIS）被认为是比弱监督语义学习（Weakly-Supervised Semantic Segmentation, WSSS）更加具有挑战的任务。和 WSSS 相比，WSIS 需要逐语义对象定位，这在只给出了图片标签的任务中是比较困难的。为了解决这个问题，大多数的 WSIS 方法使用了现有的提案技术，这需要带有实例或者物体水平标注的预训练，并且这样做也违背了全图级别监督的基本定义。</p>
+<p>​	在本文中，作者提出了一个新颖的方法，其中包含两个创新设计。第一，为了摒弃对现有实例提案（proposals）的需求，作者提出了语义知识迁移，通过迁移 WSSS 的知识到 WSIS 来获得伪实例标签。第二，作者提出了一个自优化方法，在自监督方案下优化伪实例标签，并使用优化后的标签在联网方式下进行训练。</p>
+<p>​	同时，作者发现了一个错误现象“语义漂移”（Semantic Drift），是由伪标签被分类为背景时导致的实例缺失引起的。语义漂移导致了背景和语义的混淆，使得分割能力变差。而作者提出的自优化方法可以解决语义漂移问题。</p>
+<p>​	在 PASCAL VOC 2012 和 MS COCO 数据集上的广泛实验显示了作者提出的方法的有效性，且是在没有使用现成提案技术的基础上达到了较好的表现。</p>
+<h4 id="1-介绍introduction">1. 介绍（Introduction）</h4>
+<p>​	在广泛使用类激活图（Class Activation Maps, CAMs）在图片级别标注的数据集上，获得逐类别定位图的基础上，弱监督语义学习已经取得了巨大的成就。但是 CAMs 没有提供逐实例的定位图，所以使用图片级别标注的弱监督实例分割仍然是一个未解决的问题。</p>
+<p>​	为了提取逐实例的信息，大多 WSIS 方法使用了现成的提案技术。PRM 从 MCG 生成的分割建议中获取合适的实例掩码，并生成伪实例标签。LIID 使用了一个预训练的显著性实例分割器，可以生成类别无关的实例级别的掩码。作者注意到 MCG 和显著性实例分割器分别需要使用带物体边界标注的预训练和类别无关的实例掩码。</p>
+<div>
+    <center>
+    <img src="/bestie1.png"
+         alt="提案引导的 WSIS 的两个限制"
+         style="zoom:60%"/>
+    提案引导的 WSIS 的两个限制
+    </center>
+</div>
+<br>
+<p>​	如上图，提案引导的 WSIS 方法的两个限制：第一，对现有提案方法的依赖性极高，由于提案技术常常针对普通物体，使得模型难以泛化到其他特定的领域比如医学图像；另外，严格地说，使用提案技术并用物体或者实例标注的数据集进行训练，违背了图片级别监督分割的定义。第二，这些方法无法解决，因为包含缺失实例和噪音的，伪实例标签引起的效果变差。上图中，尽管所有的奶牛在视觉语义上相似，左边两个缺失的奶牛被引导为背景类别，右边的奶牛被引导为奶牛类。作者称这种问题为语义漂移。在背景和实例之间的语义漂移使得网络发生混淆并弱化了收敛能力。</p>
+<p>​	在文章中，作者提出了一种新的 WSIS 方法 BESTIE （BEyond Semantic segmentation To InstancE Segmentation）。BESTIE 不使用现有的提案技术，同时缓解了语义漂移问题。为了实现这两个目的，BESTIE 提出了两个新颖的结构：语义知识迁移，自优化。</p>
+<p>​	具体地说，在语义知识迁移中，作者迁移已被深入研究的 WSSS 知识到 WSIS 中，去产生粗略的伪实例标签。为了从图片级别标注中获得实例提示，作者提出了峰值注意力模块（Peak Attention Module, PAM）使得原本稀疏的目标物体区域在 CAM 中被突出。</p>
+<p>​	另外，为了解决语义漂移问题，作者提出了实例感知引导（Instance-aware Guidance），动态地将引导区域指定到和标签对应的实例区域。这种策略使得网络的训练更加稳定，并捕捉缺失实例的信息。沿着这个思路，为了进一步优化伪标签，作者提出了自监督实例标签优化方法（简称“自优化”），通过自监督的方式将假负的伪标签变为真正，并通过在线方式反映到训练中。</p>
+<p>​	文章的主要贡献如下：</p>
+<ul>
+<li>提出了新的 WSIS 方法，只使用图片级别标注，不需要经过物体级别或者实例级别标注预训练过的提案技术；</li>
+<li>设计了语义知识迁移策略来获取伪实例标签，从峰值注意力模块中提取到的 WSSS 和实例线索的知识，迁移到 WSIS，避免使用现有的提案方法；</li>
+<li>提出了自优化方法在自监督方式下优化伪实例标签，并通过在线方式反映在训练中。并引入了实例感知引导策略解决“语义漂移”问题。</li>
+</ul>
+<h4 id="2-相关工作related-work">2. 相关工作（Related Work）</h4>
+<h5 id="21-弱监督语义分割weakly-supervised-semantic-segmentation">2.1 弱监督语义分割（Weakly-Supervised Semantic Segmentation）</h5>
+<p>​	为了避免使用显著性图，显著性无关的方法也被提出。RRM 使用了端到端的方式来通过可靠的像素联合 CAMs 和分割输出来产生伪标签。 PMM 通过参数平滑提出了成比例的伪掩码生成。</p>
+<h5 id="22-实例分割instance-segmentation">2.2 实例分割（Instance Segmentation）</h5>
+<p>​	应用最广泛的方法是基于区域框的两阶段法比如 Mask R-CNN，首先预测一个边界框，然后为每个边界框提取实例掩码。最近也有无需边界框的一步方法，用 2 维的偏移向量代表每个实例。每个实例的中心则是通过中心热力图提取，或者聚类 2 维偏移向量。</p>
+<h5 id="23-弱监督实例分割weakly-supervised-instance-segmentation">2.3 弱监督实例分割（Weakly-Supervised Instance Segmentation）</h5>
+<p>​	主要的困难在于从图片级别标注中获得实例级别的信息。如果采用已有的图片级别标注，则很难泛化到其他领域；如果不使用，又很难获得准确的实例级别的信息。</p>
+<p>​	同时作者注意到现有的方法都没有考虑缺失的实例对象引发的语义漂移问题。</p>
+<h4 id="3方法论methodology">3.方法论（Methodology）</h4>
+<h5 id="31-概述overview">3.1 概述（Overview）</h5>
+<div>
+    <center>
+    <img src="/bestie2.png"
+         alt="总体框架示意图"
+         style="zoom:60%"/>
+    总体框架示意图
+    </center>
+</div>
+<br>
+<p>​	上图左侧显示了使用 WSSS 知识迁移和实例线索，获得伪实例标签。实例线索来自峰值注意力模块处理的图片级别标注数据集。然后上图右侧显示了使用自监督伪标签优化过程。</p>
+<h5 id="32-初始实例表达preliminary-instance-representation">3.2 初始：实例表达（Preliminary: Instance Representation）</h5>
+<p>​	受到 Panoptic-DeepLab 的启发，作者用一个中心点和相应的 2 维偏移向量来表示实例。 2 维偏移向量表明了每个实例的中心点。使用该方法，作者构建了遵循 Panoptic-DeepLab 的实例分割结构，其中包含了 3 个输出分支：语义分割图、中心图、偏移图。语义分割图决定了前景的区域。在后续处理中，作者从中心图中为每个实例提取中心点。其中，在中心图里，最大池化前后像素位置不变的点被认为是中心点。然后，作者在像素级水平为每个实例分配代号，这个过程被称为实例分组。当被提取的第 n 个中心点被表示为\((x_n, y_n)\) ，在像素（i，j）处的偏移图被表示为\(\mathcal{O}(i,j)\) ，则在像素（i，j）处的代号\(k_{i,j}\) 计算如下：
+$$
+k_{i,j}=argmin_k||(x_k,y_k)-((i,j)+\mathcal{O}(i,j))||&hellip;&hellip;(1)
+$$</p>
+<h5 id="33-语义知识迁移semantic-knowledge-transfer">3.3 语义知识迁移（Semantic Knowledge Transfer）</h5>
+<p>​		作者考虑了语义分割和实例分割的不同：第一，实例分割需要区分重叠在一起的对象，语义分割不用区分；第二，两种分割对于不重叠的目标对象都应给予相同的权重。</p>
+<p>​	基于 WSSS 的输出和实例线索，检查目标是否重叠，然后选取一个非重叠的掩码作为伪实例掩码。具体来说，在每个类别的 WSSS 输出中，使用连接成分标注（Connected Component Labeling, CCL）算法，获得了实例掩码候选对象，检查对象中实例线索的数量，选择其中仅包含一条实例线索的候选对象作为伪实例掩码。</p>
+<div>
+    <center>
+    <img src="/bestie3.png"
+         alt="峰值注意力模块 PAM 示意图"
+         style="zoom:60%"/>
+    峰值注意力模块 PAM 示意图
+    </center>
+</div>
+<br>
+<p>​	作者提出了峰值注意力模块 PAM 来为每个实例提取一个合适的实例线索。PAM 旨在强化峰值注意力，同时弱化干扰区域的注意力。PAM 包含了 3 个部分，选择器、控制器、峰值刺激器。定义过渡特征图 \(X \in \Reals^{H \times W \times K}\) ，选择器使用 X 的全局最大池化选择峰值区域的标准点 \(S_p \in \Reals^{1 \times 1 \times K}\) 。控制器决定了对峰值区域的强化程度，被定义为 \(G_p \in [0,1]^{1 \times 1 \times K}\) 。实际上对峰值区域的强化是通过对噪音区域注意力进行弱化和停用来实现的。特别地，\(\tau_p=S_p \cdot G_p\) 表示了峰值区域的边界，其中\(\cdot\) 表示逐元素相乘。X 高于\(\tau_p\) 被视为峰值区域，否则被视为噪音区域。作者直接将噪音区域的值设为 0 来达到弱化的目的。</p>
+<p>​	对于控制器，\(G_p\) 的所有元素被设置为常量\(\alpha\) 。PAM 被接入到分类器，最终生成稀疏的物体表达区域，然后提取该处的最大值点作为实例线索。PAM 不需要额外的训练参数，且带有的分类器和 PAM 一起在二元交叉熵损失函数控制下进行优化，实现自适应聚焦峰值区域并增强分类能力。</p>
+<h5 id="34-实例感知引导instance-aware-guidance">3.4 实例感知引导（Instance-aware Guidance）</h5>
+<p>​	在实例表示中，偏移图和中心图表示由语义分割图确定的前景区域内的实例级信息。这意味着偏移图和中心图的背景区域可以视为被忽略的区域。相应地，将偏移图和中心图的引导区域动态分配给仅标记实例的区域；这种策略被称为实例感知引导，有助于缓解语义漂移问题，因为缺失实例的偏移图和中心图的区域没有反映在目标函数中。</p>
+<h5 id="35-自监督伪标签优化self-supervised-pseudo-label-refinement">3.5 自监督伪标签优化（Self-Supervised Pseudo Label Refinement）</h5>
+<p>​	即使缓解了语义漂移问题，伪标签中“真正”的数量依然不足以用于训练。因此作者提出了一个自监督的伪标签优化策略，简称为自优化策略，通过自监督的方式将“假负”转换为“真正”，同时及时反映到训练中的优化标签中。</p>
+<p>​	使用实例引导感知和伪实例标签训练的网络稳定地改善了泛化能力并且逐渐捕捉到缺失的实例信息。之后，作者通过公式（1）来进行实例分组。并通过实例分组产生的实例掩码来生成优化的偏移图和中心图。最后，优化后的图像又继续作为网络的引导。</p>
+<p>​	为了更好地进行优化，作者通过对偏移图的 2 维向量进行中心聚类来提取中心点。即使在中心图中缺失了一些中心点，也可以通过对偏移图使用中心聚类来补充中心点。</p>
+<p>​	对网络的训练则同时使用伪标签和优化后的标签。定义语义分割图，偏移图和中心图分别为：\(\mathcal{S}(\cdot),\mathcal{O}(\cdot),\mathcal{C}(\cdot),\) 。对偏移图和中心图的实例引导，从伪标签和优化后标签中收集一套带标注的像素，并分别定义为\(\mathcal{P}_{pseudo},\mathcal{P}_{refined}\) 。为了把优化后的标签作为软标签使用，作者设计了一个权重掩码\(\mathcal{W}(i,j)\) ：
+$$
+\mathcal{W}^n(i,j) = \begin{cases}\mathcal{C}(x_n,y_n) &amp;(i,j)\in \mathcal{P}^n_{pseudo} \ 0 &amp; otherwise\end{cases}
+$$
+​	优化后的标签的第 n 个实例中心点定义为\((x_n,y_n)\) ，同时\(\mathcal{C}(x_n,y_n)\) 表示第 n 个实例的置信分数。\(\mathcal{W}\) 被用作优化后标签的目标函数的权重。</p>
+<p>​	中心图的目标函数定义如下：
+$$
+\mathcal{L}<em>{center}=\frac{1}{|\mathcal{P}</em>{pseudo}|}\textstyle\sum_{(i,j)\in\mathcal{P}<em>{pseudo}}\bigg(\mathcal{C}(i,j)-\hat{\mathcal{C}}(i,j)\bigg)^2\+\frac{1}{|\mathcal{P}</em>{refined}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{refined}}\mathcal{W}(i,j)\cdot\bigg(\mathcal{C}(i,j)-\tilde{\mathcal{C}}(i,j)\bigg)^2
+$$
+​	其中\(\hat{\mathcal{C}}(i,j),\tilde{\mathcal{C}}(i,j)\) 分别为伪标签和优化后标签的中心图。</p>
+<p>​	偏移图的目标函数定义如下：
+$$
+\mathcal{L}<em>{offset}=\frac{1}{|\mathcal{P}</em>{pseudo}|}\textstyle\sum_{(i,j)\in\mathcal{P}<em>{pseudo}}|\mathcal{O}(i,j)-\hat{\mathcal{O}}(i,j)|\+\frac{1}{|\mathcal{P}</em>{refined}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{refined}}\mathcal{W}(i,j)\cdot|\mathcal{O}(i,j)-\tilde{\mathcal{O}}(i,j)|
+$$
+​	其中\(\hat{\mathcal{O}}(i,j),\tilde{\mathcal{O}}(i,j)\) 分别为伪标签和优化后标签的中心图。</p>
+<p>​	最后，分割图的目标函数定义如下：
+$$
+\mathcal{L}<em>{sem}=\frac{1}{|\mathcal{P}</em>{sem}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{sem}}log\mathcal{S}(i,j)
+$$
+​	其中\(\hat{\mathcal{S}},\mathcal{P}_{sem}\) 分别是分割图和图中的像素集。</p>
+<p>​	网络通过如下综合的目标函数进行训练：
+$$
+\mathcal{L}=\lambda_{center}\mathcal{L}<em>{center}+\lambda</em>{offset}\mathcal{L}<em>{offset}+\lambda</em>{sem}\mathcal{L}_{sem}
+$$
+​	其中\(\lambda_{center}=200,\lambda_{offset}=0.01,\lambda_{sem}=1\) 为权重参数。</p>
+<p>​	通过自优化策略，伪标签转变为高质量的优化标签，在每一批次的训练中产生并及时更新。</p>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+     
+    <a class="next" href="https://meanvery.github.io/post/2022-11-10-%E5%88%86%E5%89%B2-%E5%BC%B1%E7%9B%91%E7%9D%A3%E7%9A%84%E5%AE%9E%E4%BE%8B%E5%88%86%E5%89%B2/"><span>分割-弱监督的实例分割</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>
