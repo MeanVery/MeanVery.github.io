@@ -185,7 +185,7 @@
 <p>​	为了提取逐实例的信息，大多 WSIS 方法使用了现成的提案技术。PRM 从 MCG 生成的分割建议中获取合适的实例掩码，并生成伪实例标签。LIID 使用了一个预训练的显著性实例分割器，可以生成类别无关的实例级别的掩码。作者注意到 MCG 和显著性实例分割器分别需要使用带物体边界标注的预训练和类别无关的实例掩码。</p>
 <div>
     <center>
-    <img src="/bestie1.png"
+    <img src="/bestie1.PNG"
          alt="提案引导的 WSIS 的两个限制"
          style="zoom:60%"/>
     提案引导的 WSIS 的两个限制
@@ -214,7 +214,7 @@
 <h5 id="31-概述overview">3.1 概述（Overview）</h5>
 <div>
     <center>
-    <img src="/bestie2.png"
+    <img src="/bestie2.PNG"
          alt="总体框架示意图"
          style="zoom:60%"/>
     总体框架示意图
@@ -232,7 +232,7 @@ $$</p>
 <p>​	基于 WSSS 的输出和实例线索，检查目标是否重叠，然后选取一个非重叠的掩码作为伪实例掩码。具体来说，在每个类别的 WSSS 输出中，使用连接成分标注（Connected Component Labeling, CCL）算法，获得了实例掩码候选对象，检查对象中实例线索的数量，选择其中仅包含一条实例线索的候选对象作为伪实例掩码。</p>
 <div>
     <center>
-    <img src="/bestie3.png"
+    <img src="/bestie3.PNG"
          alt="峰值注意力模块 PAM 示意图"
          style="zoom:60%"/>
     峰值注意力模块 PAM 示意图
