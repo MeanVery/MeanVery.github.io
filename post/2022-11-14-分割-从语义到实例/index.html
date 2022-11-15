@@ -88,7 +88,7 @@
   <meta itemprop="name" content="分割-从语义到实例">
 <meta itemprop="description" content="Beyond Semantic to Instance Segmentation"><meta itemprop="datePublished" content="2022-11-14T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-11-14T00:00:00+00:00" />
-<meta itemprop="wordCount" content="313">
+<meta itemprop="wordCount" content="314">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -254,15 +254,19 @@ $$
 ​	优化后的标签的第 n 个实例中心点定义为\((x_n,y_n)\) ，同时\(\mathcal{C}(x_n,y_n)\) 表示第 n 个实例的置信分数。 \(\mathcal{W}\) 被用作优化后标签的目标函数的权重。</p>
 <p>​	中心图的目标函数定义如下：</p>
 \(\mathcal{L}_{center}=\frac{1}{|\mathcal{P}_{pseudo}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{pseudo}}\bigg(\mathcal{C}(i,j)-\hat{\mathcal{C}}(i,j)\bigg)^2 \\+\frac{1}{|\mathcal{P}_{refined}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{refined}}\mathcal{W}(i,j)\cdot\bigg(\mathcal{C}(i,j)-\tilde{\mathcal{C}}(i,j)\bigg)^2\)
+<br>
 <p>​	其中\(\hat{\mathcal{C}}(i,j),\tilde{\mathcal{C}}(i,j)\) 分别为伪标签和优化后标签的中心图。</p>
 <p>​	偏移图的目标函数定义如下：</p>
 \(\mathcal{L}_{offset}=\frac{1}{|\mathcal{P}_{pseudo}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{pseudo}}|\mathcal{O}(i,j)-\hat{\mathcal{O}}(i,j)|\\+\frac{1}{|\mathcal{P}_{refined}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{refined}}\mathcal{W}(i,j)\cdot|\mathcal{O}(i,j)-\tilde{\mathcal{O}}(i,j)|\)
+<br>
 <p>​	其中\(\hat{\mathcal{O}}(i,j),\tilde{\mathcal{O}}(i,j)\) 分别为伪标签和优化后标签的中心图。</p>
 <p>​	最后，分割图的目标函数定义如下：</p>
 \(\mathcal{L}_{sem}=\frac{1}{|\mathcal{P}_{sem}|}\textstyle\sum_{(i,j)\in\mathcal{P}_{sem}}log\mathcal{S}(i,j)\)
+<p>​	<br></p>
 <p>​	其中\(\hat{\mathcal{S}},\mathcal{P}_{sem}\) 分别是分割图和图中的像素集。</p>
 <p>​	网络通过如下综合的目标函数进行训练：</p>
 \(\mathcal{L}=\lambda_{center}\mathcal{L}_{center}+\lambda_{offset}\mathcal{L}_{offset}+\lambda_{sem}\mathcal{L}_{sem}\)
+<br>
 <p>​	其中\(\lambda_{center}=200,\lambda_{offset}=0.01,\lambda_{sem}=1\) 为权重参数。</p>
 <p>​	通过自优化策略，伪标签转变为高质量的优化标签，在每一批次的训练中产生并及时更新。</p>
 </section>
