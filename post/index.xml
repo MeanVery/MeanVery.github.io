@@ -7,7 +7,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Mon, 14 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 15 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>分割-发现会动的物体</title>
+      <link>https://meanvery.github.io/post/2022-11-15-%E5%88%86%E5%89%B2-%E5%8F%91%E7%8E%B0%E4%BC%9A%E5%8A%A8%E7%9A%84%E7%89%A9%E4%BD%93/</link>
+      <pubDate>Tue, 15 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/2022-11-15-%E5%88%86%E5%89%B2-%E5%8F%91%E7%8E%B0%E4%BC%9A%E5%8A%A8%E7%9A%84%E7%89%A9%E4%BD%93/</guid>
+      <description>Discovering Objects that Can Move 摘要（Abstract） ​	本文研究了物体发现问题——在没有手动标签的情况下将对象从背景中分离出来。现有的方法利用外观的线索，如颜色、纹理和位置，将像素聚类成类似物体的区域。然而，仅依靠外观，这些方法无法在杂乱的场景中将物体与背景分离。这是一个基本的限制，因为对象的定义本质上是模糊的、上下文相关的。为了解决这种模糊性，本文选择关注动态物体——可以在世界中独立移动的实体。
+​	作者将最新的基于自动编码器的框架，从玩具合成图像扩展到复杂现实场景的无监督物体发现。为此，简化了它们的结构，并使用来自一般运动分割算法的弱学习信号来增强结果模型。实验表明，尽管只捕获了移动对象的一小部分，但该信号足以泛化，并完成对相应对象的移动和静态实例的分割。模型也可以扩展到一个新收集的具有街道驾驶场景的合成数据集。
+1. 介绍（Introduction） ​	物体是感知的关键。人们理解世界不是以像素或是表面的形式，而是通过一个个物体及其集合。在计算机视觉领域，最近已经在物体认知领域取得了一些进展，但是这些已有的方法都需要代价昂贵的大规模手工标注，并且只能发现固定物体列表中的对象。因此此从图片数据中直接发现物体，即以跨领域通用的方式发现物体，依然是一个等待解决的问题。
+​	让该问题显得尤其苦难的点在于，物体的概念是模糊的、上下文相关的。对一张汽车的照片，门和门把手既可以看成两个不同的物体，又可以看成一个整体。因此，超出受控场景时，试图基于外观，自动将对象从背景中分离出来的现有方法遭遇困难并不奇怪。
+​	特别地，基于图的推理的经典方法往往会过少或过度分割对象。基于学习的方法使用结构化生成网络，对物体发现进行建模，通常在自动编码器的过程中利用迭代推理，虽然已经被证明了有不错的结果，但这些方法通常局限于在简单背景上具有彩色几何图形的玩具图像，在复杂现实场景中则完全失效。、
+​	作者认为，虽然在静态的图片世界中物体定义的模糊性无法解决，但是当物体在动态的视频中，自然就与其他物体区分开来。具体地说，作者选择关注动态物体，并将其定义为能够在世界中独立移动的实体。独立的物体运动是一条强大的分组线索，已被证明可以驱动动物感知中的物体学习。
+​	在计算机视觉领域，已经有一系列关于运动分割的工作，研究基于光流（Optical Flow）自动将运动的物体从背景中分离出来。这些方法也已经在无监督和弱监督机器学习算法中发现了大量应用。
+​	在本文中，作者展示了运动分割如何作为引导去对实例分组，即使当它们处于静态。其方法基于 Locatello 提出的针对无监督物体发现的框架，作者也说明了如何将其进行修改以便可以从玩具图像泛化应用到现实视频。实际上是通过引入了时空记忆模块（Spatial-Temporal Memory Module），并简化了分组机制使得模型适应大分辨率和多物体场景，由此该结构可应用于任意长度的视频。
+​	然后作者演示了基于独立对象运动的归纳偏差对初始表示的重要性，以及初始表示捕获对象的程度。特别地，作者展示了运动分割是如何引导注意力机制去发现静态物体的。至关重要的是，作者证明了不同质量的运动分割——即使是稀疏和有噪声的情况下——也足以使模型偏向于分割运动和静态实例。并且该方法仅需要视频用作训练，并在推断时分割静态图片中的物体。
+2. 相关工作（Related Work） ​	在这项工作中，我们利用运动分割作为自底而上分组的学习信号来研究真实视频中的物体发现问题。下面，我们回顾了这些领域中最相关的工作。
+2.1 物体发现（Object discovery） ​	传统的计算机视觉将物体发现视为感知分组任务，通过一些低级或中级的规律，比如颜色、方向、文本，来将场景分割为类似物体的区域。但是，由于对外形的依赖，这些方法都没有很好的解决物体定义的内在模糊性。
+​	最近，基于学习的方法也被用于物体发现。在 Locatello 提出的 SlotAttention 框架中，首先用 CNN 对图片进行编码，然后进行迭代的注意力操作被用于将一套变量绑定到图片中，然后利用对这些变量的分开解码和联合，来重构图片。
+​	在本文中，作者通过修改 SlotAttention 的结构，使其可以衡量带有多个物体的大尺度场景，并以归纳偏差（Inductive bias）的形式引入了运动分割，最终该结构可以应用于真实的视频。另外，模型只需要使用运动作为解析学习信号，并且训练好的模型可以同时分割静态和动态实例。
+2.2 运动分割（Motion segmentation） ​	使用光流从背景中分离处物体，早期的方法跟踪流的单个像素，并根据共同命运原则对生成的轨迹进行聚类。这些方法虽然在运动分割的基准数据集上取得了不错的结果，但由于其本质是启发式的，所以不能很好地泛化。最近，基于学习的方法也被提出，Dave 的模型在 FlyingThings3D 数据集上训练，但是基于流提供的外型提取，可以泛化到真实视频。由于其良好的表现，本文作者也使用了 Dave 的方法。
+3.方法论（Method） ​	首先在 3.1 中介绍本文研究的基础，即 SlotAttention 框架用于无监督物体发现。</description>
+    </item>
+    
     <item>
       <title>分割-从语义到实例</title>
       <link>https://meanvery.github.io/post/2022-11-14-%E5%88%86%E5%89%B2-%E4%BB%8E%E8%AF%AD%E4%B9%89%E5%88%B0%E5%AE%9E%E4%BE%8B/</link>
@@ -21,15 +44,6 @@
 1. 介绍（Introduction） ​	在广泛使用类激活图（Class Activation Maps, CAMs）在图片级别标注的数据集上，获得逐类别定位图的基础上，弱监督语义学习已经取得了巨大的成就。但是 CAMs 没有提供逐实例的定位图，所以使用图片级别标注的弱监督实例分割仍然是一个未解决的问题。
 ​	为了提取逐实例的信息，大多 WSIS 方法使用了现成的提案技术。PRM 从 MCG 生成的分割建议中获取合适的实例掩码，并生成伪实例标签。LIID 使用了一个预训练的显著性实例分割器，可以生成类别无关的实例级别的掩码。作者注意到 MCG 和显著性实例分割器分别需要使用带物体边界标注的预训练和类别无关的实例掩码。
 提案引导的 WSIS 的两个限制​	如上图，提案引导的 WSIS 方法的两个限制：第一，对现有提案方法的依赖性极高，由于提案技术常常针对普通物体，使得模型难以泛化到其他特定的领域比如医学图像；另外，严格地说，使用提案技术并用物体或者实例标注的数据集进行训练，违背了图片级别监督分割的定义。第二，这些方法无法解决，因为包含缺失实例和噪音的，伪实例标签引起的效果变差。上图中，尽管所有的奶牛在视觉语义上相似，左边两个缺失的奶牛被引导为背景类别，右边的奶牛被引导为奶牛类。作者称这种问题为语义漂移。在背景和实例之间的语义漂移使得网络发生混淆并弱化了收敛能力。</description>
-    </item>
-    
-    <item>
-      <title>分割-弱监督的实例分割</title>
-      <link>https://meanvery.github.io/post/2022-11-10-%E5%88%86%E5%89%B2-%E5%BC%B1%E7%9B%91%E7%9D%A3%E7%9A%84%E5%AE%9E%E4%BE%8B%E5%88%86%E5%89%B2/</link>
-      <pubDate>Thu, 10 Nov 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://meanvery.github.io/post/2022-11-10-%E5%88%86%E5%89%B2-%E5%BC%B1%E7%9B%91%E7%9D%A3%E7%9A%84%E5%AE%9E%E4%BE%8B%E5%88%86%E5%89%B2/</guid>
-      <description>Beyond Semantic to Instance Segmentation: Weakly-Supervised Instance Segmentation via Semantic Knowledge Transfer and Self-Refinement 摘要（Abstract） 1. 介绍（Introduction） Trans4PASS 示意图2. 相关工作（Related Work） 2.1 弱监督语义分割（Weakly-Supervised Semantic Segmentation） 2.2 实例分割（Instance Segmentation） 2.3 弱监督实例分割（Weakly-Supervised Instance Segmentation） 3. 方法论（Methodology） 3.1 概述（Overview） 3.2 初始阶段：实例表达（Preliminary: Instance Representation） \(\) 3.3 语义知识迁移（Semantic Knowledge Transfer） 3.4 感知实例的引导（Instance-aware Guidance） 3.5 自监督伪标签调参（Self-Supervised Pseudo Label Refinement） </description>
     </item>
     
     <item>
