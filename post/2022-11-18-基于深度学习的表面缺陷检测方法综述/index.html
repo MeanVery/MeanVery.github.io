@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>基于深度学习的表面缺陷检测方法综述 - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="基于深度学习的表面缺陷检测方法综述1 摘要（Abstract） ​	本文对近年来基于深度学习的表面缺陷检测方法进行了梳理, 根据数据标签的不同将其分为全监督学习模型方法、无监督学习模型方法和其他方法三大类, 并对各种典型方法进一步细分归类和对比分析, 总结了每种方法的优缺点和应用场景。本文探讨了表面缺陷检测中三个关键问题, 介绍了 工业表面缺陷常用数据集。最后, 对表面缺陷检测的未来发展趋势进行了展望。
+0.介绍（Introduction） ​	表面缺陷检测，也被称为 AOI（Automated Optical Inspection）或者 ASI（Automated Surface Inspection）。
+​	通常利用被检表面或者缺陷的不同性质进行成像方案的设计，合理的成像方案有助于获得光照均匀的图像，并将物体表面缺陷明显地体现出来。此方法减轻了算法设计难度，但是增加了检测系统的应用成本，同时很多工业场景下，难以设计成像系统。
+1. 缺陷检测问题的定义 有监督的方法
+缺陷意味着数据集中特有的标注。更关注缺陷特征。
+无监督的方法
+更关注无缺陷样本的特征，当发现异常、没有见过的特征，视为检测缺陷。
+2. 表面缺陷检测的深度学习方法 2.1 表征学习 2.1.1 分类网络 直接利用网络分类 利用网络做缺陷定位 利用网络做特征提取器 分类网络各子方法优缺点对比2.1.2 检测网络 基于两阶段的缺陷检测网络 基于单阶段的缺陷检测网络 2.1.3 分割网络 FCN 方法 Mask R-CNN 方法 2.2 度量学习 ​	使用深度学习来学习输入的相似性度量。
+​	在缺陷分类任务中，往往采用孪生网络（Siamese network）进行度量学习。输入通常为 2 张或多张成对的图像，通过网络学习输入图片的相似度，判断是否属于同一类。
+​	度量学习可以近似看成样本在特征空间进行聚类。在表面缺陷定位领域应用不多，大部分都应用在缺陷分类任务。在缺陷定位方面，输入孪生网络的图像对需要具有统一的内容形式，要求比较严格，现阶段还无法适应复杂的工业环境。
+2.3 正常样本学习 ​	只需要正常无缺陷样本进行网络训练（one-stage learning）。当网络输入的样本存在缺陷时，往往会产生与正常样本不同的结果。能够检测到偏离预期的模式或者没有见过的模式。
+​	通常采用自编码器（autoencoder, AE）和 GAN。
+2.3.1 基于图像空间 ​	既能实现图像级别的分类和识别，也可以获取到缺陷的具体位置。" />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="基于深度学习的表面缺陷检测方法综述" />
+<meta property="og:description" content="深度学习, 表面缺陷检测, 机器视觉, 卷积神经网络" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/2022-11-18-%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-11-18T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="基于深度学习的表面缺陷检测方法综述">
+<meta itemprop="description" content="深度学习, 表面缺陷检测, 机器视觉, 卷积神经网络"><meta itemprop="datePublished" content="2022-11-18T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-11-18T00:00:00+00:00" />
+<meta itemprop="wordCount" content="122">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="基于深度学习的表面缺陷检测方法综述"/>
+<meta name="twitter:description" content="深度学习, 表面缺陷检测, 机器视觉, 卷积神经网络"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      <time>Nov 18, 2022</time>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>基于深度学习的表面缺陷检测方法综述</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<h2 id="基于深度学习的表面缺陷检测方法综述1">基于深度学习的表面缺陷检测方法综述<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></h2>
+<h4 id="摘要abstract">摘要（Abstract）</h4>
+<p>​	本文对近年来基于深度学习的表面缺陷检测方法进行了梳理, 根据数据标签的不同将其分为全监督学习模型方法、无监督学习模型方法和其他方法三大类, 并对各种典型方法进一步细分归类和对比分析, 总结了每种方法的优缺点和应用场景。本文探讨了表面缺陷检测中三个关键问题, 介绍了 工业表面缺陷常用数据集。最后, 对表面缺陷检测的未来发展趋势进行了展望。</p>
+<h4 id="0介绍introduction">0.介绍（Introduction）</h4>
+<p>​	表面缺陷检测，也被称为 AOI（Automated Optical Inspection）或者 ASI（Automated Surface Inspection）。</p>
+<p>​	通常利用被检表面或者缺陷的不同性质进行成像方案的设计，合理的成像方案有助于获得光照均匀的图像，并将物体表面缺陷明显地体现出来。此方法减轻了算法设计难度，但是增加了检测系统的应用成本，同时很多工业场景下，难以设计成像系统。</p>
+<h4 id="1-缺陷检测问题的定义">1. 缺陷检测问题的定义</h4>
+<ul>
+<li>
+<p>有监督的方法</p>
+<p>缺陷意味着数据集中特有的标注。更关注缺陷特征。</p>
+</li>
+<li>
+<p>无监督的方法</p>
+<p>更关注无缺陷样本的特征，当发现异常、没有见过的特征，视为检测缺陷。</p>
+</li>
+</ul>
+<h4 id="2-表面缺陷检测的深度学习方法">2. 表面缺陷检测的深度学习方法</h4>
+<h5 id="21-表征学习">2.1 表征学习</h5>
+<h6 id="211-分类网络">2.1.1 分类网络</h6>
+<ul>
+<li>直接利用网络分类</li>
+<li>利用网络做缺陷定位</li>
+<li>利用网络做特征提取器</li>
+</ul>
+<div>
+    <center>
+    <img src="/surfacedd1.PNG"
+         alt="分类网络各子方法优缺点对比"
+         style="zoom:60%"/>
+    分类网络各子方法优缺点对比
+    </center>
+</div>
+<br>
+<h6 id="212-检测网络">2.1.2 检测网络</h6>
+<ul>
+<li>基于两阶段的缺陷检测网络</li>
+<li>基于单阶段的缺陷检测网络</li>
+</ul>
+<h6 id="213-分割网络">2.1.3 分割网络</h6>
+<ul>
+<li>FCN 方法</li>
+<li>Mask R-CNN 方法</li>
+</ul>
+<h5 id="22-度量学习">2.2 度量学习</h5>
+<p>​	使用深度学习来学习输入的相似性度量。</p>
+<p>​	在缺陷分类任务中，往往采用孪生网络（Siamese network）进行度量学习。输入通常为 2 张或多张成对的图像，通过网络学习输入图片的相似度，判断是否属于同一类。</p>
+<p>​	度量学习可以近似看成样本在特征空间进行聚类。在表面缺陷定位领域应用不多，大部分都应用在缺陷分类任务。在缺陷定位方面，输入孪生网络的图像对需要具有统一的内容形式，要求比较严格，现阶段还无法适应复杂的工业环境。</p>
+<h5 id="23-正常样本学习">2.3 正常样本学习</h5>
+<p>​	只需要正常无缺陷样本进行网络训练（one-stage learning）。当网络输入的样本存在缺陷时，往往会产生与正常样本不同的结果。能够检测到偏离预期的模式或者没有见过的模式。</p>
+<p>​	通常采用自编码器（autoencoder, AE）和 GAN。</p>
+<h6 id="231-基于图像空间">2.3.1 基于图像空间</h6>
+<p>​	既能实现图像级别的分类和识别，也可以获取到缺陷的具体位置。</p>
+<ul>
+<li>利用网络实现样本重建和补全</li>
+<li>利用网络实现异常区域分类</li>
+</ul>
+<h6 id="232-基于特征空间">2.3.2 基于特征空间</h6>
+<h5 id="24-弱监督与半监督学习">2.4 弱监督与半监督学习</h5>
+<ul>
+<li>基于弱监督的方法是指采用图像级别标注（弱标签）来获取分割/定位级别的检测效果。</li>
+<li>半监督学习通常会使用大量未标记数据和少部分有标签的数据用于表面缺陷检测模型的训练。目前, 基于半监督的方法大部分用于解决缺陷分类或识别任 务, 还没有广泛应用到定位与分割任务中。</li>
+</ul>
+<h4 id="3-关键问题">3. 关键问题</h4>
+<h5 id="31-小样本">3.1 小样本</h5>
+<p>​	相比于 ImageNet 数据集中1400多万张样本数据，表面缺陷检测中面临的最关键的问题是小样本问题，在很多真实的工业场景下甚至只有几张或几十张缺陷图片。</p>
+<ul>
+<li>
+<p>数据扩增、合成与生成</p>
+<p>最常用的缺陷图像扩增方法是对原始缺陷样本采用镜像、旋转、平移、扭曲、滤波、对比度调整等多种图像处理操作来获取更多的样本.。</p>
+</li>
+<li>
+<p>网络预训练或迁移学习</p>
+</li>
+<li>
+<p>合理的网络结构设计</p>
+</li>
+<li>
+<p>采用无监督与半监督模型方法</p>
+<p>在无监督模型，只利用正常样本进行训练，因此不需要缺陷样本。</p>
+<p>半监督方法可以利用没有标注的样本来解决小样本情况下的网络训练难题。</p>
+</li>
+</ul>
+<h5 id="32-实时性">3.2 实时性</h5>
+<p>​	现有深度学习模型使用 GPU 作为通用计算单元，但随着技术发展，相信 FPGA 会成为一个具有吸引力的替代方案。</p>
+<h5 id="33-与传统基于图像处理的缺陷检测方法对比">3.3 与传统基于图像处理的缺陷检测方法对比</h5>
+<div>
+    <center>
+    <img src="/surfacedd2.PNG"
+         alt="传统图像处理与基于深度学习的缺陷检测方法的比较"
+         style="zoom:60%"/>
+    传统图像处理与基于深度学习的缺陷检测方法的比较
+    </center>
+</div>
+<br>
+<h4 id="4-缺陷检测数据集">4. 缺陷检测数据集</h4>
+<div>
+    <center>
+    <img src="/surfacedd3.png"
+         alt="工业表面缺陷检测常用数据集"
+         style="zoom:60%"/>
+    工业表面缺陷检测常用数据集
+    </center>
+</div>
+<br>
+<h4 id="5-总结与展望">5. 总结与展望</h4>
+<ul>
+<li>
+<p>网络结构设计</p>
+<p>机器搜寻和自动生成的网络逐步替代人工设计的网络，这些网络不仅能够大幅度的减少手工设计网络参数，同时在检测的正确率上也会领先。</p>
+</li>
+<li>
+<p>网络训练学习</p>
+<p>利用类脑（受脑启发的）计算与仿人视觉认知模型这些先验知识来指导缺陷检测网络的训练和学习。</p>
+</li>
+<li>
+<p>异域数据联邦学习</p>
+<p>如何利用不同工业领域的缺陷数据集来进行网络学习，也是表面缺陷检测的一种重要研究方向。因此，基于异域数据的联邦学习将会成为一个趋势，它能够打破不同应用场景之间的壁垒，充分学习不同领域之间数据来提升网络性能。</p>
+</li>
+</ul>
+<br>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>陶显，侯伟，徐德．基于深度学习的表面缺陷检测方法综述[J/OL]．自动化学报. <a href="http://kn.cnki.net/kcms/detail/11.2109.TP.20200402.1101.002.html">http://kn.cnki.net/kcms/detail/11.2109.TP.20200402.1101.002.html</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+     
+    <a class="next" href="https://meanvery.github.io/post/2022-11-15-%E5%88%86%E5%89%B2-%E5%8F%91%E7%8E%B0%E4%BC%9A%E5%8A%A8%E7%9A%84%E7%89%A9%E4%BD%93/"><span>分割-发现会动的物体</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>
