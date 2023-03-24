@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>Registration based Few-Shot Anomaly Detection - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="Registration based Few-Shot Anomaly Detection（RegAD） 这篇文章发表在 ECCV2022，主要作者为 Chaoqin Huang，Haoyan Guan等人，他们来自于上海交通大学，伦敦国王学院等机构。
+文章主要研究了少样本缺陷检测（few-shot anomaly detection，以下简称为 FSAD）。
+通常人们为了解决 FSAD 问题，要对每一个类别都单独设计一个模型；本文作者则想获得一个类别无关的缺陷检测模型，即一个模型对每个类别都有较高的缺陷检测水平。而最终作者也达到了目的：基于配准（本文的配准：将两张图片的 features 在 feature space 中匹配到相近的位置），将可以跨类别实现的图片配准作为代理任务，来训练一个类别无关的缺陷检测模型。在 FSAD 的相关数据集上，测试结果达到了 SOTA，目前代码也可在网页（https://github.com/MediaBrain-SJTU/RegAD）获得。
+1. 简介 由于在实际中，会有各种难以预料的异常，无法获得足够多的图片包含所有可能出现的异常，来对模型进行训练，所以异常检测通常都采用无监督的方式，只学习正常样本，利用单值分类、重建、自监督学习等，对正常样本的分布建模，在进行检测时，异常样本属于分布之外，结果上的差异可以反映出异常。
+不同缺陷检测方法对比（a）代表了传统异常检测方法，每种类别都各自用大量图片训练一个模型； （b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练； （c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型知道怎么比较正常样本和异常样本即可，至于样本是花是草还是什么别的东西并不重要，即与图片的内容无关。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。 基于以上的思路，作者利用配准，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。
+上图中（c）就是本文提出的 RegAD 模型的结构，传统的配准是将图片逐像素对齐，本文则是为了更好的鲁棒性，提出了特征水平的对齐，使用了一个自己设计的特征配准损失函数，使得属于同一类别的图片特征向量具有最大的余弦相似度。
+训练时，从图中可见，首先进行了预训练，然后来自不同类别的图片一起对模型进行训练，输入是来自同一类别的图片对。使得模型对不同类别的图片对都有了配准能力，即同一类别的图片经过该网络，得到的特征向量具备最大的余弦相似度。
+测试时，提供包含少量正常样本的支持集和测试样本。支持集的正常图片输入网络得到特征向量，利用基于统计的分布估计，计算出该新类别中正常样本的特征应服从的正态分布。如果测试样本在网络中计算得到的特征向量，属于该正态分布的正常范围之外，则判定为异常。
+2. 方法论 2.1 特征配准网络（Feature Registration Network） 配准网络结构来自同一类别的图片 Ia 和 Ib 输入网络，经过第一卷积层 C1 的编码，分别得到特征 f1a,s 和 f1b,s，然后经过空间转换网络 S1（Spatial Transformer Network，STN）得到特征 f1a,t 和 f1b,t。后续经过相似的两次处理，得到 f3a,t 和 f3b,t，输入防止崩溃解的孪生网络，得到两张特征向量图，再使用负余弦相似度来使图中每个像素对应的特征向量尽可能对齐。
+可视化效果如下图：
+特征配准可视化结果2.2 正态分布估计（Normal Distribution Estimation） 对支持集中的图片进行数据增强后，得到更多的正常样本图片，然后输入 2." />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Registration based Few-Shot Anomaly Detection" />
+<meta property="og:description" content="Interpretation of a paper" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/2023-3-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="Registration based Few-Shot Anomaly Detection">
+<meta itemprop="description" content="Interpretation of a paper">
+
+<meta itemprop="wordCount" content="200">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Registration based Few-Shot Anomaly Detection"/>
+<meta name="twitter:description" content="Interpretation of a paper"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>Registration based Few-Shot Anomaly Detection</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<h2 id="registration-based-few-shot-anomaly-detectionregad">Registration based Few-Shot Anomaly Detection（RegAD）</h2>
+<p>这篇文章发表在 ECCV2022，主要作者为 Chaoqin Huang，Haoyan Guan等人，他们来自于上海交通大学，伦敦国王学院等机构。</p>
+<p>文章主要研究了<strong>少样本缺陷检测</strong>（few-shot anomaly detection，以下简称为 FSAD）。</p>
+<p>通常人们为了解决 FSAD 问题，要对每一个类别都单独设计一个模型；本文作者则想获得一个类别无关的缺陷检测模型，即一个模型对每个类别都有较高的缺陷检测水平。而最终作者也达到了目的：基于配准（本文的配准：将两张图片的 features 在 feature space 中匹配到相近的位置），将可以跨类别实现的图片配准作为代理任务，来训练一个类别无关的缺陷检测模型。在 FSAD 的相关数据集上，测试结果达到了 SOTA，目前代码也可在网页（https://github.com/MediaBrain-SJTU/RegAD）获得。</p>
+<h4 id="1-简介">1. 简介</h4>
+<p>由于在实际中，会有各种难以预料的异常，无法获得足够多的图片包含所有可能出现的异常，来对模型进行训练，所以异常检测通常都采用无监督的方式，只学习正常样本，利用单值分类、重建、自监督学习等，对正常样本的分布建模，在进行检测时，异常样本属于分布之外，结果上的差异可以反映出异常。</p>
+<div>
+    <center>
+    <img src="/fsad1.png"
+         alt="不同缺陷检测方法对比"
+         style="zoom:60%"/>
+    不同缺陷检测方法对比
+    </center>
+</div>
+<br>
+<ul>
+<li>（a）代表了传统异常检测方法，每种类别都各自用大量图片训练一个模型；</li>
+<li>（b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练；</li>
+<li>（c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型<strong>知道怎么比较正常样本和异常样本即可</strong>，至于样本是花是草还是什么别的东西并不重要，即<strong>与图片的内容无关</strong>。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。</li>
+</ul>
+<p>基于以上的思路，作者利用<strong>配准</strong>，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。</p>
+<p>上图中（c）就是本文提出的 RegAD 模型的结构，传统的配准是将图片逐像素对齐，本文则是为了更好的鲁棒性，提出了特征水平的对齐，使用了一个自己设计的特征配准损失函数，使得属于同一类别的图片特征向量具有最大的余弦相似度。</p>
+<ul>
+<li>
+<p>训练时，从图中可见，首先进行了预训练，然后来自不同类别的图片一起对模型进行训练，输入是来自同一类别的图片对。使得模型对不同类别的图片对都有了配准能力，即同一类别的图片经过该网络，得到的特征向量具备最大的余弦相似度。</p>
+</li>
+<li>
+<p>测试时，提供包含少量正常样本的支持集和测试样本。支持集的正常图片输入网络得到特征向量，利用基于统计的分布估计，计算出该新类别中正常样本的特征应服从的正态分布。如果测试样本在网络中计算得到的特征向量，属于该正态分布的正常范围之外，则判定为异常。</p>
+</li>
+</ul>
+<br>
+<h4 id="2-方法论">2. 方法论</h4>
+<h5 id="21-特征配准网络feature-registration-network">2.1 特征配准网络（Feature Registration Network）</h5>
+<div>
+    <center>
+    <img src="/fsad2.png"
+         alt="配准网络结构"
+         style="zoom:60%"/>
+    配准网络结构
+    </center>
+</div>
+<br>
+<p>来自同一类别的图片 Ia 和 Ib 输入网络，经过第一卷积层 C1 的编码，分别得到特征 f1a,s 和 f1b,s，然后经过空间转换网络 S1（Spatial Transformer Network，STN）得到特征 f1a,t 和 f1b,t。后续经过相似的两次处理，得到 f3a,t 和 f3b,t，输入防止崩溃解的孪生网络，得到两张特征向量图，再使用负余弦相似度来使图中每个像素对应的特征向量尽可能对齐。</p>
+<p>可视化效果如下图：</p>
+  <div>
+      <center>
+      <img src="/fsad6.png"
+           alt=“特征配准可视化结果”
+           style="zoom:60%"/>
+          特征配准可视化结果
+      </center>
+  </div>
+  <br>
+<h5 id="22-正态分布估计normal-distribution-estimation">2.2 正态分布估计（Normal Distribution Estimation）</h5>
+<p>对支持集中的图片进行数据增强后，得到更多的正常样本图片，然后输入 2.1 中的特征配准网络，由于两个分支的结构是一样的，因此选择其中一个分支的特征图即可，将所有正常样本得到的特征图，利用多元高斯分布来获得正常样本的概率分布。</p>
+<p>假设支持集经过数据增强后，一共得到 N 张正常样本图片；一张图片经过配准网络后得到的特征图尺寸为 HxW，对特征图中的某个位置（i, j），由于有 N 张图片，所以可得到 N 个特征向量 f_i,j（每个 f_i,j 是一张图片输入配准网络后， 3 个 STN 输出的特征图经过上采样尺寸统一，由图中同一位置（i, j）的向量连接产生）。</p>
+<p>对该位置（i, j），总的均值 u_i,j 和协方差可以根据 N 个 f_i,j 计算得出，对于协方差添加正则项（使得协方差矩阵满秩且可逆）后表示如下：</p>
+<div>
+    <center>
+    <img src="/fsad3.png"
+         alt=“协方差公式”
+         style="zoom:60%"/>
+    </center>
+</div>
+<br>
+<p>最终对正常样本来说，特征图中的某个位置（i, j）的特征向量都应服从均值为 u_i,j 方差如上的正态分布。</p>
+<h5 id="23-测试推理inference">2.3 测试推理（Inference）</h5>
+<p>测试图片也输入配准网络得到特征图，对特征图的每个位置（i, j）上的特征向量，计算与 2.2 中正态分布的马氏距离，根据距离的大小得到特征图的异常得分，再通过与 3 个 STN 变换对应的逆仿射变换，得到原图上的异常得分，本文中得分较高的区域则是异常区域。</p>
+<br>
+<h4 id="3实验experiments">3.实验（Experiments）</h4>
+<h5 id="31-实验设置experimental-setup">3.1 实验设置（Experimental Setup）</h5>
+<ul>
+<li>
+<p>数据集</p>
+<ul>
+<li>MVTec：MVTec 包括 15 个类别，其中 3629 张图像用于训练和验证，1725 张图像用于测试。训练集仅包含没有缺陷的正常图像。测试集包含具有各种缺陷（异常）的图像和无缺陷图像（正常）。平均每个类别 5 个，共计给出了 73 种不同的缺陷类型。所有图像的分辨率范围在 700x700 到 1024x1024 像素之间。提供了用于每个缺陷图像区域的逐像素 Ground Truth 标签。</li>
+<li>MPDD：MPDD 是一个新提出的数据集，专门关注喷漆金属零件制造过程中的缺陷检测，包含6类金属零件。图像是在物体的不同空间方向、位置和距离的条件下拍摄的，涉及不同的光强度和非均匀的背景。</li>
+</ul>
+<div>
+    <center>
+    <img src="/fsad4.png"
+         alt=“MVTec中K-shot缺陷检测结果（AUC%）”
+         style="zoom:60%"/>
+        MVTec中K-shot缺陷检测结果（AUC%）
+    </center>
+</div>
+<br>
+<div>
+      <center>
+      <img src="/fsad5.png"
+           alt=“MPDD中K-shot缺陷检测结果（AUC%）”
+           style="zoom:60%"/>
+          MPDD中K-shot缺陷检测结果（AUC%）
+      </center>
+</div>
+<br>
+</li>
+<li>
+<p>模型配置和训练细节（Model Configuration and Training Details）</p>
+<p>ImageNet 预训练的 ResNet-18 被用作 backbone，然后是基于卷积的编码器和预测器。为了保留空间信息，编码器包含三个 1x1 卷积层，而预测器包含两个 1x2 卷积层，没有任何池化操作；在一台 NVIDIA GTX 3090 上训练 224x224 图像的模型；使用动量 SGD 更新参数，学习率为 0.0001，epochs 为 50，batchsize 为 32。余弦学习速率的单个循环被用作衰减时间表。</p>
+<br>
+</li>
+</ul>
+<h5 id="32-和-sota-方法的对比">3.2 和 SOTA 方法的对比</h5>
+  <div>
+        <center>
+        <img src="/fsad7.png"
+             alt=“和SOTA方法的对比”
+             style="zoom:60%"/>
+            和SOTA方法的对比
+        </center>
+  </div>
+  <br>
+<p>RegAD 测试时无需任何参数调整，或许会影响针对每一类的最佳表现，相对其他 SOTA 方法还能进行微调，处于不利地位。但它的优势在于，适应时间（Time of Adaptation）对于缺陷检测模型的实际应用非常重要，从上图中可以看出，RegAD 的适应时间显著小于其他方法。</p>
+ <div>
+        <center>
+        <img src="/fsad8.png"
+             alt=“和SOTA方法的对比”
+             style="zoom:60%"/>
+            和SOTA方法的对比
+        </center>
+  </div>
+  <br>
+<p>上图表明即使与基于大量正常数据的普通异常检测方法相比，所提出的 RegAD 仅用极少的正常样本也达到了有竞争力的性能。</p>
+<br>
+<h5 id="33-消融实验ablation-studies">3.3 消融实验（Ablation Studies）</h5>
+<div>
+        <center>
+        <img src="/fsad9.png"
+             alt=“消融实验”
+             style="zoom:60%"/>
+            消融实验
+        </center>
+  </div>
+  <br>
+<p>图中的 A 表示对支持集的数据增强（Augmentations），F 表示特征配准集训（Feature registration aggregated training）过程，S 表示空间转换网络（Spatial Transformer Networks, STN）。</p>
+<p>从上图可知，3 种方法都在一定程度上提升了模型的效果。</p>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://meanvery.github.io/post/emoji-support/"><span>←</span><span>Emoji Support</span></a>
+     
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2023 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

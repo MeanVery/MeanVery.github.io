@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>缺陷检测-学生老师模型 - Very的计算机学习</title>
+
+  
+  
+  <meta name="description" content="Uninformed Students: Student–Teacher Anomaly Detection with Discriminative Latent Embeddings 摘要（Abstract） ​	作者引入了一个强力学生-老师框架来解决高分辨图像中无监督异常检测和像素级异常分割的难题。学生网络被训练用于回归老师网络的输出结果，老师网络则是在自然图像的大规模数据集上被预训练。这避免了对数据的标注。当学生网络的输出和相应的老师网络不一样时，说明检测到了异常。
+1. 介绍（Introduction） ​	许多有监督的方法是通过迁移学习实现的，使用预训练网络中的判别性特征。对于无监督的异常检测，最近的工作显示了即便是基础水平也要优于基于生成式的深度学习方法。然而受困于现有粗浅的机器学习流水线，现有方法在高分辨的图像中表现一般，因为在流水线过程中需要对使用的特征空间进行降维处理。另外，它们严重依赖对训练数据的下采样，因为它们没有能力对高度复杂的大量训练样本进行建模。
+​	为了解决这些问题，作者间接地使用了学生老师方法来对训练特征的分布进行建模。这利用了深度神经网络的能力并将异常检测问题框架化为了一个回归问题。基于在大型数据集上预训练的描述性特征提取器（老师），作者在无异常的训练集上，训练了学生网络的集成来模仿老师的输出。学生的预测不确定性以及相较于老师的回归误差被用于为每个输出像素产生密集评分。作者直觉上认为学生在无异常数据集之外的泛化能力会很差并开始做出错误的预测。
+顶行：原图;中间：Ground Truth;底行：预测作者认为其主要贡献如下：
+基于学生老师模型，提出了一个无监督异常检测的新颖框架。预训练的老师网络作为代理为学生集成提供标签。 基于学生的预测方差和回归误差，设计了得分函数获取自然图像中的异常分割掩码。 在 3 个真实的视觉数据集上取得了最优成绩。 ​
+2. 相关工作（Related Work） 2.1 使用预训练网络的异常检测（Anomaly Detection with Pretrained Networks） ​	通过迁移预训练网络判别性的嵌入特征到异常检测任务上，将机器学习模型拟合到无异常的训练数据集特征上，已经获得了较好的效果。
+​	但是这些模型都需要对输入图片进行降维，减少计算量，因为基础的机器学习方法的计算量，比如 K-means 聚类，会因为数据量的增大而增大到难以接受的范围。所以通常会对原始图片进行切片，并进行主成分分析用于降维。但是这显然造成了分辨率的损失，以及一些信息的损失。
+2.2 不确定性估计的开放集识别（Open-Set Recognition with Uncertainty Estimates） ​	在本文中，作者使用了预训练网络的特征向量作为代理标签来训练集成的学生网络。而预测方差和回归误差被用作打分函数，来获取测试图片中的异常分割掩码。
+3. 方法论（Methodology） ​	这个部分叙述了本方法的核心，基于给定的无异常的训练数据集，目标是获得集成的学生网络，可以用于检测测试图片中的异常。这意味着它们可以给图片的每个像素打分来表明该像素和训练数据的差异大小。为了实现这个目标，学生模型依靠在大型自然图片数据集上预训练的老师网络得出的回归目标来进行训练。训练之后，异常评分可以从每个像素的回归误差和预测方差中生成。
+​	输入图片中每个像素的通道数为 C，集成网络中的单个学生网络为每个像素生成通道数为 d 的描述符。且经过特殊设计，每个像素的描述符仅与该像素周围的部分区域有关。老师网络实际上结构和学生网络相同，但是其中的参数保持恒定并从每个输入图片的像素中提取特定的嵌入向量作为学生训练时的回归目标。
+3.1 学习当前片描述符（Learning Local Patch Descriptor） ​	首先使用度量学习和知识蒸馏技术有效地构建一个描述性的老师网络。现有工作中，特征提取器只会输出单个特征向量或者空间下采样之后的特征向量。作为对比，作者的老师网络输出的是，对应输入图片中每个特定边长方块区域的特征描述向量。
+​	老师网络的获得则是通过训练一个网络，它使用卷积和最大池化来将特定边长的通道为 C 的图片变换为通道为 d 的度量空间。" />
+  <meta name="author" content="MeanVery" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://meanvery.github.io/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://meanvery.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/theme.png" />
+
+  
+  <link rel="preload" as="image" href="https://meanvery.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="https://meanvery.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://meanvery.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.101.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="缺陷检测-学生老师模型" />
+<meta property="og:description" content="Student–Teacher Anomaly Detection with Discriminative Latent Embeddings" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://meanvery.github.io/post/2022-12-06-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-%E5%AD%A6%E7%94%9F%E8%80%81%E5%B8%88%E6%A8%A1%E5%9E%8B/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-12-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-12-06T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="缺陷检测-学生老师模型">
+<meta itemprop="description" content="Student–Teacher Anomaly Detection with Discriminative Latent Embeddings"><meta itemprop="datePublished" content="2022-12-06T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-12-06T00:00:00+00:00" />
+<meta itemprop="wordCount" content="103">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="缺陷检测-学生老师模型"/>
+<meta name="twitter:description" content="Student–Teacher Anomaly Detection with Discriminative Latent Embeddings"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="true">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://meanvery.github.io/">Very的计算机学习</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+  <nav class="menu">
+    
+    <a class="" href="/about/">关于</a>
+    
+  </nav>
+  
+
+  
+  <nav class="social">
+    
+    <a
+      class="github"
+      style="--url: url(./github.svg)"
+      href="https://github.com/MeanVery"
+      target="_blank"
+    ></a>
+    
+  </nav>
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      
+      <time>Dec 6, 2022</time>
+      
+      
+      <span>MeanVery</span>
+      
+    </p>
+    <h1>缺陷检测-学生老师模型</h1>
+  </header>
+  <section class="post-content">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+<h2 id="uninformed-students-studentteacher-anomaly-detection-with-discriminative-latent-embeddings">Uninformed Students: Student–Teacher Anomaly Detection with Discriminative Latent Embeddings</h2>
+<h4 id="摘要abstract">摘要（Abstract）</h4>
+<p>​	作者引入了一个强力学生-老师框架来解决高分辨图像中无监督异常检测和像素级异常分割的难题。学生网络被训练用于回归老师网络的输出结果，老师网络则是在自然图像的大规模数据集上被预训练。这避免了对数据的标注。当学生网络的输出和相应的老师网络不一样时，说明检测到了异常。</p>
+<h4 id="1-介绍introduction">1. 介绍（Introduction）</h4>
+<p>​	许多有监督的方法是通过迁移学习实现的，使用预训练网络中的判别性特征。对于无监督的异常检测，最近的工作显示了即便是基础水平也要优于基于生成式的深度学习方法。然而受困于现有粗浅的机器学习流水线，现有方法在高分辨的图像中表现一般，因为在流水线过程中需要对使用的特征空间进行降维处理。另外，它们严重依赖对训练数据的下采样，因为它们没有能力对高度复杂的大量训练样本进行建模。</p>
+<p>​	为了解决这些问题，作者间接地使用了学生老师方法来对训练特征的分布进行建模。这利用了深度神经网络的能力并将异常检测问题框架化为了一个回归问题。基于在大型数据集上预训练的描述性特征提取器（老师），作者在无异常的训练集上，训练了学生网络的集成来模仿老师的输出。学生的预测不确定性以及相较于老师的回归误差被用于为每个输出像素产生密集评分。作者直觉上认为学生在无异常数据集之外的泛化能力会很差并开始做出错误的预测。</p>
+<div>
+    <center>
+    <img src="/dd_StuTea1.png"
+         alt="在 MVTec 数据集上的效果"
+         style="zoom:60%"/>
+    顶行：原图;中间：Ground Truth;底行：预测
+    </center>
+</div>
+<br>
+<p>作者认为其主要贡献如下：</p>
+<ul>
+<li>基于学生老师模型，提出了一个无监督异常检测的新颖框架。预训练的老师网络作为代理为学生集成提供标签。</li>
+<li>基于学生的预测方差和回归误差，设计了得分函数获取自然图像中的异常分割掩码。</li>
+<li>在 3 个真实的视觉数据集上取得了最优成绩。</li>
+</ul>
+<p>​</p>
+<h4 id="2-相关工作related-work">2. 相关工作（Related Work）</h4>
+<h5 id="21-使用预训练网络的异常检测anomaly-detection-with-pretrained-networks">2.1 使用预训练网络的异常检测（Anomaly Detection with Pretrained Networks）</h5>
+<p>​	通过迁移预训练网络判别性的嵌入特征到异常检测任务上，将机器学习模型拟合到无异常的训练数据集特征上，已经获得了较好的效果。</p>
+<p>​	但是这些模型都需要对输入图片进行降维，减少计算量，因为基础的机器学习方法的计算量，比如 K-means 聚类，会因为数据量的增大而增大到难以接受的范围。所以通常会对原始图片进行切片，并进行主成分分析用于降维。但是这显然造成了分辨率的损失，以及一些信息的损失。</p>
+<h5 id="22-不确定性估计的开放集识别open-set-recognition-with-uncertainty-estimates">2.2 不确定性估计的开放集识别（Open-Set Recognition with Uncertainty Estimates）</h5>
+<p>​	在本文中，作者使用了预训练网络的特征向量作为代理标签来训练集成的学生网络。而预测方差和回归误差被用作打分函数，来获取测试图片中的异常分割掩码。</p>
+<h4 id="3-方法论methodology">3. 方法论（Methodology）</h4>
+<p>​	这个部分叙述了本方法的核心，基于给定的无异常的训练数据集，目标是获得集成的学生网络，可以用于检测测试图片中的异常。这意味着它们可以给图片的每个像素打分来表明该像素和训练数据的差异大小。为了实现这个目标，学生模型依靠在大型自然图片数据集上预训练的老师网络得出的回归目标来进行训练。训练之后，异常评分可以从每个像素的回归误差和预测方差中生成。</p>
+<p>​	输入图片中每个像素的通道数为 C，集成网络中的单个学生网络为每个像素生成通道数为 d 的描述符。且经过特殊设计，每个像素的描述符仅与该像素周围的部分区域有关。老师网络实际上结构和学生网络相同，但是其中的参数保持恒定并从每个输入图片的像素中提取特定的嵌入向量作为学生训练时的回归目标。</p>
+<h5 id="31-学习当前片描述符learning-local-patch-descriptor">3.1 学习当前片描述符（Learning Local Patch Descriptor）</h5>
+<p>​	首先使用度量学习和知识蒸馏技术有效地构建一个描述性的老师网络。现有工作中，特征提取器只会输出单个特征向量或者空间下采样之后的特征向量。作为对比，作者的老师网络输出的是，对应输入图片中每个特定边长方块区域的特征描述向量。</p>
+<p>​	老师网络的获得则是通过训练一个网络，它使用卷积和最大池化来将特定边长的通道为 C 的图片变换为通道为 d 的度量空间。</p>
+<ul>
+<li>
+<p>知识蒸馏（Knowledge Distillation）</p>
+</li>
+<li>
+<p>度量学习（Metric Learning）</p>
+<p>即使没有合适的预训练网络，依然可以通过完全自监督的方式获得当前图片的描述符。作者探究了</p>
+</li>
+</ul>
+<h5 id="32-用于深度异常检测的学生网络集成ensemble-of-student-networks-for-deep-anomaly-detection">3.2 用于深度异常检测的学生网络集成（Ensemble of Student Networks for Deep Anomaly Detection）</h5>
+\(XXXXXXXXXXXXXXXXXXX\)
+<h5 id="33-多尺度异常分割-multi-scale-anomaly-segmentation">3.3 多尺度异常分割（ Multi-Scale Anomaly Segmentation）</h5>
+<h4 id="4-实验experiments">4. 实验（Experiments）</h4>
+<h5 id="41-mnist-and-cifar-10">4.1 MNIST and CIFAR-10</h5>
+<h5 id="42-mvtec-anomaly-detection-dataset">4.2 MVTec Anomaly Detection Dataset</h5>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+     
+    <a class="next" href="https://meanvery.github.io/post/2022-11-18-%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/"><span>基于深度学习的表面缺陷检测方法综述</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2023 <a href="https://meanvery.github.io/">Very的计算机学习</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

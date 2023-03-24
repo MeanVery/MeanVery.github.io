@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://meanvery.github.io/</loc>
-    <lastmod>2022-11-18T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://meanvery.github.io/post/</loc>
-    <lastmod>2022-11-18T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://meanvery.github.io/post/2022-12-06-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-%E5%AD%A6%E7%94%9F%E8%80%81%E5%B8%88%E6%A8%A1%E5%9E%8B/</loc>
+    <lastmod>2022-12-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://meanvery.github.io/post/2022-11-18-%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/</loc>
     <lastmod>2022-11-18T00:00:00+00:00</lastmod>
@@ -156,5 +159,7 @@
     <lastmod>2019-03-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://meanvery.github.io/tags/index/</loc>
+  </url><url>
+    <loc>https://meanvery.github.io/post/2023-3-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/</loc>
   </url>
 </urlset>

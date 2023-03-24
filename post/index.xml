@@ -7,7 +7,27 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Fri, 18 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>缺陷检测-学生老师模型</title>
+      <link>https://meanvery.github.io/post/2022-12-06-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-%E5%AD%A6%E7%94%9F%E8%80%81%E5%B8%88%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Tue, 06 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/2022-12-06-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-%E5%AD%A6%E7%94%9F%E8%80%81%E5%B8%88%E6%A8%A1%E5%9E%8B/</guid>
+      <description>Uninformed Students: Student–Teacher Anomaly Detection with Discriminative Latent Embeddings 摘要（Abstract） ​	作者引入了一个强力学生-老师框架来解决高分辨图像中无监督异常检测和像素级异常分割的难题。学生网络被训练用于回归老师网络的输出结果，老师网络则是在自然图像的大规模数据集上被预训练。这避免了对数据的标注。当学生网络的输出和相应的老师网络不一样时，说明检测到了异常。
+1. 介绍（Introduction） ​	许多有监督的方法是通过迁移学习实现的，使用预训练网络中的判别性特征。对于无监督的异常检测，最近的工作显示了即便是基础水平也要优于基于生成式的深度学习方法。然而受困于现有粗浅的机器学习流水线，现有方法在高分辨的图像中表现一般，因为在流水线过程中需要对使用的特征空间进行降维处理。另外，它们严重依赖对训练数据的下采样，因为它们没有能力对高度复杂的大量训练样本进行建模。
+​	为了解决这些问题，作者间接地使用了学生老师方法来对训练特征的分布进行建模。这利用了深度神经网络的能力并将异常检测问题框架化为了一个回归问题。基于在大型数据集上预训练的描述性特征提取器（老师），作者在无异常的训练集上，训练了学生网络的集成来模仿老师的输出。学生的预测不确定性以及相较于老师的回归误差被用于为每个输出像素产生密集评分。作者直觉上认为学生在无异常数据集之外的泛化能力会很差并开始做出错误的预测。
+顶行：原图;中间：Ground Truth;底行：预测作者认为其主要贡献如下：
+基于学生老师模型，提出了一个无监督异常检测的新颖框架。预训练的老师网络作为代理为学生集成提供标签。 基于学生的预测方差和回归误差，设计了得分函数获取自然图像中的异常分割掩码。 在 3 个真实的视觉数据集上取得了最优成绩。 ​
+2. 相关工作（Related Work） 2.1 使用预训练网络的异常检测（Anomaly Detection with Pretrained Networks） ​	通过迁移预训练网络判别性的嵌入特征到异常检测任务上，将机器学习模型拟合到无异常的训练数据集特征上，已经获得了较好的效果。
+​	但是这些模型都需要对输入图片进行降维，减少计算量，因为基础的机器学习方法的计算量，比如 K-means 聚类，会因为数据量的增大而增大到难以接受的范围。所以通常会对原始图片进行切片，并进行主成分分析用于降维。但是这显然造成了分辨率的损失，以及一些信息的损失。
+2.2 不确定性估计的开放集识别（Open-Set Recognition with Uncertainty Estimates） ​	在本文中，作者使用了预训练网络的特征向量作为代理标签来训练集成的学生网络。而预测方差和回归误差被用作打分函数，来获取测试图片中的异常分割掩码。
+3. 方法论（Methodology） ​	这个部分叙述了本方法的核心，基于给定的无异常的训练数据集，目标是获得集成的学生网络，可以用于检测测试图片中的异常。这意味着它们可以给图片的每个像素打分来表明该像素和训练数据的差异大小。为了实现这个目标，学生模型依靠在大型自然图片数据集上预训练的老师网络得出的回归目标来进行训练。训练之后，异常评分可以从每个像素的回归误差和预测方差中生成。
+​	输入图片中每个像素的通道数为 C，集成网络中的单个学生网络为每个像素生成通道数为 d 的描述符。且经过特殊设计，每个像素的描述符仅与该像素周围的部分区域有关。老师网络实际上结构和学生网络相同，但是其中的参数保持恒定并从每个输入图片的像素中提取特定的嵌入向量作为学生训练时的回归目标。
+3.1 学习当前片描述符（Learning Local Patch Descriptor） ​	首先使用度量学习和知识蒸馏技术有效地构建一个描述性的老师网络。现有工作中，特征提取器只会输出单个特征向量或者空间下采样之后的特征向量。作为对比，作者的老师网络输出的是，对应输入图片中每个特定边长方块区域的特征描述向量。
+​	老师网络的获得则是通过训练一个网络，它使用卷积和最大池化来将特定边长的通道为 C 的图片变换为通道为 d 的度量空间。</description>
+    </item>
+    
     <item>
       <title>基于深度学习的表面缺陷检测方法综述</title>
       <link>https://meanvery.github.io/post/2022-11-18-%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/</link>
@@ -406,6 +426,25 @@ the above quote is excerpted from xxxxxx [article] (https://www.baidu.com) durin
       
       <guid>https://meanvery.github.io/post/emoji-support/</guid>
       <description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Registration based Few-Shot Anomaly Detection</title>
+      <link>https://meanvery.github.io/post/2023-3-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/2023-3-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/</guid>
+      <description>Registration based Few-Shot Anomaly Detection（RegAD） 这篇文章发表在 ECCV2022，主要作者为 Chaoqin Huang，Haoyan Guan等人，他们来自于上海交通大学，伦敦国王学院等机构。
+文章主要研究了少样本缺陷检测（few-shot anomaly detection，以下简称为 FSAD）。
+通常人们为了解决 FSAD 问题，要对每一个类别都单独设计一个模型；本文作者则想获得一个类别无关的缺陷检测模型，即一个模型对每个类别都有较高的缺陷检测水平。而最终作者也达到了目的：基于配准（本文的配准：将两张图片的 features 在 feature space 中匹配到相近的位置），将可以跨类别实现的图片配准作为代理任务，来训练一个类别无关的缺陷检测模型。在 FSAD 的相关数据集上，测试结果达到了 SOTA，目前代码也可在网页（https://github.com/MediaBrain-SJTU/RegAD）获得。
+1. 简介 由于在实际中，会有各种难以预料的异常，无法获得足够多的图片包含所有可能出现的异常，来对模型进行训练，所以异常检测通常都采用无监督的方式，只学习正常样本，利用单值分类、重建、自监督学习等，对正常样本的分布建模，在进行检测时，异常样本属于分布之外，结果上的差异可以反映出异常。
+不同缺陷检测方法对比（a）代表了传统异常检测方法，每种类别都各自用大量图片训练一个模型； （b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练； （c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型知道怎么比较正常样本和异常样本即可，至于样本是花是草还是什么别的东西并不重要，即与图片的内容无关。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。 基于以上的思路，作者利用配准，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。
+上图中（c）就是本文提出的 RegAD 模型的结构，传统的配准是将图片逐像素对齐，本文则是为了更好的鲁棒性，提出了特征水平的对齐，使用了一个自己设计的特征配准损失函数，使得属于同一类别的图片特征向量具有最大的余弦相似度。
+训练时，从图中可见，首先进行了预训练，然后来自不同类别的图片一起对模型进行训练，输入是来自同一类别的图片对。使得模型对不同类别的图片对都有了配准能力，即同一类别的图片经过该网络，得到的特征向量具备最大的余弦相似度。
+测试时，提供包含少量正常样本的支持集和测试样本。支持集的正常图片输入网络得到特征向量，利用基于统计的分布估计，计算出该新类别中正常样本的特征应服从的正态分布。如果测试样本在网络中计算得到的特征向量，属于该正态分布的正常范围之外，则判定为异常。
+2. 方法论 2.1 特征配准网络（Feature Registration Network） 配准网络结构来自同一类别的图片 Ia 和 Ib 输入网络，经过第一卷积层 C1 的编码，分别得到特征 f1a,s 和 f1b,s，然后经过空间转换网络 S1（Spatial Transformer Network，STN）得到特征 f1a,t 和 f1b,t。后续经过相似的两次处理，得到 f3a,t 和 f3b,t，输入防止崩溃解的孪生网络，得到两张特征向量图，再使用负余弦相似度来使图中每个像素对应的特征向量尽可能对齐。
+可视化效果如下图：
+特征配准可视化结果2.2 正态分布估计（Normal Distribution Estimation） 对支持集中的图片进行数据增强后，得到更多的正常样本图片，然后输入 2.</description>
     </item>
     
   </channel>
