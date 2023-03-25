@@ -27,7 +27,7 @@
 文章主要研究了少样本缺陷检测（few-shot anomaly detection，以下简称为 FSAD）。
 通常人们为了解决 FSAD 问题，要对每一个类别都单独设计一个模型；本文作者则想获得一个类别无关的缺陷检测模型，即一个模型对每个类别都有较高的缺陷检测水平。而最终作者也达到了目的：基于配准（本文的配准：将两张图片的 features 在 feature space 中匹配到相近的位置），将可以跨类别实现的图片配准作为代理任务，来训练一个类别无关的缺陷检测模型。在 FSAD 的相关数据集上，测试结果达到了 SOTA，目前代码也可在网页（https://github.com/MediaBrain-SJTU/RegAD）获得。
 1. 简介 由于在实际中，会有各种难以预料的异常，无法获得足够多的图片包含所有可能出现的异常，来对模型进行训练，所以异常检测通常都采用无监督的方式，只学习正常样本，利用单值分类、重建、自监督学习等，对正常样本的分布建模，在进行检测时，异常样本属于分布之外，结果上的差异可以反映出异常。
-不同缺陷检测方法对比（a）代表了传统异常检测方法，每种类别都各自用大量图片训练一个模型； （b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练； （c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型知道怎么比较正常样本和异常样本即可，至于样本是花是草还是什么别的东西并不重要，即与图片的内容无关。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。 基于以上的思路，作者利用配准，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。
+不同缺陷检测方法对比（a）代表了传统异常检测方法，每种类别都各自用大量图片训练一个模型； （b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练； （c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型知道怎么比较正常样本和异常样本即可，至于样本是花是草还是什么别的东西并不重要，即与图片的内容无关。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。 基于以上思路，作者利用配准，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。
 上图中（c）就是本文提出的 RegAD 模型的结构，传统的配准是将图片逐像素对齐，本文则是为了更好的鲁棒性，提出了特征水平的对齐，使用了一个自己设计的特征配准损失函数，使得属于同一类别的图片特征向量具有最大的余弦相似度。
 训练时，从图中可见，首先进行了预训练，然后来自不同类别的图片一起对模型进行训练，输入是来自同一类别的图片对。使得模型对不同类别的图片对都有了配准能力，即同一类别的图片经过该网络，得到的特征向量具备最大的余弦相似度。
 测试时，提供包含少量正常样本的支持集和测试样本。支持集的正常图片输入网络得到特征向量，利用基于统计的分布估计，计算出该新类别中正常样本的特征应服从的正态分布。如果测试样本在网络中计算得到的特征向量，属于该正态分布的正常范围之外，则判定为异常。
@@ -83,15 +83,15 @@
   <meta property="og:title" content="Registration based Few-Shot Anomaly Detection" />
 <meta property="og:description" content="Interpretation of a paper" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://meanvery.github.io/post/2023-3-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/" /><meta property="article:section" content="post" />
-
-
+<meta property="og:url" content="https://meanvery.github.io/post/2023-03-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-03-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-03-25T00:00:00+00:00" />
 
 
   
   <meta itemprop="name" content="Registration based Few-Shot Anomaly Detection">
-<meta itemprop="description" content="Interpretation of a paper">
-
+<meta itemprop="description" content="Interpretation of a paper"><meta itemprop="datePublished" content="2023-03-25T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-03-25T00:00:00+00:00" />
 <meta itemprop="wordCount" content="200">
 <meta itemprop="keywords" content="" />
   
@@ -160,6 +160,8 @@
   <header class="post-title">
     <p>
       
+      <time>Mar 25, 2023</time>
+      
       
       <span>MeanVery</span>
       
@@ -184,7 +186,7 @@
 <p>由于在实际中，会有各种难以预料的异常，无法获得足够多的图片包含所有可能出现的异常，来对模型进行训练，所以异常检测通常都采用无监督的方式，只学习正常样本，利用单值分类、重建、自监督学习等，对正常样本的分布建模，在进行检测时，异常样本属于分布之外，结果上的差异可以反映出异常。</p>
 <div>
     <center>
-    <img src="/fsad1.png"
+    <img src="/fsad1.PNG"
          alt="不同缺陷检测方法对比"
          style="zoom:60%"/>
     不同缺陷检测方法对比
@@ -196,7 +198,7 @@
 <li>（b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练；</li>
 <li>（c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型<strong>知道怎么比较正常样本和异常样本即可</strong>，至于样本是花是草还是什么别的东西并不重要，即<strong>与图片的内容无关</strong>。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。</li>
 </ul>
-<p>基于以上的思路，作者利用<strong>配准</strong>，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。</p>
+<p>基于以上思路，作者利用<strong>配准</strong>，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。</p>
 <p>上图中（c）就是本文提出的 RegAD 模型的结构，传统的配准是将图片逐像素对齐，本文则是为了更好的鲁棒性，提出了特征水平的对齐，使用了一个自己设计的特征配准损失函数，使得属于同一类别的图片特征向量具有最大的余弦相似度。</p>
 <ul>
 <li>
@@ -211,7 +213,7 @@
 <h5 id="21-特征配准网络feature-registration-network">2.1 特征配准网络（Feature Registration Network）</h5>
 <div>
     <center>
-    <img src="/fsad2.png"
+    <img src="/fsad2.PNG"
          alt="配准网络结构"
          style="zoom:60%"/>
     配准网络结构
@@ -222,7 +224,7 @@
 <p>可视化效果如下图：</p>
   <div>
       <center>
-      <img src="/fsad6.png"
+      <img src="/fsad6.PNG"
            alt=“特征配准可视化结果”
            style="zoom:60%"/>
           特征配准可视化结果
@@ -235,7 +237,7 @@
 <p>对该位置（i, j），总的均值 u_i,j 和协方差可以根据 N 个 f_i,j 计算得出，对于协方差添加正则项（使得协方差矩阵满秩且可逆）后表示如下：</p>
 <div>
     <center>
-    <img src="/fsad3.png"
+    <img src="/fsad3.PNG"
          alt=“协方差公式”
          style="zoom:60%"/>
     </center>
@@ -256,7 +258,7 @@
 </ul>
 <div>
     <center>
-    <img src="/fsad4.png"
+    <img src="/fsad4.PNG"
          alt=“MVTec中K-shot缺陷检测结果（AUC%）”
          style="zoom:60%"/>
         MVTec中K-shot缺陷检测结果（AUC%）
@@ -265,7 +267,7 @@
 <br>
 <div>
       <center>
-      <img src="/fsad5.png"
+      <img src="/fsad5.PNG"
            alt=“MPDD中K-shot缺陷检测结果（AUC%）”
            style="zoom:60%"/>
           MPDD中K-shot缺陷检测结果（AUC%）
@@ -282,7 +284,7 @@
 <h5 id="32-和-sota-方法的对比">3.2 和 SOTA 方法的对比</h5>
   <div>
         <center>
-        <img src="/fsad7.png"
+        <img src="/fsad7.PNG"
              alt=“和SOTA方法的对比”
              style="zoom:60%"/>
             和SOTA方法的对比
@@ -292,7 +294,7 @@
 <p>RegAD 测试时无需任何参数调整，或许会影响针对每一类的最佳表现，相对其他 SOTA 方法还能进行微调，处于不利地位。但它的优势在于，适应时间（Time of Adaptation）对于缺陷检测模型的实际应用非常重要，从上图中可以看出，RegAD 的适应时间显著小于其他方法。</p>
  <div>
         <center>
-        <img src="/fsad8.png"
+        <img src="/fsad8.PNG"
              alt=“和SOTA方法的对比”
              style="zoom:60%"/>
             和SOTA方法的对比
@@ -304,7 +306,7 @@
 <h5 id="33-消融实验ablation-studies">3.3 消融实验（Ablation Studies）</h5>
 <div>
         <center>
-        <img src="/fsad9.png"
+        <img src="/fsad9.PNG"
              alt=“消融实验”
              style="zoom:60%"/>
             消融实验
@@ -322,9 +324,9 @@
   
   
   <nav class="post-nav">
-    
-    <a class="prev" href="https://meanvery.github.io/post/emoji-support/"><span>←</span><span>Emoji Support</span></a>
      
+    <a class="next" href="https://meanvery.github.io/post/2022-12-06-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-%E5%AD%A6%E7%94%9F%E8%80%81%E5%B8%88%E6%A8%A1%E5%9E%8B/"><span>缺陷检测-学生老师模型</span><span>→</span></a>
+    
   </nav>
   
 

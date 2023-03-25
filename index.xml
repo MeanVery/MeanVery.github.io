@@ -7,7 +7,26 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Copyright © 2008–2019, Steve Francia and the lee.so; all rights reserved.</copyright>
-    <lastBuildDate>Tue, 06 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://meanvery.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Registration based Few-Shot Anomaly Detection</title>
+      <link>https://meanvery.github.io/post/2023-03-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/</link>
+      <pubDate>Sat, 25 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://meanvery.github.io/post/2023-03-24-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-regad/</guid>
+      <description>Registration based Few-Shot Anomaly Detection（RegAD） 这篇文章发表在 ECCV2022，主要作者为 Chaoqin Huang，Haoyan Guan等人，他们来自于上海交通大学，伦敦国王学院等机构。
+文章主要研究了少样本缺陷检测（few-shot anomaly detection，以下简称为 FSAD）。
+通常人们为了解决 FSAD 问题，要对每一个类别都单独设计一个模型；本文作者则想获得一个类别无关的缺陷检测模型，即一个模型对每个类别都有较高的缺陷检测水平。而最终作者也达到了目的：基于配准（本文的配准：将两张图片的 features 在 feature space 中匹配到相近的位置），将可以跨类别实现的图片配准作为代理任务，来训练一个类别无关的缺陷检测模型。在 FSAD 的相关数据集上，测试结果达到了 SOTA，目前代码也可在网页（https://github.com/MediaBrain-SJTU/RegAD）获得。
+1. 简介 由于在实际中，会有各种难以预料的异常，无法获得足够多的图片包含所有可能出现的异常，来对模型进行训练，所以异常检测通常都采用无监督的方式，只学习正常样本，利用单值分类、重建、自监督学习等，对正常样本的分布建模，在进行检测时，异常样本属于分布之外，结果上的差异可以反映出异常。
+不同缺陷检测方法对比（a）代表了传统异常检测方法，每种类别都各自用大量图片训练一个模型； （b）在（a）的基础上，使用数量更少的图片对每个类别的模型进行训练； （c）是本文提出来的方法，旨在探索一种全新的范式，学习一个多类别共享且能泛化到新类别的通用模型。根据人类自身检测缺陷的过程，作者认为，只要模型知道怎么比较正常样本和异常样本即可，至于样本是花是草还是什么别的东西并不重要，即与图片的内容无关。举个例子，人类没学过火星文，但是两篇火星文摆在人面前，人可以通过对比形状颜色的不同找到差异，至于火星文本身表达了早上好还是晚安，并不妨碍人找到差异。 基于以上思路，作者利用配准，将图片的特征向量转化到一致的坐标空间内来实现更好地比较。配准尤其适用于 FSAD：图片的配准是类别无关的（原因：将两本书叠在一起的思路，和将两片叶子叠在一起的思路是一样的），可以跨类别泛化，因此训练出来的模型也可以适应新的类别，在新类别上实现配准，而不需要额外的参数调整。
+上图中（c）就是本文提出的 RegAD 模型的结构，传统的配准是将图片逐像素对齐，本文则是为了更好的鲁棒性，提出了特征水平的对齐，使用了一个自己设计的特征配准损失函数，使得属于同一类别的图片特征向量具有最大的余弦相似度。
+训练时，从图中可见，首先进行了预训练，然后来自不同类别的图片一起对模型进行训练，输入是来自同一类别的图片对。使得模型对不同类别的图片对都有了配准能力，即同一类别的图片经过该网络，得到的特征向量具备最大的余弦相似度。
+测试时，提供包含少量正常样本的支持集和测试样本。支持集的正常图片输入网络得到特征向量，利用基于统计的分布估计，计算出该新类别中正常样本的特征应服从的正态分布。如果测试样本在网络中计算得到的特征向量，属于该正态分布的正常范围之外，则判定为异常。
+2. 方法论 2.1 特征配准网络（Feature Registration Network） 配准网络结构来自同一类别的图片 Ia 和 Ib 输入网络，经过第一卷积层 C1 的编码，分别得到特征 f1a,s 和 f1b,s，然后经过空间转换网络 S1（Spatial Transformer Network，STN）得到特征 f1a,t 和 f1b,t。后续经过相似的两次处理，得到 f3a,t 和 f3b,t，输入防止崩溃解的孪生网络，得到两张特征向量图，再使用负余弦相似度来使图中每个像素对应的特征向量尽可能对齐。
+可视化效果如下图：
+特征配准可视化结果2.2 正态分布估计（Normal Distribution Estimation） 对支持集中的图片进行数据增强后，得到更多的正常样本图片，然后输入 2.</description>
+    </item>
+    
     <item>
       <title>缺陷检测-学生老师模型</title>
       <link>https://meanvery.github.io/post/2022-12-06-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-%E5%AD%A6%E7%94%9F%E8%80%81%E5%B8%88%E6%A8%A1%E5%9E%8B/</link>
